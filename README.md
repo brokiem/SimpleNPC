@@ -32,7 +32,7 @@ issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
 
 ## Developers
 
-If you want to register your own entity, take a look at this [plugin]()
+If you want to register your own entity, take a look at this [plugin](https://github.com/brokiem/CustomEntity/)
 
 ## License
 

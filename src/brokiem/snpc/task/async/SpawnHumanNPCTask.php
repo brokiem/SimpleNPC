@@ -10,6 +10,7 @@ use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+use pocketmine\utils\Internet;
 use pocketmine\utils\TextFormat;
 
 class SpawnHumanNPCTask extends AsyncTask
@@ -46,7 +47,7 @@ class SpawnHumanNPCTask extends AsyncTask
             }
 
             $extension = pathinfo($parse, PATHINFO_EXTENSION);
-            $data = file_get_contents($this->skinUrl);
+            $data = Internet::getURL($this->skinUrl);
 
             if ($data === false) {
                 $this->setResult(null);
