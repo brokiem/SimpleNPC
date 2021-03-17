@@ -1,27 +1,22 @@
 # SimpleNPC
-
 <b>Free open source resource NPC plugin made by brokiem for PocketMine-MP.</b>
 
 ## Progress
-
 Plugin Progress: 40%
 
 ## Features
-
 - Migration from Slapper supported! <b>[TODO]</b>
 - Set NPC Skin With URL
 - All Entities NPC <b>[TODO]</b>
-- NPC Can Look at Players <b>[TODO]</b>
+- NPC Can Look at Players
 - NPC Can Walk <b>[TODO]</b>
 - Lightweight
-- Open Source
+- Open Source ❤
 
 ## Images
-
 <img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/img.png" alt="">
 
 ## Commands
-
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |

@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace brokiem\snpc;
 
-use brokiem\snpc\entity\sHuman;
-use brokiem\snpc\entity\sNPC;
+use brokiem\snpc\entity\BaseNPC;
+use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\event\SNPCDamageEvent;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\math\Vector2;
+use pocketmine\network\mcpe\protocol\MoveActorAbsolutePacket;
+use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
@@ -30,12 +34,12 @@ class EventHandler implements Listener
     {
         $entity = $event->getEntity();
 
-        if ($entity instanceof sHuman || $entity instanceof sNPC) {
+        if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
             $event->setCancelled();
         }
 
         if ($event instanceof EntityDamageByEntityEvent) {
-            if ($entity instanceof sHuman || $entity instanceof sNPC) {
+            if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
                 $damager = $event->getDamager();
 
                 (new SNPCDamageEvent($entity, $damager));
@@ -64,8 +68,50 @@ class EventHandler implements Listener
     {
         $entity = $event->getEntity();
 
-        if ($entity instanceof sHuman || $entity instanceof sNPC) {
+        if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
             $event->setCancelled();
+        }
+    }
+
+    public function onMove(PlayerMoveEvent $event): void
+    {
+        $player = $event->getPlayer();
+
+        if ($this->plugin->lookToPlayersEnabled) {
+            // code taken from slapper
+            if ($event->getFrom()->distance($event->getTo()) < 0.1) {
+                return;
+            }
+
+            foreach ($player->getLevel()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->maxLookDistance, $this->plugin->maxLookDistance, $this->plugin->maxLookDistance), $player) as $entity) {
+                if ($entity instanceof Player) {
+                    continue;
+                }
+
+                $angle = atan2($player->z - $entity->z, $player->x - $entity->x);
+                $yaw = (($angle * 180) / M_PI) - 90;
+                $angle = atan2((new Vector2($entity->x, $entity->z))->distance($player->x, $player->z), $player->y - $entity->y);
+                $pitch = (($angle * 180) / M_PI) - 90;
+
+                if ($entity instanceof CustomHuman) {
+                    $pk = new MovePlayerPacket();
+                    $pk->entityRuntimeId = $entity->getId();
+                    $pk->position = $entity->asVector3()->add(0, $entity->getEyeHeight());
+                    $pk->yaw = $yaw;
+                    $pk->pitch = $pitch;
+                    $pk->headYaw = $yaw;
+                    $pk->onGround = $entity->onGround;
+                } else {
+                    $pk = new MoveActorAbsolutePacket();
+                    $pk->entityRuntimeId = $entity->getId();
+                    $pk->position = $entity->asVector3();
+                    $pk->xRot = $pitch;
+                    $pk->yRot = $yaw;
+                    $pk->zRot = $yaw;
+                }
+
+                $player->sendDataPacket($pk, false, false);
+            }
         }
     }
 }

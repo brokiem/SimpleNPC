@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace brokiem\snpc\commands;
 
-use brokiem\snpc\entity\sHuman;
-use brokiem\snpc\entity\sNPC;
+use brokiem\snpc\entity\BaseNPC;
+use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
-use brokiem\snpc\task\async\CreateNPCTask;
+use brokiem\snpc\task\async\SpawnHumanNPCTask;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\entity\Entity;
@@ -57,25 +58,25 @@ class Commands extends PluginCommand
                                         return true;
                                     }
 
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3], $args[4]));
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3], $args[4]));
 
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
                                 if (isset($args[3])) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3]));
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3]));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
                                 if (isset($args[2])) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
-                                $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
+                                $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
                                 $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                             } else {
                                 if (isset($args[3])) {
@@ -130,7 +131,7 @@ class Commands extends PluginCommand
                         $entityNames = array_map(static function (Entity $entity): string {
                             return TextFormat::DARK_GREEN . $entity->getNameTag() . " §d-- §3X:" . $entity->getFloorX() . " Y:" . $entity->getFloorY() . " Z:" . $entity->getFloorZ();
                         }, array_filter($world->getEntities(), static function (Entity $entity): bool {
-                            return $entity instanceof sNPC or $entity instanceof sHuman;
+                            return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                         }));
 
                         $sender->sendMessage("§csNPC List and Location: (" . count($entityNames) . ")\n §3- " . implode("\n - ", $entityNames));

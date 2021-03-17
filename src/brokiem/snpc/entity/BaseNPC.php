@@ -5,7 +5,7 @@ namespace brokiem\snpc\entity;
 
 use pocketmine\entity\Entity;
 
-class sNPC extends Entity
+class BaseNPC extends Entity
 {
     protected $gravity = 0.0;
 }

@@ -9,7 +9,7 @@ class EntityManager
 {
     /** @var array */
     private static $entities = [
-        sHuman::class => ["human", "snpc:human"]
+        CustomHuman::class => ["human", "snpc:human"]
     ];
 
     public static function init(): void

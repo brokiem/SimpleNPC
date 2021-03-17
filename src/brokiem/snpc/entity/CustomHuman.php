@@ -5,7 +5,7 @@ namespace brokiem\snpc\entity;
 
 use pocketmine\entity\Human;
 
-class sHuman extends Human
+class CustomHuman extends Human
 {
     protected $gravity = 0.0;
 }

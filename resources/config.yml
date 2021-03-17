@@ -1,0 +1,14 @@
+### SimpleNPC Configuration File ###
+# Author: @brokiem (github.com/brokiem)
+# Source code: https://github.com/brokiem/SimpleNPC/
+
+# Don't edit this version
+config-version: 1
+# ---------------------- #
+
+# Enable npc look to players
+# Default: true
+enable-look-to-players: true
+# Max npc distance to look at players
+# Default: 8
+max-look-distance: 8

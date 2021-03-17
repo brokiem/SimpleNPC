@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\task\async;
 
-use brokiem\snpc\entity\sHuman;
+use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\event\SNPCCreationEvent;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
@@ -12,7 +12,7 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
-class CreateNPCTask extends AsyncTask
+class SpawnHumanNPCTask extends AsyncTask
 {
     /** @var string */
     private $skinUrl;
@@ -96,7 +96,7 @@ class CreateNPCTask extends AsyncTask
             $nbt->setShort("Walk", 1);
         }
 
-        $entity = new sHuman($player->getLevel(), $nbt);
+        $entity = new CustomHuman($player->getLevel(), $nbt);
 
         if ($this->nametag !== null) {
             $entity->setNameTag($this->nametag);

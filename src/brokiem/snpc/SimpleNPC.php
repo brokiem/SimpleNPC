@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace brokiem\snpc;
 
-use brokiem\snpc\commands\CommandManager;
+use brokiem\snpc\commands\Commands;
 use brokiem\snpc\entity\EntityManager;
 use pocketmine\plugin\PluginBase;
 
 class SimpleNPC extends PluginBase
 {
     public const ENTITY_HUMAN = "human";
-
-    /** @var self */
-    private static $i;
 
     /** @var array */
     public $removeNPC = [];
@@ -23,18 +20,25 @@ class SimpleNPC extends PluginBase
         self::ENTITY_HUMAN
     ];
 
+    /** @var int */
+    public $maxLookDistance = 10;
+    /** @var bool */
+    public $lookToPlayersEnabled = true;
+
     public function onEnable(): void
     {
-        self::$i = $this;
         EntityManager::init();
-        CommandManager::init($this);
 
+        $this->initConfiguration();
+        $this->getServer()->getCommandMap()->register("SimpleNPC", new Commands("snpc", $this));
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
     }
 
-    /** @internal */
-    public static function get(): self
+    private function initConfiguration(): void
     {
-        return self::$i;
+        $this->saveDefaultConfig();
+
+        $this->lookToPlayersEnabled = $this->getConfig()->get("enable-look-to-players", true);
+        $this->maxLookDistance = $this->getConfig()->get("max-look-distance", 8);
     }
 }
