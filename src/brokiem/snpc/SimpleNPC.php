@@ -32,7 +32,7 @@ class SimpleNPC extends PluginBase
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->register("SimpleNPC", new Commands("snpc", $this));
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
-        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask());
+        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getVersion()));
     }
 
     private function initConfiguration(): void
