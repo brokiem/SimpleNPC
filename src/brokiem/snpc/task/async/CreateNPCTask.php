@@ -37,45 +37,31 @@ class CreateNPCTask extends AsyncTask
     {
         if ($this->skinUrl !== null) {
             $uniqId = uniqid($this->nametag, true);
-            $contents = file_get_contents($this->skinUrl);
             $extension = pathinfo(parse_url($this->skinUrl, PHP_URL_PATH), PATHINFO_EXTENSION);
-            file_put_contents($this->dataPath . $uniqId . ".$extension", $contents);
 
+            if ($extension !== "png") {
+                $this->setResult(null);
+                return;
+            }
+
+            file_put_contents($this->dataPath . $uniqId . ".$extension", file_get_contents($this->skinUrl));
             $file = $this->dataPath . $uniqId . ".$extension";
 
-            if ($extension === "png") {
-                $img = imagecreatefrompng($file);
-                $bytes = '';
-                for ($y = 0; $y < imagesy($img); $y++) {
-                    for ($x = 0; $x < imagesx($img); $x++) {
-                        $rgba = @imagecolorat($img, $x, $y);
-                        $a = ((~(($rgba >> 24))) << 1) & 0xff;
-                        $r = ($rgba >> 16) & 0xff;
-                        $g = ($rgba >> 8) & 0xff;
-                        $b = $rgba & 0xff;
-                        $bytes .= chr($r) . chr($g) . chr($b) . chr($a);
-                    }
+            $img = imagecreatefrompng($file);
+            $bytes = '';
+            for ($y = 0; $y < imagesy($img); $y++) {
+                for ($x = 0; $x < imagesx($img); $x++) {
+                    $rgba = @imagecolorat($img, $x, $y);
+                    $a = ((~(($rgba >> 24))) << 1) & 0xff;
+                    $r = ($rgba >> 16) & 0xff;
+                    $g = ($rgba >> 8) & 0xff;
+                    $b = $rgba & 0xff;
+                    $bytes .= chr($r) . chr($g) . chr($b) . chr($a);
                 }
-
-                @imagedestroy($img);
-                $this->setResult($bytes);
-            } elseif ($extension === "jpg" or $extension === "jpeg") {
-                $img = imagecreatefromjpeg($file);
-                $bytes = '';
-                for ($y = 0; $y < imagesy($img); $y++) {
-                    for ($x = 0; $x < imagesx($img); $x++) {
-                        $rgba = @imagecolorat($img, $x, $y);
-                        $a = ((~($rgba >> 24)) << 1) & 0xff;
-                        $r = ($rgba >> 16) & 0xff;
-                        $g = ($rgba >> 8) & 0xff;
-                        $b = $rgba & 0xff;
-                        $bytes .= chr($r) . chr($g) . chr($b) . chr($a);
-                    }
-                }
-
-                @imagedestroy($img);
-                $this->setResult($bytes);
             }
+
+            @imagedestroy($img);
+            $this->setResult($bytes);
 
             unlink($file);
         }
@@ -92,6 +78,10 @@ class CreateNPCTask extends AsyncTask
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
         $nbt->setTag($player->namedtag->getTag("Skin"));
         $nbt->setTag(new CompoundTag("commands", []));
+
+        if ($this->canWalk) {
+            $nbt->setShort("Walk", 1);
+        }
 
         $entity = new Human($player->getLevel(), $nbt);
 

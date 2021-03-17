@@ -47,14 +47,14 @@ class Commands extends PluginCommand
                     if (isset($args[1])) {
                         if (in_array(strtolower($args[1]), $plugin->npcType, true)) {
                             if ($args[1] === SimpleNPC::ENTITY_HUMAN) {
-                                if (count($args) === 2) {
+                                if (count($args) === 1) {
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
+                                } elseif (count($args) === 2) {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
                                 } elseif (count($args) === 3) {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3]));
                                 } elseif (count($args) >= 4) {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3], $args[4]));
-                                } elseif (count($args) === 1) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
                                 }
                             } else {
                                 if (isset($args[2])) {
@@ -96,7 +96,6 @@ class Commands extends PluginCommand
 
                     break;
             }
-
         }
 
         return parent::execute($sender, $commandLabel, $args);
