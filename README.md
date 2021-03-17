@@ -1,4 +1,4 @@
-<h1>SimpleLay</h1><br>
+## SimpleNPC
 Free open source resource NPC plugin made by brokiem for PocketMine-MP.
 
 ### Features
