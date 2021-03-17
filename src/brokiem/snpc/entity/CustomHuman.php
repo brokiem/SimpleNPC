@@ -30,7 +30,7 @@ class CustomHuman extends Human
         }
     }
 
-    public function entityBaseTick(int $tickDiff = 1): bool
+    public function onUpdate(int $currentTick): bool
     {
         if ($this->namedtag->getShort("Walk") === 1) {
             if ($this->findNewPosition === 0 or $this->distance($this->randomPosition) <= 2) {
@@ -63,7 +63,7 @@ class CustomHuman extends Human
             $this->updateMovement();
         }
 
-        return $this->isAlive();
+        return parent::onUpdate($currentTick);
     }
 
     private function shouldJump(): bool

@@ -7,7 +7,7 @@ Plugin Progress: 50%
 ## Features
 - Migration from Slapper supported! <b>[TODO]</b>
 - Set NPC Skin With URL
-- All Entities NPC <b>[TODO]</b>
+- Register your own entity!
 - NPC Can Look at Players
 - NPC Can Walk
 - Lightweight
@@ -17,6 +17,7 @@ Plugin Progress: 50%
 <img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/img.png" alt="">
 
 ## Commands
+
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
@@ -25,7 +26,14 @@ Plugin Progress: 50%
 | ```/snpc list``` | ```See the npc list``` | ```snpc.list``` | ```op``` |
 
 ## Issues
-Did you find a bug or error when using this plugin? feel free to open the issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
+
+Did you find a bug or error when using this plugin? feel free to open the
+issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
+
+## Developers
+
+If you want to register your own entity, take a look at this [plugin]()
 
 ## License
+
 This project is licensed under LGPL-3.0. Please see the [LICENSE](/LICENSE) file for details.

@@ -50,7 +50,7 @@ class Commands extends PluginCommand
                     }
 
                     if (isset($args[1])) {
-                        if (in_array(strtolower($args[1]), $plugin->npcType, true)) {
+                        if (in_array(strtolower($args[1]), SimpleNPC::$npcType, true)) {
                             if ($args[1] === SimpleNPC::ENTITY_HUMAN) {
                                 if (isset($args[4])) {
                                     if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[4])) {
@@ -79,11 +79,6 @@ class Commands extends PluginCommand
                                 $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
                                 $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                             } else {
-                                if (isset($args[3])) {
-                                    NPCManager::createNPC($args[1], $sender, $args[2], $args[3]);
-                                    return true;
-                                }
-
                                 if (isset($args[2])) {
                                     NPCManager::createNPC($args[1], $sender, $args[2]);
                                     return true;
