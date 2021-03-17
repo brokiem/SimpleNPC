@@ -10,6 +10,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
+use pocketmine\utils\TextFormat;
 
 class Commands extends PluginCommand
 {
@@ -48,21 +49,31 @@ class Commands extends PluginCommand
                         if (in_array(strtolower($args[1]), $plugin->npcType, true)) {
                             if ($args[1] === SimpleNPC::ENTITY_HUMAN) {
                                 if (isset($args[4])) {
+                                    if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[4])) {
+                                        $sender->sendMessage(TextFormat::RED . "Invalied skin file format! (Only PNG Supported)");
+                                        return true;
+                                    }
+
                                     $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3], $args[4]));
+
+                                    $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
                                 if (isset($args[3])) {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3]));
+                                    $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
                                 if (isset($args[2])) {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
+                                    $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
                                 $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
+                                $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                             } else {
                                 if (isset($args[3])) {
                                     NPCManager::createNPC($args[1], $sender, $args[2], $args[3]);

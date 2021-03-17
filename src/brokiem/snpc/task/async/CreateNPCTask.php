@@ -10,6 +10,7 @@ use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+use pocketmine\utils\TextFormat;
 
 class CreateNPCTask extends AsyncTask
 {
@@ -24,6 +25,7 @@ class CreateNPCTask extends AsyncTask
     /** @var string */
     private $dataPath;
 
+
     public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null)
     {
         $this->username = $username;
@@ -37,14 +39,22 @@ class CreateNPCTask extends AsyncTask
     {
         if ($this->skinUrl !== null) {
             $uniqId = uniqid($this->nametag, true);
-            $extension = pathinfo(parse_url($this->skinUrl, PHP_URL_PATH), PATHINFO_EXTENSION);
+            $parse = parse_url($this->skinUrl, PHP_URL_PATH);
 
-            if ($extension !== "png") {
+            if ($parse === null or $parse === false) {
                 $this->setResult(null);
                 return;
             }
 
-            file_put_contents($this->dataPath . $uniqId . ".$extension", file_get_contents($this->skinUrl));
+            $extension = pathinfo($parse, PATHINFO_EXTENSION);
+            $data = file_get_contents($this->skinUrl);
+
+            if ($data === false) {
+                $this->setResult(null);
+                return;
+            }
+
+            file_put_contents($this->dataPath . $uniqId . ".$extension", $data);
             $file = $this->dataPath . $uniqId . ".$extension";
 
             $img = imagecreatefrompng($file);
@@ -64,6 +74,8 @@ class CreateNPCTask extends AsyncTask
             $this->setResult($bytes);
 
             unlink($file);
+        } else {
+            $this->setResult(null);
         }
     }
 
@@ -91,7 +103,7 @@ class CreateNPCTask extends AsyncTask
             $entity->setNameTagAlwaysVisible();
         }
 
-        if (!$this->getResult() or $this->skinUrl !== null) {
+        if ($this->getResult() !== null) {
             $entity->setSkin(new Skin($player->getSkin()->getSkinId(), $this->getResult()));
         } else {
             $entity->setSkin($player->getSkin());
@@ -99,5 +111,7 @@ class CreateNPCTask extends AsyncTask
 
         $entity->spawnToAll();
         (new SNPCCreationEvent($entity))->call();
+
+        $player->sendMessage(TextFormat::GREEN . "NPC created successfuly!");
     }
 }
