@@ -16,6 +16,9 @@ class SimpleNPC extends PluginBase
     private static $i;
 
     /** @var array */
+    public $removeNPC = [];
+
+    /** @var array */
     public $npcType = [
         self::ENTITY_HUMAN
     ];

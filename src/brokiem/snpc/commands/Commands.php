@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\commands;
 
+use brokiem\snpc\entity\sHuman;
+use brokiem\snpc\entity\sNPC;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
 use brokiem\snpc\task\async\CreateNPCTask;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
+use pocketmine\entity\Entity;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
@@ -88,10 +91,10 @@ class Commands extends PluginCommand
                                 NPCManager::createNPC($args[1], $sender);
                             }
                         } else {
-                            $sender->sendMessage("Invalid entity type or entity not registered!");
+                            $sender->sendMessage(TextFormat::RED . "Invalid entity type or entity not registered!");
                         }
                     } else {
-                        $sender->sendMessage("Usage: /snpc spawn <type> optional: <nametag> <canWalk> <skinUrl>");
+                        $sender->sendMessage(TextFormat::RED . "Usage: /snpc spawn <type> optional: <nametag> <canWalk> <skinUrl>");
                     }
                     break;
                 case "delete":
@@ -101,6 +104,13 @@ class Commands extends PluginCommand
                         return true;
                     }
 
+                    if (!isset($plugin->removeNPC[$sender->getName()])) {
+                        $plugin->removeNPC[$sender->getName()] = true;
+                        $sender->sendMessage(TextFormat::DARK_GREEN . "Hit the npc that you want to delete or remove");
+                    } else {
+                        unset($plugin->removeNPC[$sender->getName()]);
+                        $sender->sendMessage(TextFormat::GREEN . "Remove npc by hitting has been canceled successfully");
+                    }
                     break;
                 case "edit":
                 case "manage":
@@ -116,6 +126,15 @@ class Commands extends PluginCommand
                         return true;
                     }
 
+                    foreach ($plugin->getServer()->getLevels() as $world) {
+                        $entityNames = array_map(static function (Entity $entity): string {
+                            return TextFormat::DARK_GREEN . $entity->getNameTag() . " §d-- §3X:" . $entity->getFloorX() . " Y:" . $entity->getFloorY() . " Z:" . $entity->getFloorZ();
+                        }, array_filter($world->getEntities(), static function (Entity $entity): bool {
+                            return $entity instanceof sNPC or $entity instanceof sHuman;
+                        }));
+
+                        $sender->sendMessage("§csNPC List and Location: (" . count($entityNames) . ")\n §3- " . implode("\n - ", $entityNames));
+                    }
                     break;
             }
         }

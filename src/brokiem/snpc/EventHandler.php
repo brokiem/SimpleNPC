@@ -13,6 +13,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\Listener;
 use pocketmine\Player;
+use pocketmine\utils\TextFormat;
 
 class EventHandler implements Listener
 {
@@ -39,9 +40,18 @@ class EventHandler implements Listener
 
                 (new SNPCDamageEvent($entity, $damager));
 
-                if (($damager instanceof Player) && ($commands = $entity->namedtag->getCompoundTag("Commands")) !== null) {
-                    foreach ($commands as $stringTag) {
-                        $this->plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender(), str_replace("{player}", '"' . $damager->getName() . '"', $stringTag->getValue()));
+                if ($damager instanceof Player) {
+                    if (isset($this->plugin->removeNPC[$damager->getName()]) && !$entity->isFlaggedForDespawn()) {
+                        $entity->flagForDespawn();
+                        $damager->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+                        unset($this->plugin->removeNPC[$damager->getName()]);
+                        return;
+                    }
+
+                    if (($commands = $entity->namedtag->getCompoundTag("Commands")) !== null) {
+                        foreach ($commands as $stringTag) {
+                            $this->plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender(), str_replace("{player}", '"' . $damager->getName() . '"', $stringTag->getValue()));
+                        }
                     }
                 }
 

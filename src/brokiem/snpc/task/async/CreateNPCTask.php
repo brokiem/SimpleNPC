@@ -112,6 +112,6 @@ class CreateNPCTask extends AsyncTask
         $entity->spawnToAll();
         (new SNPCCreationEvent($entity))->call();
 
-        $player->sendMessage(TextFormat::GREEN . "NPC created successfuly!");
+        $player->sendMessage(TextFormat::GREEN . "NPC created successfully!");
     }
 }
