@@ -37,7 +37,7 @@ class CheckUpdateTask extends AsyncTask
 
         if ($this->version !== $latestVersion) {
             $server->getLogger()->notice(
-                "SimpleNPC v$latestVersion has been released at $updateDate. Download the new update at $updateUrl"
+                "SimpleNPC v$latestVersion has been released on $updateDate. Download the new update at $updateUrl"
             );
         }
     }
