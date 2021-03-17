@@ -2,7 +2,7 @@
 <b>Free open source resource NPC plugin made by brokiem for PocketMine-MP.</b>
 
 ## Progress
-Plugin Progress: 50%
+Plugin Progress: 70%
 
 ## Features
 - Migration from Slapper supported! <b>[TODO]</b>
