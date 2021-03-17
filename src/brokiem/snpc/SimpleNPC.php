@@ -12,7 +12,7 @@ class SimpleNPC extends PluginBase
 {
     public const ENTITY_HUMAN = "human";
 
-    /** @var */
+    /** @var self */
     private static $i;
 
     /** @var array */
@@ -29,6 +29,7 @@ class SimpleNPC extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
     }
 
+    /** @internal */
     public static function get(): self
     {
         return self::$i;
