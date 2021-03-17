@@ -1,7 +1,7 @@
-## SimpleNPC
+# SimpleNPC
 Free open source resource NPC plugin made by brokiem for PocketMine-MP.
 
-### Features
+## Features
 - Migration from Slapper supported!
   
 - Set NPC Skin With URL
@@ -11,7 +11,7 @@ Free open source resource NPC plugin made by brokiem for PocketMine-MP.
 - Lightweight
 - Open Source
 
-### Commands
+## Commands
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
