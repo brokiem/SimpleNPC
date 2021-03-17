@@ -1,5 +1,4 @@
-# SimpleNPC
-Free open source resource NPC plugin made by brokiem for PocketMine-MP.
+<p align="center"><h1>SimpleNPC</h1><br><b>Free open source resource NPC plugin made by brokiem for PocketMine-MP.</b></p>
 
 ## Features
 - Migration from Slapper supported!
@@ -17,3 +16,9 @@ Free open source resource NPC plugin made by brokiem for PocketMine-MP.
 | ```/snpc edit [args]``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
 | ```/snpc remove``` | ```Remove the npc``` | ```snpc.remove``` | ```op``` |
 | ```/snpc list``` | ```See the npc list``` | ```snpc.list``` | ```op``` |
+
+## Issues
+Did you find a bug or error when using this plugin? feel free to open the issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
+
+## License
+This project is licensed under LGPL-3.0. Please see the [LICENSE](/LICENSE) file for details.
