@@ -25,9 +25,7 @@ class CheckUpdateTask extends AsyncTask
         if ($json !== false) {
             $updates = json_decode($json, true);
 
-            if (version_compare($this->version, $updates["latest-version"], "<")) {
-                $this->setResult([$updates["latest-version"], $updates["update-date"], $updates["update-url"]]);
-            }
+            $this->setResult([$updates["latest-version"], $updates["update-date"], $updates["update-url"]]);
         }
     }
 
@@ -36,7 +34,7 @@ class CheckUpdateTask extends AsyncTask
         [$latestVersion, $updateDate, $updateUrl] = $this->getResult();
 
         if ($this->version !== $latestVersion) {
-            $server->getPluginManager()->getPlugin("SimpleNPC")->getLogger()->notice(
+            $server->getLogger()->notice(
                 "SimpleNPC v$latestVersion has been released on $updateDate. Download the new update at $updateUrl"
             );
         }
