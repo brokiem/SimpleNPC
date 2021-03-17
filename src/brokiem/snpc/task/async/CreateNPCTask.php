@@ -75,6 +75,7 @@ class CreateNPCTask extends AsyncTask
             return;
         }
 
+        $player->saveNBT();
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
         $nbt->setTag($player->namedtag->getTag("Skin"));
         $nbt->setTag(new CompoundTag("commands", []));
@@ -85,12 +86,7 @@ class CreateNPCTask extends AsyncTask
 
         $entity = new Human($player->getLevel(), $nbt);
 
-        if (!$entity instanceof Human) {
-            $player->sendMessage('Entity not human');
-            return;
-        }
-
-        if (!$this->nametag) {
+        if ($this->nametag !== null) {
             $entity->setNameTag($this->nametag);
             $entity->setNameTagAlwaysVisible();
         }
