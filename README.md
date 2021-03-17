@@ -16,7 +16,12 @@ Plugin Progress: 40%
 - Lightweight
 - Open Source
 
+## Images
+
+<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/img.png" alt="">
+
 ## Commands
+
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
