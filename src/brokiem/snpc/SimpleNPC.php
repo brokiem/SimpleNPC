@@ -10,13 +10,27 @@ use pocketmine\plugin\PluginBase;
 
 class SimpleNPC extends PluginBase
 {
+    public const ENTITY_HUMAN = "human";
+
+    /** @var */
+    private static $i;
+
+    /** @var array */
+    public $npcType = [
+        self::ENTITY_HUMAN
+    ];
 
     public function onEnable(): void
     {
+        self::$i = $this;
         EntityManager::init($this);
         CommandManager::init($this);
 
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
     }
 
+    public static function get(): self
+    {
+        return self::$i;
+    }
 }
