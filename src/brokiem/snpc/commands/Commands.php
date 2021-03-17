@@ -110,7 +110,7 @@ class Commands extends PluginCommand
                         $sender->sendMessage(TextFormat::DARK_GREEN . "Hit the npc that you want to delete or remove");
                     } else {
                         unset($plugin->removeNPC[$sender->getName()]);
-                        $sender->sendMessage(TextFormat::GREEN . "Remove npc by hitting has been canceled successfully");
+                        $sender->sendMessage(TextFormat::GREEN . "Remove npc by hitting has been canceled");
                     }
                     break;
                 case "edit":

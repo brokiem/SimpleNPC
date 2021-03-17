@@ -16,13 +16,9 @@ class CustomHuman extends Human
     private $randomPosition;
     /** @var int */
     private $findNewPosition = 0;
-    /**
-     * @var float
-     */
+    /** @var float */
     private $speed = 0.35;
-    /**
-     * @var int|mixed
-     */
+    /** @var int */
     private $jumpTick = 25;
 
     public function __construct(Level $level, CompoundTag $nbt)

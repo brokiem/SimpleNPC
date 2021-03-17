@@ -6,6 +6,7 @@ namespace brokiem\snpc;
 
 use brokiem\snpc\commands\Commands;
 use brokiem\snpc\entity\EntityManager;
+use brokiem\snpc\task\async\CheckUpdateTask;
 use pocketmine\plugin\PluginBase;
 
 class SimpleNPC extends PluginBase
@@ -13,13 +14,12 @@ class SimpleNPC extends PluginBase
     public const ENTITY_HUMAN = "human";
 
     /** @var array */
-    public $removeNPC = [];
-
-    /** @var array */
     public $npcType = [
         self::ENTITY_HUMAN
     ];
 
+    /** @var array */
+    public $removeNPC = [];
     /** @var int */
     public $maxLookDistance = 10;
     /** @var bool */
@@ -32,6 +32,7 @@ class SimpleNPC extends PluginBase
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->register("SimpleNPC", new Commands("snpc", $this));
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
+        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask());
     }
 
     private function initConfiguration(): void

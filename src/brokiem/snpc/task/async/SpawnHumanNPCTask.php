@@ -16,7 +16,7 @@ class SpawnHumanNPCTask extends AsyncTask
 {
     /** @var string */
     private $skinUrl;
-    /** @var ?string */
+    /** @var null|string */
     private $nametag;
     /** @var bool */
     private $canWalk;
@@ -24,7 +24,6 @@ class SpawnHumanNPCTask extends AsyncTask
     private $username;
     /** @var string */
     private $dataPath;
-
 
     public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null)
     {
@@ -62,7 +61,7 @@ class SpawnHumanNPCTask extends AsyncTask
             for ($y = 0; $y < imagesy($img); $y++) {
                 for ($x = 0; $x < imagesx($img); $x++) {
                     $rgba = @imagecolorat($img, $x, $y);
-                    $a = ((~(($rgba >> 24))) << 1) & 0xff;
+                    $a = ((~($rgba >> 24)) << 1) & 0xff;
                     $r = ($rgba >> 16) & 0xff;
                     $g = ($rgba >> 8) & 0xff;
                     $b = $rgba & 0xff;
@@ -73,7 +72,7 @@ class SpawnHumanNPCTask extends AsyncTask
             @imagedestroy($img);
             $this->setResult($bytes);
 
-            unlink($file);
+            @unlink($file);
         } else {
             $this->setResult(null);
         }

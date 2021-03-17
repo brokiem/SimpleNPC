@@ -6,7 +6,6 @@ namespace brokiem\snpc;
 
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
-use brokiem\snpc\event\SNPCDamageEvent;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -41,8 +40,6 @@ class EventHandler implements Listener
         if ($event instanceof EntityDamageByEntityEvent) {
             if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
                 $damager = $event->getDamager();
-
-                (new SNPCDamageEvent($entity, $damager));
 
                 if ($damager instanceof Player) {
                     if (isset($this->plugin->removeNPC[$damager->getName()]) && !$entity->isFlaggedForDespawn()) {
