@@ -2,11 +2,11 @@
 <b>Free open source resource NPC plugin made by brokiem for PocketMine-MP.</b>
 
 ## Features
-- Migration from Slapper supported!
+- Migration from Slapper supported! [TODO]
 - Set NPC Skin With URL
-- All Entities NPC
-- NPC Can Look at Players
-- NPC Can Walk
+- All Entities NPC [TODO]
+- NPC Can Look at Players [TODO]
+- NPC Can Walk [TODO]
 - Lightweight
 - Open Source
 
