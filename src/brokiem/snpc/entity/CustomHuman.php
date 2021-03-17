@@ -116,10 +116,4 @@ class CustomHuman extends Human
     {
         return ($this->isUnderwater() ? $this->speed / 2 : $this->speed);
     }
-
-    public function jump(): void
-    {
-        $this->motion->y = $this->getJumpVelocity();
-        $this->move($this->motion->x * 1.25, $this->motion->y, $this->motion->z * 1.25);
-    }
 }

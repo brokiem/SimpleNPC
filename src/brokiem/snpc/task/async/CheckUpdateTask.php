@@ -20,10 +20,10 @@ class CheckUpdateTask extends AsyncTask
 
     public function onRun(): void
     {
-        $json = Internet::getURL(self::UPDATES_URL);
+        $data = Internet::getURL(self::UPDATES_URL);
 
-        if ($json !== false) {
-            $updates = json_decode($json, true);
+        if ($data !== false) {
+            $updates = json_decode($data, true);
 
             $this->setResult([$updates["latest-version"], $updates["update-date"], $updates["update-url"]]);
         }

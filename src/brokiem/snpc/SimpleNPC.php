@@ -30,7 +30,7 @@ class SimpleNPC extends PluginBase
 
     public function onEnable(): void
     {
-        self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN);
+        self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN, true);
 
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->register("SimpleNPC", new Commands("snpc", $this));
@@ -46,7 +46,7 @@ class SimpleNPC extends PluginBase
         $this->maxLookDistance = $this->getConfig()->get("max-look-distance", 8);
     }
 
-    public static function registerEntity(string $entityClass, string $name, bool $force = false, array $saveNames = []): void
+    public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): void
     {
         $class = new ReflectionClass($entityClass);
         if (is_a($entityClass, BaseNPC::class, true) or is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
