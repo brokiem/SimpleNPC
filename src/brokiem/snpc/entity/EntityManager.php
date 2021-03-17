@@ -3,12 +3,19 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\entity;
 
-use brokiem\snpc\SimpleNPC;
+use pocketmine\entity\Entity;
 
 class EntityManager
 {
-    public static function init(SimpleNPC $plugin): void
-    {
+    /** @var array */
+    private static $entities = [
+        sHuman::class => ["human", "snpc:human"]
+    ];
 
+    public static function init(): void
+    {
+        foreach (self::$entities as $class => $saveName) {
+            Entity::registerEntity($class, true, $saveName);
+        }
     }
 }

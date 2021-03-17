@@ -7,5 +7,5 @@ use pocketmine\entity\Entity;
 
 class sNPC extends Entity
 {
-
+    protected $gravity = 0.0;
 }

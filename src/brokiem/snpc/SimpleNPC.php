@@ -23,7 +23,7 @@ class SimpleNPC extends PluginBase
     public function onEnable(): void
     {
         self::$i = $this;
-        EntityManager::init($this);
+        EntityManager::init();
         CommandManager::init($this);
 
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);

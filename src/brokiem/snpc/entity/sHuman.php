@@ -7,5 +7,5 @@ use pocketmine\entity\Human;
 
 class sHuman extends Human
 {
-
+    protected $gravity = 0.0;
 }

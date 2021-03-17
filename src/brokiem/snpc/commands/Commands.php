@@ -47,23 +47,34 @@ class Commands extends PluginCommand
                     if (isset($args[1])) {
                         if (in_array(strtolower($args[1]), $plugin->npcType, true)) {
                             if ($args[1] === SimpleNPC::ENTITY_HUMAN) {
-                                if (count($args) === 1) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
-                                } elseif (count($args) === 2) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
-                                } elseif (count($args) === 3) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3]));
-                                } elseif (count($args) >= 4) {
+                                if (isset($args[4])) {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3], $args[4]));
+                                    return true;
                                 }
+
+                                if (isset($args[3])) {
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), (bool)$args[3]));
+                                    return true;
+                                }
+
+                                if (isset($args[2])) {
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
+                                    return true;
+                                }
+
+                                $plugin->getServer()->getAsyncPool()->submitTask(new CreateNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
                             } else {
+                                if (isset($args[3])) {
+                                    NPCManager::createNPC($args[1], $sender, $args[2], $args[3]);
+                                    return true;
+                                }
+
                                 if (isset($args[2])) {
                                     NPCManager::createNPC($args[1], $sender, $args[2]);
-                                } elseif (isset($args[3])) {
-                                    NPCManager::createNPC($args[1], $sender, $args[2], $args[3]);
-                                } else {
-                                    NPCManager::createNPC($args[1], $sender);
+                                    return true;
                                 }
+
+                                NPCManager::createNPC($args[1], $sender);
                             }
                         } else {
                             $sender->sendMessage("Invalid entity type or entity not registered!");
