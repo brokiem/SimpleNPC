@@ -30,7 +30,7 @@ class SimpleNPC extends PluginBase
 
     public function onEnable(): void
     {
-        self::registerEntity(CustomHuman::class, "human");
+        self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN);
 
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->register("SimpleNPC", new Commands("snpc", $this));
@@ -49,15 +49,11 @@ class SimpleNPC extends PluginBase
     public static function registerEntity(string $entityClass, string $name, bool $force = false, array $saveNames = []): void
     {
         $class = new ReflectionClass($entityClass);
-        if (is_a($entityClass, BaseNPC::class, true) and !$class->isAbstract()) {
+        if (is_a($entityClass, BaseNPC::class, true) or is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
             self::$entities[$entityClass] = array_merge($saveNames, [$name]);
             self::$npcType[] = $name;
 
-            if (Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]))) {
-                var_dump("Entity $entityClass registered!");
-            }
-
-            var_dump(self::$entities);
+            Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
         }
     }
 }
