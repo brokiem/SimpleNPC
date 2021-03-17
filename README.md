@@ -1,4 +1,5 @@
-<p align="center"><h1>SimpleNPC</h1><br><b>Free open source resource NPC plugin made by brokiem for PocketMine-MP.</b></p>
+# SimpleNPC
+<b>Free open source resource NPC plugin made by brokiem for PocketMine-MP.</b>
 
 ## Features
 - Migration from Slapper supported!
