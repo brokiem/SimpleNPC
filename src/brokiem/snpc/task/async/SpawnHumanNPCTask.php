@@ -91,6 +91,7 @@ class SpawnHumanNPCTask extends AsyncTask
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
         $nbt->setTag($player->namedtag->getTag("Skin"));
         $nbt->setTag(new CompoundTag("commands", []));
+        $nbt->setShort("Walk", 0);
 
         if ($this->canWalk) {
             $nbt->setShort("Walk", 1);

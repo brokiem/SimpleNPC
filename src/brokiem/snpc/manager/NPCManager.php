@@ -11,6 +11,8 @@ class NPCManager
     public static function createNPC(string $type, Player $player, ?string $nametag = null, bool $canWalk = false): bool
     {
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
+        $nbt->setShort("Walk", 1);
+
         if ($canWalk) {
             $nbt->setShort("Walk", 1);
         }

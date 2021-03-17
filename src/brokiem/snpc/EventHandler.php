@@ -69,7 +69,9 @@ class EventHandler implements Listener
         $entity = $event->getEntity();
 
         if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
-            $event->setCancelled();
+            if ($entity->namedtag->getShort("Walk") === 0) {
+                $event->setCancelled();
+            }
         }
     }
 
@@ -93,24 +95,26 @@ class EventHandler implements Listener
                 $angle = atan2((new Vector2($entity->x, $entity->z))->distance($player->x, $player->z), $player->y - $entity->y);
                 $pitch = (($angle * 180) / M_PI) - 90;
 
-                if ($entity instanceof CustomHuman) {
-                    $pk = new MovePlayerPacket();
-                    $pk->entityRuntimeId = $entity->getId();
-                    $pk->position = $entity->asVector3()->add(0, $entity->getEyeHeight());
-                    $pk->yaw = $yaw;
-                    $pk->pitch = $pitch;
-                    $pk->headYaw = $yaw;
-                    $pk->onGround = $entity->onGround;
-                } else {
-                    $pk = new MoveActorAbsolutePacket();
-                    $pk->entityRuntimeId = $entity->getId();
-                    $pk->position = $entity->asVector3();
-                    $pk->xRot = $pitch;
-                    $pk->yRot = $yaw;
-                    $pk->zRot = $yaw;
+                if ($entity->namedtag->getShort("Walk") === 0) {
+                    if ($entity instanceof CustomHuman) {
+                        $pk = new MovePlayerPacket();
+                        $pk->entityRuntimeId = $entity->getId();
+                        $pk->position = $entity->asVector3()->add(0, $entity->getEyeHeight());
+                        $pk->yaw = $yaw;
+                        $pk->pitch = $pitch;
+                        $pk->headYaw = $yaw;
+                        $pk->onGround = $entity->onGround;
+                        $player->sendDataPacket($pk, false, false);
+                    } elseif ($entity instanceof BaseNPC) {
+                        $pk = new MoveActorAbsolutePacket();
+                        $pk->entityRuntimeId = $entity->getId();
+                        $pk->position = $entity->asVector3();
+                        $pk->xRot = $pitch;
+                        $pk->yRot = $yaw;
+                        $pk->zRot = $yaw;
+                        $player->sendDataPacket($pk, false, false);
+                    }
                 }
-
-                $player->sendDataPacket($pk, false, false);
             }
         }
     }
