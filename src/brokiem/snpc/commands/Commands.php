@@ -150,7 +150,9 @@ class Commands extends PluginCommand
                             foreach ($plugin->getServer()->getLevels() as $level) {
                                 foreach ($level->getEntities() as $entity) {
                                     if ($entity instanceof SlapperEntity) {
-                                        NPCManager::createNPC(AddActorPacket::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"));
+                                        if (NPCManager::createNPC(AddActorPacket::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands")) && !$entity->isFlaggedForDespawn()) {
+                                            $entity->flagForDespawn();
+                                        }
                                     } elseif ($entity instanceof SlapperHuman) {
                                         $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($entity->getNameTag(), $sender->getName(), $plugin->getDataFolder(), false, null, $entity->namedtag->getCompoundTag("Commands"), $entity->getSkin(), $entity->getLocation()));
                                         // TODO: Queue (don't spam async task)

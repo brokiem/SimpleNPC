@@ -28,7 +28,7 @@ class NPCManager
         $entity = Entity::createEntity($type, $player->getLevel(), $nbt);
 
         if ($entity === null) {
-            $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid");
+            $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid, make sure you register the entity first!");
             return false;
         }
 
