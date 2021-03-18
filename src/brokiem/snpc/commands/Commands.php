@@ -155,13 +155,13 @@ class Commands extends PluginCommand
                         }
                     });
 
-                $editForm = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\nClass: §2" . get_class($entity) . "\nNametag: §2" . $entity->getNameTag() . "\nPosition: §2" . $entity->getX() . "/" . $entity->getY() . "/" . $entity->getZ());
-                $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
-                    $sender->sendForm($addcmdForm);
-                }));
+                    $editForm = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\nClass: §2" . get_class($entity) . "\nNametag: §2" . $entity->getNameTag() . "\nPosition: §2" . $entity->getX() . "/" . $entity->getY() . "/" . $entity->getZ());
+                    $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
+                        $sender->sendForm($addcmdForm);
+                    }));
 
-                $sender->sendForm($editForm);
-                break;
+                    $sender->sendForm($editForm);
+                    break;
                 case "migrate":
                     if (!$sender->hasPermission("snpc.migrate")) {
                         return true;
@@ -245,7 +245,7 @@ class Commands extends PluginCommand
 
                     foreach ($plugin->getServer()->getLevels() as $world) {
                         $entityNames = array_map(static function (Entity $entity): string {
-                            return "ID: (" . TextFormat::YELLOW . $entity->getId() . ") " . TextFormat::DARK_GREEN . $entity->getNameTag() . " §7-- §3" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::DARK_GREEN . $entity->getNameTag() . " §7-- §3" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
                         }, array_filter($world->getEntities(), static function (Entity $entity): bool {
                             return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                         }));
