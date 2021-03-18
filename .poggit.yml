@@ -5,6 +5,7 @@ branches:
 projects:
   SimpleNPC:
     path: ""
+    icon: "/assets/logo.png"
     libs:
       - src: GiantQuartz/EasyUI/libEasyUI
         version: 1.0.0

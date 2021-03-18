@@ -1,4 +1,4 @@
-# SimpleNPC
+<h1>SimpleLay<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/logo.png" height="64" width="64" align="left" alt=""></h1><br>
 <b>Free open source resource NPC plugin made by brokiem for PocketMine-MP.</b>
 
 ## Progress
