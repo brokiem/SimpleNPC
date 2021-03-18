@@ -9,9 +9,15 @@ use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
 use brokiem\snpc\task\async\SpawnHumanNPCTask;
+use EasyUI\element\Button;
+use EasyUI\element\Input;
+use EasyUI\utils\FormResponse;
+use EasyUI\variant\CustomForm;
+use EasyUI\variant\SimpleForm;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\entity\Entity;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
@@ -25,7 +31,6 @@ class Commands extends PluginCommand
     public function __construct(string $name, Plugin $owner)
     {
         parent::__construct($name, $owner);
-        $this->setPermission("snpc.command.use");
         $this->setDescription("SimpleNPC commands");
     }
 
@@ -112,10 +117,50 @@ class Commands extends PluginCommand
                 break;
                 case "edit":
                 case "manage":
-                    if (!$sender->hasPermission("snpc.edit")) {
+                    if (!$sender->hasPermission("snpc.edit") or !$sender instanceof Player) {
                         return true;
                     }
 
+                    if (!isset($args[1]) && !is_numeric($args[1])) {
+                        $sender->sendMessage(TextFormat::RED . "Usage: /snpc edit <id>");
+                        return true;
+                    }
+
+                    $entity = $plugin->getServer()->findEntity((int)$args[1]);
+                    if ($entity === null) {
+                        $sender->sendMessage(TextFormat::YELLOW . "Entity with ID: " . $args[1] . " not found!");
+                        return true;
+                    }
+
+                    $addcmdForm = new CustomForm("Add Command");
+                    $addcmdForm->addElement("addcmd", new Input("Enter the command here"));
+
+                    $addcmdForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $addcmdForm) {
+                        $submittedText = $response->getInputSubmittedText("addcmd");
+
+                        if ($submittedText === "") {
+                            $player->sendMessage(TextFormat::RED . "Plese enter a valid command!");
+                            $player->sendForm($addcmdForm);
+                        } else {
+                            $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
+
+                            if ($commands->hasTag($submittedText)) {
+                                $player->sendMessage(TextFormat::RED . "'" . $submittedText . "' command has already been added.");
+                                return;
+                            }
+
+                            $commands->setString($submittedText, $submittedText);
+                            $entity->namedtag->setTag($commands);
+                            $player->sendMessage(TextFormat::GREEN . "Successfully added command " . $submittedText . " to entity ID: " . $entity->getId());
+                        }
+                    });
+
+                    $editForm = new SimpleForm("Manage NPC", "§aID: $args[1]\nClass: " . get_class($entity) . "\nNametag: " . $entity->getNameTag() . "\nPosition: X:" . $entity->getX() . " Y:" . $entity->getY() . " Z:" . $entity->getZ());
+                    $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
+                        $sender->sendForm($addcmdForm);
+                    }));
+
+                    $sender->sendForm($editForm);
                     break;
                 case "migrate":
                     if (!$sender->hasPermission("snpc.migrate")) {
@@ -200,6 +245,8 @@ class Commands extends PluginCommand
                     }
                     break;
             }
+        } else {
+            $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancell>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
         }
 
         return parent::execute($sender, $commandLabel, $args);

@@ -5,4 +5,7 @@ branches:
 projects:
   SimpleNPC:
     path: ""
+    libs:
+      - src: GiantQuartz/EasyUI/libEasyUI
+        version: 1.0.0
 ...

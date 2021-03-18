@@ -21,7 +21,7 @@ Plugin Progress: 70%
 
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
-| ```/snpc``` | ```SimpleNPC Commands``` | ```snpc.command.use``` | ```op``` |
+| ```/snpc``` | ```SimpleNPC command list and credits``` | ```none``` | ```true``` |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
 | ```/snpc edit [args]``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
 | ```/snpc remove``` | ```Remove the npc``` | ```snpc.remove``` | ```op``` |
