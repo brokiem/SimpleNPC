@@ -121,7 +121,7 @@ class Commands extends PluginCommand
                         return true;
                     }
 
-                    if (!isset($args[1]) && !is_numeric($args[1])) {
+                    if (!isset($args[1]) or !is_numeric($args[1])) {
                         $sender->sendMessage(TextFormat::RED . "Usage: /snpc edit <id>");
                         return true;
                     }
@@ -155,13 +155,13 @@ class Commands extends PluginCommand
                         }
                     });
 
-                    $editForm = new SimpleForm("Manage NPC", "§aID: $args[1]\nClass: " . get_class($entity) . "\nNametag: " . $entity->getNameTag() . "\nPosition: X:" . $entity->getX() . " Y:" . $entity->getY() . " Z:" . $entity->getZ());
-                    $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
-                        $sender->sendForm($addcmdForm);
-                    }));
+                $editForm = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\nClass: §2" . get_class($entity) . "\nNametag: §2" . $entity->getNameTag() . "\nPosition: §2" . $entity->getX() . "/" . $entity->getY() . "/" . $entity->getZ());
+                $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
+                    $sender->sendForm($addcmdForm);
+                }));
 
-                    $sender->sendForm($editForm);
-                    break;
+                $sender->sendForm($editForm);
+                break;
                 case "migrate":
                     if (!$sender->hasPermission("snpc.migrate")) {
                         return true;
@@ -199,20 +199,29 @@ class Commands extends PluginCommand
                                     return true;
                                 }
 
+                                $error = 0;
                                 foreach ($level->getEntities() as $entity) {
                                     if ($entity instanceof SlapperEntity) {
                                         if (NPCManager::createNPC(AddActorPacket::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"))) {
                                             if (!$entity->isFlaggedForDespawn()) {
                                                 $entity->flagForDespawn();
                                             }
+                                        } else {
+                                            ++$error;
                                         }
                                     } elseif ($entity instanceof SlapperHuman) {
                                         $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($entity->getNameTag(), $sender->getName(), $plugin->getDataFolder(), false, null, $entity->namedtag->getCompoundTag("Commands"), $entity->getSkin(), $entity->getLocation()));
-                                        // TODO: Queue (don't spam async task)
+                                        // TODO: QueueSytem (don't spam async task)
                                         if (!$entity->isFlaggedForDespawn()) {
                                             $entity->flagForDespawn();
                                         }
                                     }
+                                }
+
+                                if ($error === 0) {
+                                    $sender->sendMessage(TextFormat::GREEN . "The migration was successful, you can safely remove the Slapper plugin now");
+                                } else {
+                                    $sender->sendMessage(TextFormat::YELLOW . "It seems that the migration is not going well, please fix the error so that it can be fully migrated. Don't delete Slapper Plugin now");
                                 }
                             }
 
@@ -236,7 +245,7 @@ class Commands extends PluginCommand
 
                     foreach ($plugin->getServer()->getLevels() as $world) {
                         $entityNames = array_map(static function (Entity $entity): string {
-                            return TextFormat::DARK_GREEN . $entity->getNameTag() . " §d-- §3X:" . $entity->getFloorX() . " Y:" . $entity->getFloorY() . " Z:" . $entity->getFloorZ();
+                            return "ID: (" . TextFormat::YELLOW . $entity->getId() . ") " . TextFormat::DARK_GREEN . $entity->getNameTag() . " §7-- §3" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
                         }, array_filter($world->getEntities(), static function (Entity $entity): bool {
                             return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                         }));
