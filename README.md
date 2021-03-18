@@ -9,6 +9,7 @@ Plugin Progress: 70%
 - Set NPC Skin With URL
 - Register your own entity!
 - NPC Can Look at Players
+- NPC With Emote! <b>(TODO)</b>
 - NPC Can Walk
 - Lightweight
 - Open Source ❤
@@ -20,6 +21,7 @@ Plugin Progress: 70%
 
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
+| ```/snpc``` | ```SimpleNPC Commands``` | ```snpc.command.use``` | ```op``` |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
 | ```/snpc edit [args]``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
 | ```/snpc remove``` | ```Remove the npc``` | ```snpc.remove``` | ```op``` |

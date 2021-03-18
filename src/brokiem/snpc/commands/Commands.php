@@ -25,14 +25,13 @@ class Commands extends PluginCommand
     public function __construct(string $name, Plugin $owner)
     {
         parent::__construct($name, $owner);
-        $this->setPermission("snpc.*");
+        $this->setPermission("snpc.command.use");
         $this->setDescription("SimpleNPC commands");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
         if (!$this->testPermission($sender)) {
-            $sender->sendMessage($this->getPermissionMessage());
             return true;
         }
 
@@ -49,7 +48,6 @@ class Commands extends PluginCommand
                     }
 
                     if (!$sender->hasPermission("snpc.spawn")) {
-                        $sender->sendMessage($this->getPermissionMessage());
                         return true;
                     }
 
@@ -101,7 +99,6 @@ class Commands extends PluginCommand
                 case "delete":
                 case "remove":
                     if (!$sender->hasPermission("snpc.remove")) {
-                        $sender->sendMessage($this->getPermissionMessage());
                         return true;
                     }
 
@@ -116,14 +113,12 @@ class Commands extends PluginCommand
                 case "edit":
                 case "manage":
                     if (!$sender->hasPermission("snpc.edit")) {
-                        $sender->sendMessage($this->getPermissionMessage());
                         return true;
                     }
 
                     break;
                 case "migrate":
                     if (!$sender->hasPermission("snpc.migrate")) {
-                        $sender->sendMessage($this->getPermissionMessage());
                         return true;
                     }
 
@@ -137,7 +132,8 @@ class Commands extends PluginCommand
 
                             $plugin->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($plugin, $sender): void {
                                 unset($plugin->migrateNPC[$sender->getName()]);
-                            }), 100);
+                                $sender->sendMessage(TextFormat::YELLOW . "Migrating NPC Cancelled! (10 seconds)");
+                            }), 10 * 20);
 
                             $sender->sendMessage(TextFormat::RED . " \nAre you sure want to migrate your NPC from Slapper to SimpleNPC? \nThis will replace the slapper NPCs with the new Simple NPCs\n\nIf yes, run /migrate confirm, if no, run /migrate cancel\n\n ");
                             $sender->sendMessage(TextFormat::RED . "NOTE: Make sure all the worlds with the Slapper NPC have been loaded!");
@@ -174,11 +170,12 @@ class Commands extends PluginCommand
                             unset($plugin->migrateNPC[$sender->getName()]);
                             return true;
                         }
+                    } else {
+                        $sender->sendMessage(TextFormat::RED . "Missing Slapper plugin, cannnot migrating!");
                     }
                     break;
                 case "list":
                     if (!$sender->hasPermission("snpc.list")) {
-                        $sender->sendMessage($this->getPermissionMessage());
                         return true;
                     }
 
