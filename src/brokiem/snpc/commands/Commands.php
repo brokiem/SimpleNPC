@@ -14,7 +14,10 @@ use pocketmine\command\PluginCommand;
 use pocketmine\entity\Entity;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\TextFormat;
+use slapper\entities\SlapperEntity;
+use slapper\entities\SlapperHuman;
 
 class Commands extends PluginCommand
 {
@@ -80,10 +83,12 @@ class Commands extends PluginCommand
                             } else {
                                 if (isset($args[2])) {
                                     NPCManager::createNPC($args[1], $sender, $args[2]);
+                                    $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
                                 NPCManager::createNPC($args[1], $sender);
+                                $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                             }
                         } else {
                             $sender->sendMessage(TextFormat::RED . "Invalid entity type or entity not registered!");
@@ -106,7 +111,7 @@ class Commands extends PluginCommand
                         unset($plugin->removeNPC[$sender->getName()]);
                         $sender->sendMessage(TextFormat::GREEN . "Remove npc by hitting has been canceled");
                     }
-                    break;
+                break;
                 case "edit":
                 case "manage":
                     if (!$sender->hasPermission("snpc.edit")) {
@@ -114,6 +119,49 @@ class Commands extends PluginCommand
                         return true;
                     }
 
+                    break;
+                case "migrate":
+                    if (!$sender instanceof Player) {
+                        return true;
+                    }
+
+                    if ($plugin->getServer()->getPluginManager()->getPlugin("Slapper") !== null) {
+                        if (!isset($args[1]) && !isset($plugin->migrateNPC[$sender->getName()])) {
+                            $plugin->migrateNPC[$sender->getName()] = true;
+
+                            $plugin->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($plugin, $sender): void {
+                                unset($plugin->migrateNPC[$sender->getName()]);
+                            }), 100);
+
+                            $sender->sendMessage(TextFormat::RED . " \nAre you sure want to migrate your NPC from Slapper to SimpleNPC? This will replace the slapper NPCs with the new Simple NPCs\nIf yes, run /migrate confirm, if no, run /migrate cancel\n");
+                            $sender->sendMessage(TextFormat::RED . "NOTE: Make sure all the worlds with the Slapper NPC have been loaded!");
+                            return true;
+                        }
+
+                        if (isset($plugin->migrateNPC[$sender->getName()], $args[1]) && $args[1] === "confirm") {
+                            $sender->sendMessage(TextFormat::DARK_GREEN . "Migrating NPC... Please wait...");
+
+                            foreach ($plugin->getServer()->getLevels() as $level) {
+                                foreach ($level->getEntities() as $entity) {
+                                    if ($entity instanceof SlapperEntity) {
+                                        NPCManager::createNPC($entity::TYPE_ID, $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"));
+                                    } elseif ($entity instanceof SlapperHuman) {
+                                        $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($entity->getNameTag(), $sender->getName(), $plugin->getDataFolder(), false, null, $entity->namedtag->getCompoundTag("Commands"), $entity->getSkin()));
+                                        // TODO: Queue (don't spam async task)
+                                    }
+                                }
+                            }
+
+                            unset($plugin->migrateNPC[$sender->getName()]);
+                            return true;
+                        }
+
+                        if (isset($plugin->migrateNPC[$sender->getName()], $args[1]) && $args[1] === "cancel") {
+                            $sender->sendMessage(TextFormat::GREEN . "Migrating NPC cancelled!");
+                            unset($plugin->migrateNPC[$sender->getName()]);
+                            return true;
+                        }
+                    }
                     break;
                 case "list":
                     if (!$sender->hasPermission("snpc.list")) {

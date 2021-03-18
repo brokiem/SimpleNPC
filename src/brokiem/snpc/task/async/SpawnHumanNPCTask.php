@@ -26,13 +26,15 @@ class SpawnHumanNPCTask extends AsyncTask
     /** @var string */
     private $dataPath;
 
-    public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null)
+    public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null, CompoundTag $command = null, Skin $skin = null)
     {
         $this->username = $username;
         $this->nametag = $nametag;
         $this->canWalk = $canWalk;
         $this->skinUrl = $skinUrl;
         $this->dataPath = $dataPath;
+
+        $this->storeLocal([$command, $skin]);
     }
 
     public function onRun(): void
@@ -82,6 +84,7 @@ class SpawnHumanNPCTask extends AsyncTask
     public function onCompletion(Server $server): void
     {
         $player = $server->getPlayerExact($this->username);
+        [$commands, $skin] = $this->fetchLocal();
 
         if ($player === null) {
             return;
@@ -90,7 +93,11 @@ class SpawnHumanNPCTask extends AsyncTask
         $player->saveNBT();
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
         $nbt->setTag($player->namedtag->getTag("Skin"));
-        $nbt->setTag(new CompoundTag("commands", []));
+        if ($commands !== null) {
+            $nbt->setTag($commands);
+        } else {
+            $nbt->setTag(new CompoundTag("Commands", []));
+        }
         $nbt->setShort("Walk", 0);
 
         if ($this->canWalk) {
@@ -106,6 +113,8 @@ class SpawnHumanNPCTask extends AsyncTask
 
         if ($this->getResult() !== null) {
             $entity->setSkin(new Skin($player->getSkin()->getSkinId(), $this->getResult()));
+        } elseif ($skin instanceof Skin) {
+            $entity->setSkin($this->fetchLocal());
         } else {
             $entity->setSkin($player->getSkin());
         }

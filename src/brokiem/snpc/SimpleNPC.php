@@ -17,10 +17,11 @@ class SimpleNPC extends PluginBase
     public const ENTITY_HUMAN = "human";
 
     /** @var array */
+    public $migrateNPC = [];
+    /** @var array */
     public static $npcType = [];
-
+    /** @var array */
     private static $entities = [];
-
     /** @var array */
     public $removeNPC = [];
     /** @var int */
