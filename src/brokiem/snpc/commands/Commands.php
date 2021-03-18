@@ -176,8 +176,10 @@ class Commands extends PluginCommand
                             $plugin->migrateNPC[$sender->getName()] = true;
 
                             $plugin->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($plugin, $sender): void {
-                                unset($plugin->migrateNPC[$sender->getName()]);
-                                $sender->sendMessage(TextFormat::YELLOW . "Migrating NPC Cancelled! (10 seconds)");
+                                if (isset($plugin->migrateNPC[$sender->getName()])) {
+                                    unset($plugin->migrateNPC[$sender->getName()]);
+                                    $sender->sendMessage(TextFormat::YELLOW . "Migrating NPC Cancelled! (10 seconds)");
+                                }
                             }), 10 * 20);
 
                             $sender->sendMessage(TextFormat::RED . " \nAre you sure want to migrate your NPC from Slapper to SimpleNPC? \nThis will replace the slapper NPCs with the new Simple NPCs\n\nIf yes, run /migrate confirm, if no, run /migrate cancel\n\n ");
@@ -186,6 +188,7 @@ class Commands extends PluginCommand
                         }
 
                         if (isset($plugin->migrateNPC[$sender->getName()], $args[1]) && $args[1] === "confirm") {
+                            unset($plugin->migrateNPC[$sender->getName()]);
                             $sender->sendMessage(TextFormat::DARK_GREEN . "Migrating NPC... Please wait...");
 
                             foreach ($plugin->getServer()->getLevels() as $level) {
@@ -202,6 +205,7 @@ class Commands extends PluginCommand
                                 $error = 0;
                                 foreach ($level->getEntities() as $entity) {
                                     if ($entity instanceof SlapperEntity) {
+                                        /** @phpstan-ignore-next-line */
                                         if (NPCManager::createNPC(AddActorPacket::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"))) {
                                             if (!$entity->isFlaggedForDespawn()) {
                                                 $entity->flagForDespawn();
@@ -225,7 +229,6 @@ class Commands extends PluginCommand
                                 }
                             }
 
-                            unset($plugin->migrateNPC[$sender->getName()]);
                             return true;
                         }
 
