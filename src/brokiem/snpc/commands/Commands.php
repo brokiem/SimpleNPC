@@ -144,6 +144,16 @@ class Commands extends PluginCommand
                             $sender->sendMessage(TextFormat::DARK_GREEN . "Migrating NPC... Please wait...");
 
                             foreach ($plugin->getServer()->getLevels() as $level) {
+                                $entity = array_map(static function (Entity $entity) {
+                                }, array_filter($level->getEntities(), static function (Entity $entity): bool {
+                                    return $entity instanceof SlapperHuman or $entity instanceof SlapperEntity;
+                                }));
+
+                                if (count($entity) === 0) {
+                                    $sender->sendMessage(TextFormat::RED . "Migrating failed: No Slapper entity found!");
+                                    return true;
+                                }
+
                                 foreach ($level->getEntities() as $entity) {
                                     if ($entity instanceof SlapperEntity) {
                                         if (NPCManager::createNPC(AddActorPacket::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"))) {
