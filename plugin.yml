@@ -18,3 +18,5 @@ permissions:
     default: op
   snpc.list:
     default: op
+  snpc.rca:
+    default: op

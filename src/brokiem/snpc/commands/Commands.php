@@ -114,7 +114,7 @@ class Commands extends PluginCommand
                         unset($plugin->removeNPC[$sender->getName()]);
                         $sender->sendMessage(TextFormat::GREEN . "Remove npc by hitting has been canceled");
                     }
-                break;
+                    break;
                 case "edit":
                 case "manage":
                     if (!$sender->hasPermission("snpc.edit") or !$sender instanceof Player) {
@@ -221,7 +221,7 @@ class Commands extends PluginCommand
                                 if ($error === 0) {
                                     $sender->sendMessage(TextFormat::GREEN . "The migration was successful, you can safely remove the Slapper plugin now");
                                 } else {
-                                    $sender->sendMessage(TextFormat::YELLOW . "It seems that the migration is not going well, please fix the error so that it can be fully migrated. Don't delete Slapper Plugin now");
+                                    $sender->sendMessage(TextFormat::RED . "(" . $error . " error found) " . TextFormat::YELLOW . "It seems that the migration is not going well, please fix the error so that it can be fully migrated. Don't delete Slapper Plugin now");
                                 }
                             }
 
@@ -235,7 +235,7 @@ class Commands extends PluginCommand
                             return true;
                         }
                     } else {
-                        $sender->sendMessage(TextFormat::RED . "Missing Slapper plugin, cannnot migrating!");
+                        $sender->sendMessage(TextFormat::RED . "Slapper plugin is missing, cannnot migrating.");
                     }
                     break;
                 case "list":

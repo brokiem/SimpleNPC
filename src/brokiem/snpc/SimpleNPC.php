@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace brokiem\snpc;
 
 use brokiem\snpc\commands\Commands;
+use brokiem\snpc\commands\RcaCommand;
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\task\async\CheckUpdateTask;
@@ -34,7 +35,10 @@ class SimpleNPC extends PluginBase
         self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN, true);
 
         $this->initConfiguration();
-        $this->getServer()->getCommandMap()->register("SimpleNPC", new Commands("snpc", $this));
+        $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [
+            new Commands("snpc", $this),
+            new RcaCommand("rca", $this)
+        ]);
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
         $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getVersion()));
     }
