@@ -12,6 +12,7 @@ use brokiem\snpc\task\async\SpawnHumanNPCTask;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\entity\Entity;
+use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\scheduler\ClosureTask;
@@ -121,6 +122,11 @@ class Commands extends PluginCommand
 
                     break;
                 case "migrate":
+                    if (!$sender->hasPermission("snpc.migrate")) {
+                        $sender->sendMessage($this->getPermissionMessage());
+                        return true;
+                    }
+
                     if (!$sender instanceof Player) {
                         return true;
                     }
@@ -133,7 +139,7 @@ class Commands extends PluginCommand
                                 unset($plugin->migrateNPC[$sender->getName()]);
                             }), 100);
 
-                            $sender->sendMessage(TextFormat::RED . " \nAre you sure want to migrate your NPC from Slapper to SimpleNPC? This will replace the slapper NPCs with the new Simple NPCs\nIf yes, run /migrate confirm, if no, run /migrate cancel\n");
+                            $sender->sendMessage(TextFormat::RED . " \nAre you sure want to migrate your NPC from Slapper to SimpleNPC? \nThis will replace the slapper NPCs with the new Simple NPCs\n\nIf yes, run /migrate confirm, if no, run /migrate cancel\n\n ");
                             $sender->sendMessage(TextFormat::RED . "NOTE: Make sure all the worlds with the Slapper NPC have been loaded!");
                             return true;
                         }
@@ -144,10 +150,13 @@ class Commands extends PluginCommand
                             foreach ($plugin->getServer()->getLevels() as $level) {
                                 foreach ($level->getEntities() as $entity) {
                                     if ($entity instanceof SlapperEntity) {
-                                        NPCManager::createNPC($entity::TYPE_ID, $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"));
+                                        NPCManager::createNPC(AddActorPacket::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"));
                                     } elseif ($entity instanceof SlapperHuman) {
-                                        $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($entity->getNameTag(), $sender->getName(), $plugin->getDataFolder(), false, null, $entity->namedtag->getCompoundTag("Commands"), $entity->getSkin()));
+                                        $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($entity->getNameTag(), $sender->getName(), $plugin->getDataFolder(), false, null, $entity->namedtag->getCompoundTag("Commands"), $entity->getSkin(), $entity->getLocation()));
                                         // TODO: Queue (don't spam async task)
+                                        if (!$entity->isFlaggedForDespawn()) {
+                                            $entity->flagForDespawn();
+                                        }
                                     }
                                 }
                             }

@@ -7,6 +7,7 @@ use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\event\SNPCCreationEvent;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
+use pocketmine\level\Location;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -26,7 +27,7 @@ class SpawnHumanNPCTask extends AsyncTask
     /** @var string */
     private $dataPath;
 
-    public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null, CompoundTag $command = null, Skin $skin = null)
+    public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null, CompoundTag $command = null, Skin $skin = null, Location $customPos = null)
     {
         $this->username = $username;
         $this->nametag = $nametag;
@@ -34,7 +35,7 @@ class SpawnHumanNPCTask extends AsyncTask
         $this->skinUrl = $skinUrl;
         $this->dataPath = $dataPath;
 
-        $this->storeLocal([$command, $skin]);
+        $this->storeLocal([$command, $skin, $customPos]);
     }
 
     public function onRun(): void
@@ -84,7 +85,7 @@ class SpawnHumanNPCTask extends AsyncTask
     public function onCompletion(Server $server): void
     {
         $player = $server->getPlayerExact($this->username);
-        [$commands, $skin] = $this->fetchLocal();
+        [$commands, $skin, $customPos] = $this->fetchLocal();
 
         if ($player === null) {
             return;
@@ -92,6 +93,9 @@ class SpawnHumanNPCTask extends AsyncTask
 
         $player->saveNBT();
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
+        if ($customPos instanceof Location) {
+            $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
+        }
         $nbt->setTag($player->namedtag->getTag("Skin"));
         if ($commands !== null) {
             $nbt->setTag($commands);
@@ -114,7 +118,7 @@ class SpawnHumanNPCTask extends AsyncTask
         if ($this->getResult() !== null) {
             $entity->setSkin(new Skin($player->getSkin()->getSkinId(), $this->getResult()));
         } elseif ($skin instanceof Skin) {
-            $entity->setSkin($this->fetchLocal());
+            $entity->setSkin($skin);
         } else {
             $entity->setSkin($player->getSkin());
         }

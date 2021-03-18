@@ -15,5 +15,7 @@ permissions:
     default: op
   snpc.remove:
     default: op
+  snpc.migrate:
+    default: op
   snpc.list:
     default: op

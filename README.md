@@ -5,7 +5,7 @@
 Plugin Progress: 70%
 
 ## Features
-- Migration from Slapper supported! <b>[TODO]</b>
+- Migration from Slapper supported!
 - Set NPC Skin With URL
 - Register your own entity!
 - NPC Can Look at Players
@@ -23,6 +23,7 @@ Plugin Progress: 70%
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
 | ```/snpc edit [args]``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
 | ```/snpc remove``` | ```Remove the npc``` | ```snpc.remove``` | ```op``` |
+| ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```snpc.migrate``` | ```op``` |
 | ```/snpc list``` | ```See the npc list``` | ```snpc.list``` | ```op``` |
 
 ## Issues
