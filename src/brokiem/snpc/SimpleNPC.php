@@ -58,9 +58,7 @@ class SimpleNPC extends PluginBase
             self::$entities[$entityClass] = array_merge($saveNames, [$name]);
             self::$npcType[] = $name;
 
-            if (Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]))) {
-                return true;
-            }
+            return Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
         }
 
         return false;

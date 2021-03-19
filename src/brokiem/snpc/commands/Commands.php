@@ -110,6 +110,20 @@ class Commands extends PluginCommand
                         return true;
                     }
 
+                    if (isset($args[1]) and is_numeric($args[1])) {
+                        $entity = $plugin->getServer()->findEntity((int)$args[1]);
+
+                        if (!$entity instanceof BaseNPC or !$entity instanceof CustomHuman) {
+                            $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
+                            return true;
+                        }
+
+                        if (!$entity->isFlaggedForDespawn()) {
+                            $entity->flagForDespawn();
+                            $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+                        }
+                    }
+
                     if (!isset($plugin->removeNPC[$sender->getName()])) {
                         $plugin->removeNPC[$sender->getName()] = true;
                         $sender->sendMessage(TextFormat::DARK_GREEN . "Hit the npc that you want to delete or remove");
@@ -130,8 +144,8 @@ class Commands extends PluginCommand
                     }
 
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
-                    if ($entity === null) {
-                        $sender->sendMessage(TextFormat::YELLOW . "Entity with ID: " . $args[1] . " not found!");
+                    if (!$entity instanceof BaseNPC or !$entity instanceof CustomHuman) {
+                        $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                         return true;
                     }
 
