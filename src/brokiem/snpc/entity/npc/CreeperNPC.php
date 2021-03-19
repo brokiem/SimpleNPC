@@ -12,4 +12,5 @@ class CreeperNPC extends BaseNPC {
     public const NETWORK_ID = Entity::CREEPER;
 
     public $height = 1.7;
+    public $width = 1;
 }

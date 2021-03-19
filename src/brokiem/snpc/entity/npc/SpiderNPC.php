@@ -12,4 +12,5 @@ class SpiderNPC extends BaseNPC {
     public const NETWORK_ID = Entity::SPIDER;
 
     public $height = 0.9;
+    public $width = 1;
 }

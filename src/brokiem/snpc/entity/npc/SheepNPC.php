@@ -12,4 +12,5 @@ class SheepNPC extends BaseNPC {
     public const NETWORK_ID = Entity::SHEEP;
 
     public $height = 1.3;
+    public $width = 1;
 }

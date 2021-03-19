@@ -12,4 +12,5 @@ class BatNPC extends BaseNPC {
     public const NETWORK_ID = Entity::BAT;
 
     public $height = 0.9;
+    public $width = 1;
 }

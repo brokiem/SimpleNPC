@@ -12,4 +12,5 @@ class PigNPC extends BaseNPC {
     public const NETWORK_ID = Entity::PIG;
 
     public $height = 0.9;
+    public $width = 1;
 }

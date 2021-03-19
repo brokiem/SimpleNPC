@@ -12,4 +12,5 @@ class SkeletonNPC extends BaseNPC {
     public const NETWORK_ID = Entity::SKELETON;
 
     public $height = 1.99;
+    public $width = 1;
 }

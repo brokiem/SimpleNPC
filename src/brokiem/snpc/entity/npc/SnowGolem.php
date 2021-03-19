@@ -12,4 +12,5 @@ class SnowGolem extends BaseNPC {
     public const NETWORK_ID = Entity::SNOW_GOLEM;
 
     public $height = 1.9;
+    public $width = 1;
 }

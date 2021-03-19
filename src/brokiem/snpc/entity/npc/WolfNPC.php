@@ -12,4 +12,5 @@ class WolfNPC extends BaseNPC {
     public const NETWORK_ID = Entity::WOLF;
 
     public $height = 0.85;
+    public $width = 1;
 }

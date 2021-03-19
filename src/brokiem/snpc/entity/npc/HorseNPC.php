@@ -12,4 +12,5 @@ class HorseNPC extends BaseNPC {
     public const NETWORK_ID = Entity::HORSE;
 
     public $height = 1.6;
+    public $width = 1;
 }

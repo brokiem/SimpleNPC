@@ -12,4 +12,5 @@ class ChickenNPC extends BaseNPC {
     public const NETWORK_ID = Entity::CHICKEN;
 
     public $height = 0.7;
+    public $width = 1;
 }

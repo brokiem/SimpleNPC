@@ -12,4 +12,5 @@ class WitchNPC extends BaseNPC {
     public const NETWORK_ID = Entity::WITCH;
 
     public $height = 1.95;
+    public $width = 1;
 }

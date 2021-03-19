@@ -12,4 +12,5 @@ class SlimeNPC extends BaseNPC {
     public const NETWORK_ID = Entity::SLIME;
 
     public $height = 0.51;
+    public $width = 1;
 }

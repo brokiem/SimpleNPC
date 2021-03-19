@@ -12,4 +12,5 @@ class VillagerNPC extends BaseNPC {
     public const NETWORK_ID = Entity::VILLAGER;
 
     public $height = 1.95;
+    public $width = 1;
 }

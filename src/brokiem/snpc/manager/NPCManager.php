@@ -33,6 +33,7 @@ use pocketmine\utils\TextFormat;
 
 class NPCManager
 {
+
     private static $npcs = [
         BatNPC::class => ["bat", "minecraft:bat"],
         BlazeNPC::class => ["blaze", "minecraft:blaze"],
