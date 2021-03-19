@@ -1,4 +1,4 @@
-<h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/image.png" height="64" width="64" align="left" alt=""></h1><br>
+<h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/stable/assets/image.png" height="64" width="64" align="left" alt=""></h1><br>
 
 [![License](https://img.shields.io/github/license/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC)
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC/stargazers) <br>
