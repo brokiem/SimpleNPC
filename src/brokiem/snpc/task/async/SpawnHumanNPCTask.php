@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace brokiem\snpc\task\async;
 
 use brokiem\snpc\entity\CustomHuman;
+use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\event\SNPCCreationEvent;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
@@ -109,7 +110,7 @@ class SpawnHumanNPCTask extends AsyncTask
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
-        $entity = new CustomHuman($player->getLevel(), $nbt);
+        $entity = $this->canWalk ? new WalkingHuman($player->getLevel(), $nbt) : new CustomHuman($player->getLevel(), $nbt);
 
         if ($this->nametag !== null) {
             $entity->setNameTag($this->nametag);
