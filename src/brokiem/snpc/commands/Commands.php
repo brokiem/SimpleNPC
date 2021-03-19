@@ -263,7 +263,7 @@ class Commands extends PluginCommand
 
                     foreach ($plugin->getServer()->getLevels() as $world) {
                         $entityNames = array_map(static function (Entity $entity): string {
-                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::DARK_GREEN . $entity->getNameTag() . " §7-- §3" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::DARK_GREEN . $entity->getNameTag() . " §7-- §3" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
                         }, array_filter($world->getEntities(), static function (Entity $entity): bool {
                             return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                         }));
