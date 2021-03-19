@@ -34,13 +34,6 @@ class SimpleNPC extends PluginBase
 
     public function onEnable(): void
     {
-        // copied from pocketmine
-        $this->getLogger()->warning(str_repeat("-", 40));
-        $this->getLogger()->warning("You are running a " . $this->getDescription()->getVersion() . " DEVELOPMENT build.");
-        $this->getLogger()->warning("The build may have bugs, crash, corrupt your data, or break your plugins.");
-        $this->getLogger()->warning("Unless you're a developer and know what you're doing, please AVOID using development builds");
-        $this->getLogger()->warning(str_repeat("-", 40));
-
         self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN, true);
         self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN, true);
 
