@@ -8,6 +8,7 @@ use brokiem\snpc\commands\Commands;
 use brokiem\snpc\commands\RcaCommand;
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
+use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\task\async\CheckUpdateTask;
 use pocketmine\entity\Entity;
 use pocketmine\plugin\PluginBase;
@@ -16,6 +17,7 @@ use ReflectionClass;
 class SimpleNPC extends PluginBase
 {
     public const ENTITY_HUMAN = "human";
+    public const ENTITY_WALKING_HUMAN = "walking_human";
 
     /** @var array */
     public $migrateNPC = [];
@@ -33,6 +35,7 @@ class SimpleNPC extends PluginBase
     public function onEnable(): void
     {
         self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN, true);
+        self::registerEntity(WalkingHuman::class, self::ENTITY_HUMAN, true);
 
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [
