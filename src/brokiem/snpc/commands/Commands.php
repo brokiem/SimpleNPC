@@ -113,16 +113,16 @@ class Commands extends PluginCommand
                     if (isset($args[1]) and is_numeric($args[1])) {
                         $entity = $plugin->getServer()->findEntity((int)$args[1]);
 
-                        /** @phpstan-ignore-next-line */
-                        if (!$entity instanceof BaseNPC or !$entity instanceof CustomHuman) {
+                        if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+                            if (!$entity->isFlaggedForDespawn()) {
+                                $entity->flagForDespawn();
+                                $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+                            }
+                        } else {
                             $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
-                            return true;
                         }
 
-                        if (!$entity->isFlaggedForDespawn()) {
-                            $entity->flagForDespawn();
-                            $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
-                        }
+                        return true;
                     }
 
                     if (!isset($plugin->removeNPC[$sender->getName()])) {
@@ -145,41 +145,40 @@ class Commands extends PluginCommand
                     }
 
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
-                    /** @phpstan-ignore-next-line */
-                    if (!$entity instanceof BaseNPC or !$entity instanceof CustomHuman) {
-                        $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
-                        return true;
-                    }
 
-                    $addcmdForm = new CustomForm("Add Command");
-                    $addcmdForm->addElement("addcmd", new Input("Enter the command here"));
+                    if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+                        $addcmdForm = new CustomForm("Add Command");
+                        $addcmdForm->addElement("addcmd", new Input("Enter the command here"));
 
-                    $addcmdForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $addcmdForm) {
-                        $submittedText = $response->getInputSubmittedText("addcmd");
+                        $addcmdForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $addcmdForm) {
+                            $submittedText = $response->getInputSubmittedText("addcmd");
 
-                        if ($submittedText === "") {
-                            $player->sendMessage(TextFormat::RED . "Plese enter a valid command!");
-                            $player->sendForm($addcmdForm);
-                        } else {
-                            $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
+                            if ($submittedText === "") {
+                                $player->sendMessage(TextFormat::RED . "Plese enter a valid command!");
+                                $player->sendForm($addcmdForm);
+                            } else {
+                                $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
 
-                            if ($commands->hasTag($submittedText)) {
-                                $player->sendMessage(TextFormat::RED . "'" . $submittedText . "' command has already been added.");
-                                return;
+                                if ($commands->hasTag($submittedText)) {
+                                    $player->sendMessage(TextFormat::RED . "'" . $submittedText . "' command has already been added.");
+                                    return;
+                                }
+
+                                $commands->setString($submittedText, $submittedText);
+                                $entity->namedtag->setTag($commands);
+                                $player->sendMessage(TextFormat::GREEN . "Successfully added command " . $submittedText . " to entity ID: " . $entity->getId());
                             }
+                        });
 
-                            $commands->setString($submittedText, $submittedText);
-                            $entity->namedtag->setTag($commands);
-                            $player->sendMessage(TextFormat::GREEN . "Successfully added command " . $submittedText . " to entity ID: " . $entity->getId());
-                        }
-                    });
+                        $editForm = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\nClass: §2" . get_class($entity) . "\nNametag: §2" . $entity->getNameTag() . "\nPosition: §2" . $entity->getX() . "/" . $entity->getY() . "/" . $entity->getZ());
+                        $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
+                            $sender->sendForm($addcmdForm);
+                        }));
 
-                    $editForm = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\nClass: §2" . get_class($entity) . "\nNametag: §2" . $entity->getNameTag() . "\nPosition: §2" . $entity->getX() . "/" . $entity->getY() . "/" . $entity->getZ());
-                    $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
-                        $sender->sendForm($addcmdForm);
-                    }));
-
-                    $sender->sendForm($editForm);
+                        $sender->sendForm($editForm);
+                    } else {
+                        $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
+                    }
                     break;
                 case "migrate":
                     if (!$sender->hasPermission("snpc.migrate")) {
