@@ -45,6 +45,9 @@ class Commands extends PluginCommand
 
         if (isset($args[0])) {
             switch ($args[0]) {
+                case "help":
+                    $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancell>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
+                    break;
                 case "spawn":
                 case "add":
                     if (!$sender instanceof Player) {

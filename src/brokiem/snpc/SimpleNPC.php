@@ -51,14 +51,18 @@ class SimpleNPC extends PluginBase
         $this->maxLookDistance = $this->getConfig()->get("max-look-distance", 8);
     }
 
-    public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): void
+    public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): bool
     {
         $class = new ReflectionClass($entityClass);
         if (is_a($entityClass, BaseNPC::class, true) or is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
             self::$entities[$entityClass] = array_merge($saveNames, [$name]);
             self::$npcType[] = $name;
 
-            Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
+            if (Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]))) {
+                return true;
+            }
         }
+
+        return false;
     }
 }

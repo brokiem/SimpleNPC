@@ -10,6 +10,7 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\level\Location;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
@@ -53,7 +54,7 @@ class SpawnHumanNPCTask extends AsyncTask
             $extension = pathinfo($parse, PATHINFO_EXTENSION);
             $data = Internet::getURL($this->skinUrl);
 
-            if ($data === false) {
+            if (($data === false) or $extension !== "png") {
                 $this->setResult(null);
                 return;
             }
@@ -74,10 +75,10 @@ class SpawnHumanNPCTask extends AsyncTask
                 }
             }
 
-            @imagedestroy($img);
+            imagedestroy($img);
             $this->setResult($bytes);
 
-            @unlink($file);
+            unlink($file);
         } else {
             $this->setResult(null);
         }
@@ -93,20 +94,19 @@ class SpawnHumanNPCTask extends AsyncTask
         }
 
         $player->saveNBT();
+
+        $skin = $skin instanceof Skin ? $skin->getSkinData() : $this->getResult();
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
+        $nbt->setTag($commands ?? new CompoundTag("Commands", []));
+        $nbt->setTag(new CompoundTag("Skin", [
+                "Data" => new StringTag("Data", in_array(strlen($skin), Skin::ACCEPTED_SKIN_SIZES, true) ? $skin : $player->getSkin()->getSkinData()),
+                "Name" => new StringTag("Name", $player->getSkin()->getSkinId())
+            ])
+        );
+        $nbt->setShort("Walk", $this->canWalk ? 1 : 0);
+
         if ($customPos instanceof Location) {
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
-        }
-        $nbt->setTag($player->namedtag->getTag("Skin"));
-        if ($commands !== null) {
-            $nbt->setTag($commands);
-        } else {
-            $nbt->setTag(new CompoundTag("Commands", []));
-        }
-        $nbt->setShort("Walk", 0);
-
-        if ($this->canWalk) {
-            $nbt->setShort("Walk", 1);
         }
 
         $entity = new CustomHuman($player->getLevel(), $nbt);
@@ -114,14 +114,6 @@ class SpawnHumanNPCTask extends AsyncTask
         if ($this->nametag !== null) {
             $entity->setNameTag($this->nametag);
             $entity->setNameTagAlwaysVisible();
-        }
-
-        if ($this->getResult() !== null) {
-            $entity->setSkin(new Skin($player->getSkin()->getSkinId(), $this->getResult()));
-        } elseif ($skin instanceof Skin) {
-            $entity->setSkin($skin);
-        } else {
-            $entity->setSkin($player->getSkin());
         }
 
         $entity->spawnToAll();

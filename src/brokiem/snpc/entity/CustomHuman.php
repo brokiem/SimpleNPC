@@ -35,7 +35,7 @@ class CustomHuman extends Human
     {
         if ($this->namedtag->getShort("Walk") === 1) {
             if ($this->findNewPosition === 0 or $this->distance($this->randomPosition) <= 2) {
-                $this->findNewPosition = mt_rand(150, 800);
+                $this->findNewPosition = mt_rand(150, 500);
                 $this->generateRandomPosition();
             }
 
@@ -44,6 +44,10 @@ class CustomHuman extends Human
 
             if ($this->shouldJump()) {
                 $this->jump();
+            }
+
+            if ($this->isUnderwater()) {
+                $this->motion->y = $this->gravity * 2;
             }
 
             $position = $this->randomPosition;
@@ -103,7 +107,7 @@ class CustomHuman extends Human
 
             $blockAboveEntity = $world->getBlockAt($x, $y + 1, $z);
             $blockBelowEntity = $world->getBlockAt($x + 1, $y - 1, $z);
-            if ($blockAboveEntity->isSolid() || $blockAboveEntity instanceof Liquid || $blockBelowEntity instanceof Liquid) {
+            if ($blockAboveEntity->isSolid() || $blockAboveEntity->getId() !== 0 || $blockBelowEntity instanceof Liquid) {
                 continue;
             }
 
