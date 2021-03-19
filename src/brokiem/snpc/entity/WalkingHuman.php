@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\entity;
 
+use pocketmine\block\Flowable;
 use pocketmine\block\Liquid;
 use pocketmine\math\Vector3;
 
@@ -18,6 +19,8 @@ class WalkingHuman extends CustomHuman
     private $speed = 0.35;
     /** @var int */
     private $jumpTick = 25;
+    /** @var float */
+    protected $jumpVelocity = 0.45;
 
     public function onUpdate(int $currentTick): bool
     {
@@ -29,12 +32,13 @@ class WalkingHuman extends CustomHuman
         --$this->findNewPosition;
         --$this->jumpTick;
 
-        if (!$this->isUnderwater() and $this->shouldJump()) {
-            $this->jump();
+        if ($this->isUnderwater()) {
+            $this->motion->y = $this->gravity * 2;
+            $this->jumpVelocity = 0.48;
         }
 
-        if ($this->isUnderwater()) {
-            $this->motion->y = $this->gravity * 3;
+        if ($this->shouldJump()) {
+            $this->jump();
         }
 
         $position = $this->randomPosition;
@@ -61,8 +65,8 @@ class WalkingHuman extends CustomHuman
     {
         if ($this->jumpTick === 0) {
             $this->jumpTick = 25;
-            $pos = $this->asVector3()->add($this->getDirectionVector()->x * $this->getScale(), 1, $this->getDirectionVector()->z * $this->getScale())->round();
-            return $this->isCollidedHorizontally || $this->getLevel()->getBlock($pos)->getId() !== 0;
+            $pos = $this->asVector3()->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
+            return $this->getLevel()->getBlock($pos)->getId() !== 0 and !$this->getLevel()->getBlock($pos) instanceof Flowable;
         }
 
         return false;
