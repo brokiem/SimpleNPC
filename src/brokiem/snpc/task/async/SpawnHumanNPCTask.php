@@ -10,6 +10,7 @@ use brokiem\snpc\event\SNPCCreationEvent;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\level\Location;
+use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\scheduler\AsyncTask;
@@ -98,17 +99,19 @@ class SpawnHumanNPCTask extends AsyncTask
 
         $skin = $skin instanceof Skin ? $skin->getSkinData() : $this->getResult();
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
-        $nbt->setTag($commands ?? new CompoundTag("Commands", []));
-        $nbt->setTag(new CompoundTag("Skin", [
-                "Data" => new StringTag("Data", in_array(strlen($skin ?? "somerandomstring"), Skin::ACCEPTED_SKIN_SIZES, true) ? $skin : $player->getSkin()->getSkinData()),
-                "Name" => new StringTag("Name", $player->getSkin()->getSkinId())
-            ])
-        );
-        $nbt->setShort("Walk", $this->canWalk ? 1 : 0);
 
         if ($customPos instanceof Location) {
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
+
+        $nbt->setTag($commands ?? new CompoundTag("Commands", []));
+        $nbt->setTag(new CompoundTag("Skin", [
+                "Name" => new StringTag("Name", $player->getSkin()->getSkinId()),
+                "Data" => new ByteArrayTag("Data", in_array(strlen($skin ?? "somerandomstring"), Skin::ACCEPTED_SKIN_SIZES, true) ? $skin : $player->getSkin()->getSkinData()),
+
+            ])
+        );
+        $nbt->setShort("Walk", $this->canWalk ? 1 : 0);
 
         $entity = $this->canWalk ? new WalkingHuman($player->getLevel(), $nbt) : new CustomHuman($player->getLevel(), $nbt);
 

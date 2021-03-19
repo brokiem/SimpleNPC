@@ -17,6 +17,7 @@ class RcaCommand extends PluginCommand
     {
         parent::__construct($name, $owner);
         $this->setPermission("snpc.rca");
+        $this->setDescription("Execute command by player like sudo");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
