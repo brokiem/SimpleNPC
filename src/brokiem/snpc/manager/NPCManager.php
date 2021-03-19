@@ -86,6 +86,7 @@ class NPCManager
         }
 
         $entity->spawnToAll();
+        $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully!");
         return true;
     }
 }
