@@ -113,6 +113,7 @@ class Commands extends PluginCommand
                     if (isset($args[1]) and is_numeric($args[1])) {
                         $entity = $plugin->getServer()->findEntity((int)$args[1]);
 
+                        /** @phpstan-ignore-next-line */
                         if (!$entity instanceof BaseNPC or !$entity instanceof CustomHuman) {
                             $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                             return true;
@@ -144,6 +145,7 @@ class Commands extends PluginCommand
                     }
 
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
+                    /** @phpstan-ignore-next-line */
                     if (!$entity instanceof BaseNPC or !$entity instanceof CustomHuman) {
                         $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                         return true;
