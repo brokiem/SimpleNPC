@@ -9,6 +9,7 @@ use brokiem\snpc\commands\RcaCommand;
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
+use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\task\async\CheckUpdateTask;
 use pocketmine\entity\Entity;
 use pocketmine\plugin\PluginBase;
@@ -36,6 +37,7 @@ class SimpleNPC extends PluginBase
     {
         self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN, true);
         self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN, true);
+        NPCManager::registerAllNPC();
 
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [

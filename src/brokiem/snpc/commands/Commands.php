@@ -167,7 +167,7 @@ class Commands extends PluginCommand
                             }
                         });
 
-                        $editForm = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\nClass: §2" . get_class($entity) . "\nNametag: §2" . $entity->getNameTag() . "\nPosition: §2" . $entity->getX() . "/" . $entity->getY() . "/" . $entity->getZ());
+                        $editForm = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
                         $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
                             $sender->sendForm($addcmdForm);
                         }));
