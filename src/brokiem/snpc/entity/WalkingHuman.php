@@ -65,7 +65,7 @@ class WalkingHuman extends CustomHuman
     {
         if ($this->jumpTick === 0) {
             $this->jumpTick = 25;
-            $pos = $this->asVector3()->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
+            $pos = $this->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
             return $this->getLevel()->getBlock($pos)->getId() !== 0 and !$this->getLevel()->getBlock($pos) instanceof Flowable;
         }
 

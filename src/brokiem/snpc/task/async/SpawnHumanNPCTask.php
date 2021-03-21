@@ -107,8 +107,7 @@ class SpawnHumanNPCTask extends AsyncTask
         $nbt->setTag($commands ?? new CompoundTag("Commands", []));
         $nbt->setTag(new CompoundTag("Skin", [
                 "Name" => new StringTag("Name", $player->getSkin()->getSkinId()),
-                "Data" => new ByteArrayTag("Data", in_array(strlen($skin ?? "somerandomstring"), Skin::ACCEPTED_SKIN_SIZES, true) ? $skin : $player->getSkin()->getSkinData()),
-
+                "Data" => new ByteArrayTag("Data", in_array(strlen($skin ?? "somerandomstring"), Skin::ACCEPTED_SKIN_SIZES, true) ? $skin : $player->getSkin()->getSkinData())
             ])
         );
         $nbt->setShort("Walk", $this->canWalk ? 1 : 0);

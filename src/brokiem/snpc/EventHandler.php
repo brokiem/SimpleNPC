@@ -95,7 +95,7 @@ class EventHandler implements Listener
                 if ($entity instanceof CustomHuman and $entity->namedtag->getShort("Walk") === 0) {
                     $pk = new MovePlayerPacket();
                     $pk->entityRuntimeId = $entity->getId();
-                    $pk->position = $entity->asVector3()->add(0, $entity->getEyeHeight());
+                    $pk->position = $entity->add(0, $entity->getEyeHeight());
                     $pk->yaw = $yaw;
                     $pk->pitch = $pitch;
                     $pk->headYaw = $yaw;
