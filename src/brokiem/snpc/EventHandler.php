@@ -89,7 +89,6 @@ class EventHandler implements Listener
         $player = $event->getPlayer();
 
         if (isset($this->plugin->lastHit[$player->getName()])) {
-            var_dump(true);
             unset($this->plugin->lastHit[$player->getName()]);
         }
     }

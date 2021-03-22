@@ -153,7 +153,7 @@ class Commands extends PluginCommand
                         }));
                         $editUI->addButton(new Button("Teleport or Move", null, function (Player $sender) use ($entity) {
                             $entity->teleport($sender->getLocation());
-                            $sender->sendMessage(TextFormat::GREEN . "Teleported NPC to you Location");
+                            $sender->sendMessage(TextFormat::GREEN . "Teleported NPC to your Location");
                         }));
 
                         $customForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $customForm) {

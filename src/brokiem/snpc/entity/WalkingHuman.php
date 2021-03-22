@@ -18,14 +18,14 @@ class WalkingHuman extends CustomHuman
     /** @var float */
     private $speed = 0.35;
     /** @var int */
-    private $jumpTick = 25;
+    private $jumpTick = 30;
     /** @var float */
     protected $jumpVelocity = 0.45;
 
     public function onUpdate(int $currentTick): bool
     {
         if ($this->findNewPosition === 0 or $this->distance($this->randomPosition) <= 2) {
-            $this->findNewPosition = mt_rand(150, 500);
+            $this->findNewPosition = mt_rand(150, 300);
             $this->generateRandomPosition();
         }
 
@@ -61,10 +61,10 @@ class WalkingHuman extends CustomHuman
         return parent::onUpdate($currentTick);
     }
 
-    private function shouldJump(): bool
+    public function shouldJump(): bool
     {
         if ($this->jumpTick === 0) {
-            $this->jumpTick = 25;
+            $this->jumpTick = 30;
             $pos = $this->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
             return $this->getLevel()->getBlock($pos)->getId() !== 0 and !$this->getLevel()->getBlock($pos) instanceof Flowable;
         }
@@ -72,7 +72,7 @@ class WalkingHuman extends CustomHuman
         return false;
     }
 
-    private function generateRandomPosition(): void
+    public function generateRandomPosition(): void
     {
         $minX = $this->getFloorX() - 8;
         $maxX = $minX + 16;
