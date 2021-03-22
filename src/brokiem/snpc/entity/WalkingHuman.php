@@ -12,7 +12,7 @@ class WalkingHuman extends CustomHuman
 {
     protected $gravity = 0.08;
     /** @var Vector3 */
-    private $randomPosition;
+    public $randomPosition;
     /** @var int */
     private $findNewPosition = 0;
     /** @var float */

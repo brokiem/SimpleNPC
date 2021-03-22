@@ -6,6 +6,7 @@ namespace brokiem\snpc\commands;
 
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
+use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
 use brokiem\snpc\task\async\SpawnHumanNPCTask;
@@ -153,6 +154,9 @@ class Commands extends PluginCommand
                         }));
                         $editUI->addButton(new Button("Teleport or Move", null, function (Player $sender) use ($entity) {
                             $entity->teleport($sender->getLocation());
+                            if ($entity instanceof WalkingHuman) {
+                                $entity->randomPosition = $entity->asVector3();
+                            }
                             $sender->sendMessage(TextFormat::GREEN . "Teleported NPC to your Location");
                         }));
 
