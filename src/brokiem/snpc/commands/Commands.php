@@ -165,6 +165,8 @@ class Commands extends PluginCommand
                                 }
                                 $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                             }));
+
+                            $sender->sendForm($simpleForm);
                         }));
 
                         $customForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $customForm) {
