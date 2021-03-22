@@ -73,7 +73,7 @@ class NPCManager
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
-        $entity = Entity::createEntity($type, $player->getLevel(), $nbt);
+        $entity = Entity::createEntity($type, $player->getLevel(), $nbt); // TODO: get rid of this function (doesn't exist in PM4)
 
         if ($entity === null) {
             $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid, make sure you register the entity first!");

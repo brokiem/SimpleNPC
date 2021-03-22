@@ -146,18 +146,25 @@ class Commands extends PluginCommand
 
                     if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
                         $customForm = new CustomForm("Manage NPC");
+                        $simpleForm = new SimpleForm("Manage NPC");
                         $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
                         $editUI->addButton(new Button("Add Command", null, function (Player $sender) use ($customForm) {
                             $customForm->addElement("addcmd", new Input("Enter the command here"));
                             $sender->sendForm($customForm);
                         }));
-                        $editUI->addButton(new Button("Teleport or Move", null, function (Player $sender) use ($entity) {
-                            $entity->teleport($sender->getLocation());
-                            if ($entity instanceof WalkingHuman) {
-                                $entity->randomPosition = $entity->asVector3();
-                            }
-                            $sender->sendMessage(TextFormat::GREEN . "Teleported NPC to your Location");
+                        $editUI->addButton(new Button("Teleport", null, function (Player $sender) use ($simpleForm, $entity) {
+                            $simpleForm->addButton(new Button("You to Entity", null, function (Player $sender) use ($entity): void {
+                                $sender->teleport($entity->getLocation());
+                                $sender->sendMessage(TextFormat::GREEN . "Teleported!");
+                            }));
+                            $simpleForm->addButton(new Button("Entity to You", null, function (Player $sender) use ($entity): void {
+                                $entity->teleport($sender->getLocation());
+                                if ($entity instanceof WalkingHuman) {
+                                    $entity->randomPosition = $entity->asVector3();
+                                }
+                                $sender->sendMessage(TextFormat::GREEN . "Teleported!");
+                            }));
                         }));
 
                         $customForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $customForm) {
