@@ -144,15 +144,24 @@ class Commands extends PluginCommand
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
 
                     if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                        $addcmdForm = new CustomForm("Add Command");
-                        $addcmdForm->addElement("addcmd", new Input("Enter the command here"));
+                        $customForm = new CustomForm("Manage NPC");
+                        $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
-                        $addcmdForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $addcmdForm) {
+                        $editUI->addButton(new Button("Add Command", null, function (Player $sender) use ($customForm) {
+                            $customForm->addElement("addcmd", new Input("Enter the command here"));
+                            $sender->sendForm($customForm);
+                        }));
+                        $editUI->addButton(new Button("Teleport or Move", null, function (Player $sender) use ($entity) {
+                            $entity->teleport($sender->getLocation());
+                            $sender->sendMessage(TextFormat::GREEN . "Teleported NPC to you Location");
+                        }));
+
+                        $customForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $customForm) {
                             $submittedText = $response->getInputSubmittedText("addcmd");
 
                             if ($submittedText === "") {
-                                $addcmdForm->addElement("addcmd", new Input(TextFormat::RED . "Please enter a valid command"));
-                                $player->sendForm($addcmdForm);
+                                $customForm->addElement("addcmd", new Input(TextFormat::RED . "Please enter a valid command"));
+                                $player->sendForm($customForm);
                             } else {
                                 $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
 
@@ -167,12 +176,7 @@ class Commands extends PluginCommand
                             }
                         });
 
-                        $editForm = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
-                        $editForm->addButton(new Button("Add Command", null, function (Player $sender) use ($addcmdForm) {
-                            $sender->sendForm($addcmdForm);
-                        }));
-
-                        $sender->sendForm($editForm);
+                        $sender->sendForm($editUI);
                     } else {
                         $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                     }
