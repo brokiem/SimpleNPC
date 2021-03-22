@@ -56,7 +56,7 @@ class EventHandler implements Listener
                     }
 
                     $coldown = $this->plugin->settings["commandExecuteColdown"] ?? 2.0;
-                    if (($coldown + $this->plugin->lastHit[$damager->getName()][$entity->getId()]) > microtime(true)) {
+                    if (($coldown + (float)$this->plugin->lastHit[$damager->getName()][$entity->getId()]) > microtime(true)) {
                         return;
                     }
 
