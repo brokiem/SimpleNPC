@@ -12,6 +12,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\math\Vector2;
 use pocketmine\network\mcpe\protocol\MoveActorAbsolutePacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
@@ -49,6 +50,17 @@ class EventHandler implements Listener
                         return;
                     }
 
+                    if (!isset($this->plugin->lastHit[$damager->getName()][$entity->getId()])) {
+                        $this->plugin->lastHit[$damager->getName()][$entity->getId()] = microtime(true);
+                        return;
+                    }
+
+                    if ((2 + $this->plugin->lastHit[$damager->getName()][$entity->getId()]) > microtime(true)) {
+                        return;
+                    }
+
+                    $this->plugin->lastHit[$damager->getName()][$entity->getId()] = microtime(true);
+
                     if (($commands = $entity->namedtag->getCompoundTag("Commands")) !== null) {
                         foreach ($commands as $stringTag) {
                             $this->plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender(), str_replace("{player}", '"' . $damager->getName() . '"', $stringTag->getValue()));
@@ -69,6 +81,16 @@ class EventHandler implements Listener
             if ($entity->namedtag->hasTag("Walk") && $entity->namedtag->getShort("Walk") === 0) {
                 $event->setCancelled();
             }
+        }
+    }
+
+    public function onQuit(PlayerQuitEvent $event): void
+    {
+        $player = $event->getPlayer();
+
+        if (isset($this->plugin->lastHit[$player->getName()])) {
+            var_dump(true);
+            unset($this->plugin->lastHit[$player->getName()]);
         }
     }
 

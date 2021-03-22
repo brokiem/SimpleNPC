@@ -32,6 +32,8 @@ class SimpleNPC extends PluginBase
     public $maxLookDistance = 10;
     /** @var bool */
     public $lookToPlayersEnabled = true;
+    /** @var array */
+    public $lastHit = [];
 
     public function onEnable(): void
     {
