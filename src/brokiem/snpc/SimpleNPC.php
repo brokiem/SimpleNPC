@@ -28,10 +28,8 @@ class SimpleNPC extends PluginBase
     private static $entities = [];
     /** @var array */
     public $removeNPC = [];
-    /** @var int */
-    public $maxLookDistance = 10;
-    /** @var bool */
-    public $lookToPlayersEnabled = true;
+    /** @var array */
+    public $settings = [];
     /** @var array */
     public $lastHit = [];
 
@@ -54,8 +52,9 @@ class SimpleNPC extends PluginBase
     {
         $this->saveDefaultConfig();
 
-        $this->lookToPlayersEnabled = $this->getConfig()->get("enable-look-to-players", true);
-        $this->maxLookDistance = $this->getConfig()->get("max-look-distance", 8);
+        $this->settings["lookToPlayersEnabled"] = $this->getConfig()->get("enable-look-to-players", true);
+        $this->settings["maxLookDistance"] = $this->getConfig()->get("max-look-distance", 8);
+        $this->settings["commandExecuteColdown"] = $this->getConfig()->get("command-execute-coldown", 2);
     }
 
     public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): bool

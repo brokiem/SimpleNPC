@@ -55,7 +55,8 @@ class EventHandler implements Listener
                         return;
                     }
 
-                    if ((2 + $this->plugin->lastHit[$damager->getName()][$entity->getId()]) > microtime(true)) {
+                    $coldown = $this->plugin->settings["commandExecuteColdown"] ?? 2;
+                    if (($coldown + $this->plugin->lastHit[$damager->getName()][$entity->getId()]) > microtime(true)) {
                         return;
                     }
 
@@ -97,13 +98,13 @@ class EventHandler implements Listener
     {
         $player = $event->getPlayer();
 
-        if ($this->plugin->lookToPlayersEnabled) {
+        if ($this->plugin->settings["lookToPlayersEnabled"]) {
             // code taken from slapper
             if ($event->getFrom()->distance($event->getTo()) < 0.1) {
                 return;
             }
 
-            foreach ($player->getLevel()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->maxLookDistance, $this->plugin->maxLookDistance, $this->plugin->maxLookDistance), $player) as $entity) {
+            foreach ($player->getLevel()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"]), $player) as $entity) {
                 if ($entity instanceof Player) {
                     continue;
                 }
