@@ -62,7 +62,7 @@ class Commands extends PluginCommand
                             if ($args[1] === SimpleNPC::ENTITY_HUMAN) {
                                 if (isset($args[4])) {
                                     if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[4])) {
-                                        $sender->sendMessage(TextFormat::RED . "Invalied skin file format! (Only PNG Supported)");
+                                        $sender->sendMessage(TextFormat::RED . "Invalid skin file format! (Only PNG Supported)");
                                         return true;
                                     }
 
@@ -144,9 +144,10 @@ class Commands extends PluginCommand
 
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
 
+                    $customForm = new CustomForm("Manage NPC");
+                    $simpleForm = new SimpleForm("Manage NPC");
+
                     if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                        $customForm = new CustomForm("Manage NPC");
-                        $simpleForm = new SimpleForm("Manage NPC");
                         $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
                         $editUI->addButton(new Button("Add Command", null, function (Player $sender) use ($customForm) {
