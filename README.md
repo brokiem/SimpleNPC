@@ -11,7 +11,7 @@
 - NPC can walk!
 - Set NPC skin with uRL!
 - Register your own entity!
-- NPC with Emote! <b>(TODO)</b>
+- NPC with Emote! <b>(TODO!)</b>
 - NPC can look at players
 - Lightweight & Open Source ❤
 

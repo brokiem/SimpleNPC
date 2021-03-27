@@ -84,7 +84,6 @@ class Commands extends PluginCommand
                                 }
 
                                 $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
-                                $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                             } else {
                                 if (isset($args[2])) {
                                     NPCManager::createNPC($args[1], $sender, $args[2]);
@@ -93,8 +92,8 @@ class Commands extends PluginCommand
                                 }
 
                                 NPCManager::createNPC($args[1], $sender);
-                                $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                             }
+                            $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                         } else {
                             $sender->sendMessage(TextFormat::RED . "Invalid entity type or entity not registered!");
                         }

@@ -35,8 +35,8 @@ class SimpleNPC extends PluginBase
 
     public function onEnable(): void
     {
-        self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN, true);
-        self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN, true);
+        self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN);
+        self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN);
         NPCManager::registerAllNPC();
 
         $this->initConfiguration();
