@@ -58,8 +58,8 @@ class Commands extends PluginCommand
                     }
 
                     if (isset($args[1])) {
-                        if (in_array(strtolower($args[1]), SimpleNPC::$npcType, true)) {
-                            if ($args[1] === SimpleNPC::ENTITY_HUMAN) {
+                        if (in_array(strtolower($args[1]) . "_npc", SimpleNPC::$npcType, true)) {
+                            if ($args[1]."_npc" === SimpleNPC::ENTITY_HUMAN) {
                                 if (isset($args[4])) {
                                     if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[4])) {
                                         $sender->sendMessage(TextFormat::RED . "Invalid skin file format! (Only PNG Supported)");
@@ -86,12 +86,12 @@ class Commands extends PluginCommand
                                 $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
                             } else {
                                 if (isset($args[2])) {
-                                    NPCManager::createNPC($args[1], $sender, $args[2]);
+                                    NPCManager::createNPC(strtolower($args[1]) . "_npc", $sender, $args[2]);
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
-                                NPCManager::createNPC($args[1], $sender);
+                                NPCManager::createNPC(strtolower($args[1]) . "_npc", $sender);
                             }
                             $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                         } else {

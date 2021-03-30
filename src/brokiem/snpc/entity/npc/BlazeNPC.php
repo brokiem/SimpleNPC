@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 
 class BlazeNPC extends BaseNPC {
 
-    public const NETWORK_ID = Entity::BLAZE;
+    public const SNPC_ENTITY_ID = Entity::BLAZE;
 
     public $height = 1.8;
     public $width = 1;

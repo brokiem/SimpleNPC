@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 
 class ShulkerNPC extends BaseNPC {
 
-    public const NETWORK_ID = Entity::SHULKER;
+    public const SNPC_ENTITY_ID = Entity::SHULKER;
 
     public $height = 1;
     public $width = 1;

@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 
 class PolarBearNPC extends BaseNPC {
 
-    public const NETWORK_ID = Entity::POLAR_BEAR;
+    public const SNPC_ENTITY_ID = Entity::POLAR_BEAR;
 
     public $height = 1.4;
     public $width = 1;

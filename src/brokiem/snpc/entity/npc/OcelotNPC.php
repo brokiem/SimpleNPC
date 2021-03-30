@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 
 class OcelotNPC extends BaseNPC {
 
-    public const NETWORK_ID = Entity::OCELOT;
+    public const SNPC_ENTITY_ID = Entity::OCELOT;
 
     public $height = 0.7;
     public $width = 1;

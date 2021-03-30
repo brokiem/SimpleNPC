@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 
 class WolfNPC extends BaseNPC {
 
-    public const NETWORK_ID = Entity::WOLF;
+    public const SNPC_ENTITY_ID = Entity::WOLF;
 
     public $height = 0.85;
     public $width = 1;
