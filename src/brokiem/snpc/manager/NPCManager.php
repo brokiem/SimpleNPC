@@ -57,7 +57,8 @@ class NPCManager
         ZombieNPC::class => ["zombie_npc", "simplenpc:zombie"]
     ];
 
-    public static function registerAllNPC(): void {
+    public static function registerAllNPC(): void
+    {
         foreach (self::$npcs as $class => $saveNames) {
             SimpleNPC::registerEntity($class, array_shift($saveNames), true, $saveNames);
         }

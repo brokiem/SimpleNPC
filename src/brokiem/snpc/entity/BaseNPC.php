@@ -14,7 +14,8 @@ class BaseNPC extends Entity
 
     protected $gravity = 0.0;
 
-    protected function sendSpawnPacket(Player $player) : void{
+    protected function sendSpawnPacket(Player $player): void
+    {
         $pk = new AddActorPacket();
         $pk->entityRuntimeId = $this->getId();
         $pk->type = AddActorPacket::LEGACY_ID_MAP_BC[static::SNPC_ENTITY_ID];

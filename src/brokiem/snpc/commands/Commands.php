@@ -59,7 +59,7 @@ class Commands extends PluginCommand
 
                     if (isset($args[1])) {
                         if (in_array(strtolower($args[1]) . "_npc", SimpleNPC::$npcType, true)) {
-                            if ($args[1]."_npc" === SimpleNPC::ENTITY_HUMAN) {
+                            if ($args[1] . "_npc" === SimpleNPC::ENTITY_HUMAN) {
                                 if (isset($args[4])) {
                                     if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[4])) {
                                         $sender->sendMessage(TextFormat::RED . "Invalid skin file format! (Only PNG Supported)");
