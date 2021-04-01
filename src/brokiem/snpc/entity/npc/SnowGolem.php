@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 
 class SnowGolem extends BaseNPC {
 
-    public const NETWORK_ID = Entity::SNOW_GOLEM;
+    public const SNPC_ENTITY_ID = Entity::SNOW_GOLEM;
 
     public $height = 1.9;
     public $width = 1;

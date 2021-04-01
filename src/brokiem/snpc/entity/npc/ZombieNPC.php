@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 
 class ZombieNPC extends BaseNPC {
 
-    public const NETWORK_ID = Entity::ZOMBIE;
+    public const SNPC_ENTITY_ID = Entity::ZOMBIE;
 
     public $height = 1.95;
     public $width = 1;

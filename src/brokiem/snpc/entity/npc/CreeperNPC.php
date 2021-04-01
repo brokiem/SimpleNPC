@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 
 class CreeperNPC extends BaseNPC {
 
-    public const NETWORK_ID = Entity::CREEPER;
+    public const SNPC_ENTITY_ID = Entity::CREEPER;
 
     public $height = 1.7;
     public $width = 1;

@@ -17,8 +17,8 @@ use ReflectionClass;
 
 class SimpleNPC extends PluginBase
 {
-    public const ENTITY_HUMAN = "human";
-    public const ENTITY_WALKING_HUMAN = "walking_human";
+    public const ENTITY_HUMAN = "human_npc";
+    public const ENTITY_WALKING_HUMAN = "walking_human_npc";
 
     /** @var array */
     public $migrateNPC = [];
