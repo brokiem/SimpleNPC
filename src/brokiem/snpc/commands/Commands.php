@@ -60,7 +60,7 @@ class Commands extends PluginCommand
                     }
 
                     $plugin->reloadConfig();
-                    $sender->sendMessage(TextFormat::GREEN . "Plugin reloaded successfully!");
+                    $sender->sendMessage(TextFormat::GREEN . "SimpleNPC Config reloaded successfully!");
                     break;
                 case "spawn":
                 case "add":
@@ -193,7 +193,7 @@ class Commands extends PluginCommand
 
                                 /** @var StringTag $stringTag */
                                 foreach ($commands as $stringTag) {
-                                    $cmds .= TextFormat::GREEN . "- " . TextFormat::GREEN . $stringTag->getValue() . "\n";
+                                    $cmds .= TextFormat::GREEN . "- " . $stringTag->getValue() . "\n";
                                 }
                             }
 
@@ -375,7 +375,7 @@ class Commands extends PluginCommand
 
                     foreach ($plugin->getServer()->getLevels() as $world) {
                         $entityNames = array_map(static function (Entity $entity): string {
-                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::DARK_GREEN . $entity->getNameTag() . " §7-- §3" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::DARK_GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
                         }, array_filter($world->getEntities(), static function (Entity $entity): bool {
                             return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                         }));

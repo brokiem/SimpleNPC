@@ -20,7 +20,7 @@
 - Lightweight & Open Source ❤
 
 ### Commands
-<b>For more command info, please look directly at /snpc help</b><br>
+<b>For more command info, please look directly at ```/snpc help```</b><br>
 
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
