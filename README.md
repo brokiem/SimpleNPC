@@ -29,7 +29,7 @@
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/snpc``` | ```SimpleNPC command list``` | ```none``` | ```true``` |
-| ```/snpc ui``` | ```Manage npc with UI/Form``` | ```snpc.id``` | ```op``` |
+| ```/snpc ui``` | ```Manage npc with UI/Form``` | ```snpc.ui``` | ```op``` |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
 | ```/snpc edit``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
 | ```/snpc id``` | ```Get the npc id``` | ```snpc.id``` | ```op``` |
