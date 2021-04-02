@@ -1,10 +1,14 @@
 <h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/image.png" height="64" width="64" align="left" alt=""></h1><br>
 
+<b>Free open source resource NPC plugin made by brokiem for PocketMine-MP (_to ditch slapper_).</b>
 [![License](https://img.shields.io/github/license/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC)
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC/stargazers)
 [![](https://poggit.pmmp.io/shield.state/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
 [![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC) <br>
-<b>Free open source resource NPC plugin made by brokiem for PocketMine-MP.</b>
+
+### Planned Features in V2.0
+- NPC with database saving
+- More more and more!
 
 ### Features
 - Migration from Slapper supported!
@@ -20,13 +24,15 @@
 - Lightweight & Open Source ❤
 
 ### Commands
-<b>For more command info, please look directly at ```/snpc help```</b><br>
+<b>For more command info, please look directly at ```/snpc help```</b><br> or you can use <b>```/snpc ui```</b><br>
 
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
-| ```/snpc``` | ```SimpleNPC command list and credits``` | ```none``` | ```true``` |
+| ```/snpc``` | ```SimpleNPC command list``` | ```none``` | ```true``` |
+| ```/snpc ui``` | ```Manage npc with UI/Form``` | ```snpc.id``` | ```op``` |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
 | ```/snpc edit``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
+| ```/snpc id``` | ```Get the npc id``` | ```snpc.id``` | ```op``` |
 | ```/snpc reload``` | ```Reload plugin config``` | ```snpc.reload``` | ```op``` |
 | ```/snpc remove``` | ```Remove the npc``` | ```snpc.remove``` | ```op``` |
 | ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```snpc.migrate``` | ```op``` |
@@ -38,6 +44,9 @@ issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
 
 ### Developers
 If you want to register your own entity, take a look at this [plugin](https://github.com/brokiem/CustomEntity/)
+
+### Donate me
+Saweria - https://saweria.co/brokiem
 
 ### Images
 <img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/img.png" alt="">

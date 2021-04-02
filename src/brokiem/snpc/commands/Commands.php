@@ -11,7 +11,9 @@ use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
 use brokiem\snpc\task\async\SpawnHumanNPCTask;
 use EasyUI\element\Button;
+use EasyUI\element\Dropdown;
 use EasyUI\element\Input;
+use EasyUI\element\Option;
 use EasyUI\utils\FormResponse;
 use EasyUI\variant\CustomForm;
 use EasyUI\variant\SimpleForm;
@@ -48,11 +50,89 @@ class Commands extends PluginCommand
         if (isset($args[0])) {
             switch (strtolower($args[0])) {
                 case "ui":
-                    if (!$sender->hasPermission("snpc.ui")) {
+                    if (!$sender->hasPermission("snpc.ui") or (!$sender instanceof Player)) {
                         return true;
                     }
 
-                    //TODO: Add form
+                    $form = new SimpleForm("Manage NPC");
+                    $simpleForm = new SimpleForm("Manage NPC");
+                    $cusForm = new CustomForm("Manage NPC");
+
+                    $form->addButton(new Button("Reload Config", null, function (Player $sender) use ($plugin) {
+                        $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc reload");
+                    }));
+
+                    $form->addButton(new Button("Spawn NPC", null, function (Player $sender) use ($cusForm) {
+                        $cusForm->addElement("type", new Input("NPC Type: (human | mob like sheep, cow)"));
+                        $cusForm->addElement("nametag", new Input("NPC Nametag (null | string)"));
+
+                        $dropdown = new Dropdown("NPC Walk");
+                        $dropdown->addOption(new Option("choose", "Choose"));
+                        $dropdown->addOption(new Option("true", "True"));
+                        $dropdown->addOption(new Option("false", "False"));
+                        $cusForm->addElement("walk", $dropdown);
+
+                        $cusForm->addElement("skin", new Input("NPC SkinUrl (null | string)"));
+                        $sender->sendForm($cusForm);
+                    }));
+
+                    $form->addButton(new Button("Edit NPC", null, function (Player $sender) use ($cusForm) {
+                        $cusForm->addElement("snpcid_edit", new Input("Enter the NPC ID"));
+                        $sender->sendForm($cusForm);
+                    }));
+
+                    $form->addButton(new Button("Get NPC ID", null, function (Player $sender) use ($plugin) {
+                        $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc id");
+                    }));
+
+                    $form->addButton(new Button("Migrate NPC", null, function (Player $sender) use ($plugin) {
+                        $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc migrate");
+                    }));
+
+                    $form->addButton(new Button("NPC List", null, function (Player $sender) use ($simpleForm, $plugin) {
+                        if (!$sender->hasPermission("snpc.list")) {
+                            return;
+                        }
+
+                        $list = " ";
+                        foreach ($plugin->getServer()->getLevels() as $world) {
+                            $entityNames = array_map(static function (Entity $entity): string {
+                                return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                            }, array_filter($world->getEntities(), static function (Entity $entity): bool {
+                                return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
+                            }));
+
+                            $list .= "§cNPC List and Location: (" . count($entityNames) . ")\n §f- " . implode("\n - ", $entityNames);
+                        }
+
+                        $simpleForm->setHeaderText($list);
+                        $simpleForm->addButton(new Button("Print", null, function (Player $sender) use ($list) {
+                            $sender->sendMessage($list);
+                        }));
+                        $sender->sendForm($simpleForm);
+                    }));
+
+                    $sender->sendForm($form);
+
+                    $cusForm->setSubmitListener(function (Player $player, FormResponse $response) use ($plugin) {
+                        $type = $response->getInputSubmittedText("type") === "" ? null : $response->getInputSubmittedText("type");
+                        $nametag = $response->getInputSubmittedText("nametag");
+                        $walk = $response->getDropdownSubmittedOptionId("walk") === "" ? null : $response->getDropdownSubmittedOptionId("walk");
+                        $skin = $response->getInputSubmittedText("skin") === "" ? null : $response->getInputSubmittedText("skin");
+
+                        $npcEditId = $response->getInputSubmittedText("snpcid_edit");
+                        if ($npcEditId !== "") {
+                            $plugin->getServer()->getCommandMap()->dispatch($player, "snpc edit $npcEditId");
+                            return;
+                        }
+
+                        if ($walk === "choose") {
+                            $player->sendMessage(TextFormat::YELLOW . "Please select whether NPC can walk or not.");
+                            return;
+                        }
+
+                        $plugin->getServer()->getCommandMap()->dispatch($player, "snpc add $type $nametag $walk $skin");
+                    });
                     break;
                 case "reload":
                     if (!$sender->hasPermission("snpc.reload")) {
@@ -61,6 +141,19 @@ class Commands extends PluginCommand
 
                     $plugin->reloadConfig();
                     $sender->sendMessage(TextFormat::GREEN . "SimpleNPC Config reloaded successfully!");
+                    break;
+                case "id":
+                    if (!$sender->hasPermission("snpc.id")) {
+                        return true;
+                    }
+
+                    if (!isset($plugin->idPlayers[$sender->getName()])) {
+                        $plugin->idPlayers[$sender->getName()] = true;
+                        $sender->sendMessage(TextFormat::DARK_GREEN . "Hit the npc that you want to see the ID");
+                    } else {
+                        unset($plugin->idPlayers[$sender->getName()]);
+                        $sender->sendMessage(TextFormat::GREEN . "Tap to get NPC ID has been canceled");
+                    }
                     break;
                 case "spawn":
                 case "add":
@@ -285,9 +378,10 @@ class Commands extends PluginCommand
                         });
 
                         $sender->sendForm($editUI);
-                    } else {
-                        $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
+                        return true;
                     }
+
+                    $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                     break;
                 case "migrate":
                     if (!$sender->hasPermission("snpc.migrate")) {

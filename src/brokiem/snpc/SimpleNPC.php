@@ -33,11 +33,19 @@ class SimpleNPC extends PluginBase
     public $settings = [];
     /** @var array */
     public $lastHit = [];
-    /** @var array $cachedUpdate */
+    /** @var array */
     public $cachedUpdate = [];
+    /** @var bool */
+    private $isDev = true;
+    /** @var array */
+    public $idPlayers = [];
 
     public function onEnable(): void
     {
+        if ($this->isDev) {
+            $this->getLogger()->warning("You are using the Development version of SimpleNPC. The plugin will experience errors, crashes, or bugs. Only use this version if you are testing. Don't use the Dev version in production!");
+        }
+
         self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN);
         self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN);
         NPCManager::registerAllNPC();
@@ -51,7 +59,7 @@ class SimpleNPC extends PluginBase
 
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
             $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getVersion(), $this));
-        }), 1728000); // 1 day
+        }), 864000); // 12 hours
     }
 
     private function initConfiguration(): void

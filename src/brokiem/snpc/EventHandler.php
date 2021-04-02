@@ -57,6 +57,12 @@ class EventHandler implements Listener
                 $damager = $event->getDamager();
 
                 if ($damager instanceof Player) {
+                    if (isset($this->plugin->idPlayers[$damager->getName()])) {
+                        $damager->sendMessage(TextFormat::GREEN . "NPC ID: " . $entity->getId());
+                        unset($this->plugin->idPlayers[$damager->getName()]);
+                        return;
+                    }
+
                     if (isset($this->plugin->removeNPC[$damager->getName()]) && !$entity->isFlaggedForDespawn()) {
                         $entity->flagForDespawn();
                         $damager->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
@@ -105,6 +111,14 @@ class EventHandler implements Listener
 
         if (isset($this->plugin->lastHit[$player->getName()])) {
             unset($this->plugin->lastHit[$player->getName()]);
+        }
+
+        if (isset($this->plugin->removeNPC[$player->getName()])) {
+            unset($this->plugin->removeNPC[$player->getName()]);
+        }
+
+        if (isset($this->plugin->idPlayers[$player->getName()])) {
+            unset($this->plugin->idPlayers[$player->getName()]);
         }
     }
 

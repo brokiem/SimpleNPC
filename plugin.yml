@@ -14,6 +14,8 @@ permissions:
     default: op
   snpc.edit:
     default: op
+  snpc.id:
+    default: op
   snpc.notify:
     default: op
   snpc.ui:
