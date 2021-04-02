@@ -35,7 +35,7 @@ class EventHandler implements Listener
     {
         $player = $event->getPlayer();
 
-        if ($player->hasPermission("snpc.notify")) {
+        if ($player->hasPermission("snpc.notify") && !empty($this->plugin->cachedUpdate)) {
             [$latestVersion, $updateDate, $updateUrl] = $this->plugin->cachedUpdate;
 
             if ($this->plugin->getDescription()->getVersion() !== $latestVersion) {
