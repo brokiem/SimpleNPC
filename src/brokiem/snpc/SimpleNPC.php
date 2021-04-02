@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace brokiem\snpc;
@@ -16,8 +17,8 @@ use ReflectionClass;
 
 class SimpleNPC extends PluginBase
 {
-    public const ENTITY_HUMAN = "human_npc";
-    public const ENTITY_WALKING_HUMAN = "walking_human_npc";
+    public const ENTITY_HUMAN = "human_snpc";
+    public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
 
     /** @var array */
     public $migrateNPC = [];
@@ -62,7 +63,7 @@ class SimpleNPC extends PluginBase
 
         $this->settings["lookToPlayersEnabled"] = $this->getConfig()->get("enable-look-to-players", true);
         $this->settings["maxLookDistance"] = $this->getConfig()->get("max-look-distance", 8);
-        $this->settings["commandExecuteColdown"] = (float)$this->getConfig()->get("command-execute-coldown", 2.0);
+        $this->settings["commandExecuteColdown"] = (float)$this->getConfig()->get("command-execute-coldown", 1.0);
     }
 
     public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): bool

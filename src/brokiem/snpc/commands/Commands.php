@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace brokiem\snpc\commands;
@@ -57,11 +58,11 @@ class Commands extends PluginCommand
                     }
 
                     if (isset($args[1])) {
-                        if (in_array(strtolower($args[1]) . "_npc", SimpleNPC::$npcType, true)) {
-                            if ($args[1] . "_npc" === SimpleNPC::ENTITY_HUMAN) {
+                        if (in_array(strtolower($args[1]) . "_snpc", SimpleNPC::$npcType, true)) {
+                            if ($args[1] . "_snpc" === SimpleNPC::ENTITY_HUMAN) {
                                 if (isset($args[4])) {
                                     if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[4])) {
-                                        $sender->sendMessage(TextFormat::RED . "Invalid skin file format! (Only PNG Supported)");
+                                        $sender->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
                                         return true;
                                     }
 
@@ -85,12 +86,12 @@ class Commands extends PluginCommand
                                 $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
                             } else {
                                 if (isset($args[2])) {
-                                    NPCManager::createNPC(strtolower($args[1]) . "_npc", $sender, $args[2]);
+                                    NPCManager::createNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
-                                NPCManager::createNPC(strtolower($args[1]) . "_npc", $sender);
+                                NPCManager::createNPC(strtolower($args[1]) . "_snpc", $sender);
                             }
                             $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                         } else {
@@ -152,6 +153,22 @@ class Commands extends PluginCommand
                             $customForm->addElement("addcmd", new Input("Enter the command here"));
                             $sender->sendForm($customForm);
                         }));
+
+                        $editUI->addButton(new Button("Remove Command", null, function (Player $sender) use ($customForm) {
+                            $customForm->addElement("removecmd", new Input("Enter the command here"));
+                            $sender->sendForm($customForm);
+                        }));
+
+                        $editUI->addButton(new Button("Change Nametag", null, function (Player $sender) use ($customForm) {
+                            $customForm->addElement("changenametag", new Input("Enter the new nametag here"));
+                            $sender->sendForm($customForm);
+                        }));
+
+                        $editUI->addButton(new Button("Change Skin\n(Only Human NPC)", null, function (Player $sender) use ($customForm) {
+                            $customForm->addElement("changeskin", new Input("Enter the skin URL or online player name"));
+                            $sender->sendForm($customForm);
+                        }));
+
                         $editUI->addButton(new Button("Teleport", null, function (Player $sender) use ($simpleForm, $entity) {
                             $simpleForm->addButton(new Button("You to Entity", null, function (Player $sender) use ($entity): void {
                                 $sender->teleport($entity->getLocation());
@@ -168,24 +185,65 @@ class Commands extends PluginCommand
                             $sender->sendForm($simpleForm);
                         }));
 
-                        $customForm->setSubmitListener(function (Player $player, FormResponse $response) use ($entity, $customForm) {
-                            $submittedText = $response->getInputSubmittedText("addcmd");
+                        $customForm->setSubmitListener(function (Player $player, FormResponse $response) use ($plugin, $entity) {
+                            $addcmd = $response->getInputSubmittedText("addcmd");
+                            $rmcmd = $response->getInputSubmittedText("removecmd");
+                            $chnmtd = $response->getInputSubmittedText("changenametag");
+                            $skin = $response->getInputSubmittedText("changeskin");
 
-                            if ($submittedText === "") {
-                                $customForm->addElement("addcmd", new Input(TextFormat::RED . "Please enter a valid command"));
-                                $player->sendForm($customForm);
-                            } else {
+                            if ($rmcmd !== "") {
                                 $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
 
-                                if ($commands->hasTag($submittedText)) {
-                                    $player->sendMessage(TextFormat::RED . "'" . $submittedText . "' command has already been added.");
-                                    return;
+                                $commands->removeTag($rmcmd, $rmcmd);
+                                $entity->namedtag->setTag($commands);
+                                $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId().")");
+                            } elseif ($addcmd !== "") {
+                                $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
+
+                                if ($commands->hasTag($addcmd)) {
+                                    $player->sendMessage(TextFormat::RED . "'$addcmd' command has already been added.");
+                                    return true;
                                 }
 
-                                $commands->setString($submittedText, $submittedText);
+                                $commands->setString($addcmd, $addcmd);
                                 $entity->namedtag->setTag($commands);
-                                $player->sendMessage(TextFormat::GREEN . "Successfully added command '" . $submittedText . "' to entity ID: " . $entity->getId());
+                                $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId().")");
+                            } elseif ($chnmtd !== "") {
+                                $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
+
+                                $entity->setNameTag($chnmtd);
+                                $entity->setNameTagAlwaysVisible();
+                            } elseif ($skin !== "") {
+                                if (!$entity instanceof CustomHuman) {
+                                    $player->sendMessage(TextFormat::RED . "Only human NPC can change skin!");
+                                    return true;
+                                }
+
+                                $pSkin = $player->getServer()->getPlayerExact($skin);
+
+                                if ($pSkin instanceof Player) {
+                                    $entity->setSkin($pSkin->getSkin());
+                                    $entity->sendSkin($player->getServer()->getOnlinePlayers());
+
+                                    $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId().")");
+                                    return true;
+                                }
+
+                                if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $skin)) {
+                                    $player->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
+                                    return true;
+                                }
+
+                                $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($entity->getNameTag(), $player->getName(), $plugin->getDataFolder(), !($entity->namedtag->getShort("Walk") === 0), $skin, $entity->namedtag->getCompoundTag("Commands"), null, $entity->getLocation()));
+                                if (!$entity->isFlaggedForDespawn()) {
+                                    $entity->flagForDespawn();
+                                }
+                                $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId().")");
+                            } else {
+                                $player->sendMessage(TextFormat::RED . "Please enter a valid value!");
                             }
+
+                            return true;
                         });
 
                         $sender->sendForm($editUI);
