@@ -36,7 +36,7 @@ class SimpleNPC extends PluginBase
     /** @var array */
     public $cachedUpdate = [];
     /** @var bool */
-    private $isDev = true;
+    private $isDev = false;
     /** @var array */
     public $idPlayers = [];
 
