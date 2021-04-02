@@ -14,5 +14,5 @@ enable-look-to-players: true
 max-look-distance: 8
 
 # Coldown executing command when hit the NPC
-# Default: 2.0
-commandExecuteColdown: 2.0
+# Default: 2.0 (float)
+commandExecuteColdown: 1.0

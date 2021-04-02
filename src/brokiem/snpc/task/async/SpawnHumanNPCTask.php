@@ -64,7 +64,14 @@ class SpawnHumanNPCTask extends AsyncTask
             file_put_contents($this->dataPath . $uniqId . ".$extension", $data);
             $file = $this->dataPath . $uniqId . ".$extension";
 
-            $img = imagecreatefrompng($file);
+            $img = @imagecreatefrompng($file);
+
+            if (!$img) {
+                $this->setResult(null);
+                unlink($file);
+                return;
+            }
+
             $bytes = '';
             for ($y = 0; $y < imagesy($img); $y++) {
                 for ($x = 0; $x < imagesx($img); $x++) {

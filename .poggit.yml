@@ -8,6 +8,6 @@ projects:
     path: ""
     icon: "/assets/image.png"
     libs:
-      - src: GiantQuartz/EasyUI/libEasyUI
+      - src: brokiem/EasyUI/libEasyUI
         version: 1.0.0
 ...
