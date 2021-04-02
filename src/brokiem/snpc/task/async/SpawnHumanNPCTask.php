@@ -68,7 +68,9 @@ class SpawnHumanNPCTask extends AsyncTask
 
             if (!$img) {
                 $this->setResult(null);
-                unlink($file);
+                if (is_file($file)) {
+                    unlink($file);
+                }
                 return;
             }
 
@@ -87,7 +89,9 @@ class SpawnHumanNPCTask extends AsyncTask
             imagedestroy($img);
             $this->setResult($bytes);
 
-            unlink($file);
+            if (is_file($file)) {
+                unlink($file);
+            }
         } else {
             $this->setResult(null);
         }

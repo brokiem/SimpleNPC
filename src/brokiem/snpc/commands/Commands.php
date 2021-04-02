@@ -19,6 +19,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\entity\Entity;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
@@ -167,6 +168,28 @@ class Commands extends PluginCommand
                         $editUI->addButton(new Button("Change Skin\n(Only Human NPC)", null, function (Player $sender) use ($customForm) {
                             $customForm->addElement("changeskin", new Input("Enter the skin URL or online player name"));
                             $sender->sendForm($customForm);
+                        }));
+
+                        $editUI->addButton(new Button("Command list", null, function (Player $sender) use ($editUI, $entity, $simpleForm) {
+                            $commands = $entity->namedtag->getCompoundTag("Commands");
+                            $cmds = "This NPC does not have any commands.";
+                            if ($commands !== null && $commands->getCount() > 0) {
+                                $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list ({$commands->getCount()})\n";
+
+                                /** @var StringTag $stringTag */
+                                foreach ($commands as $stringTag) {
+                                    $cmds .= TextFormat::GREEN . "- " . TextFormat::GREEN . $stringTag->getValue() . "\n";
+                                }
+                            }
+
+                            $simpleForm->setHeaderText($cmds);
+                            $simpleForm->addButton(new Button("Print", null, function (Player $sender) use ($cmds) {
+                                $sender->sendMessage($cmds);
+                            }));
+                            $simpleForm->addButton(new Button("< Back", null, function (Player $sender) use ($editUI) {
+                                $sender->sendForm($editUI);
+                            }));
+                            $sender->sendForm($simpleForm);
                         }));
 
                         $editUI->addButton(new Button("Teleport", null, function (Player $sender) use ($simpleForm, $entity) {
