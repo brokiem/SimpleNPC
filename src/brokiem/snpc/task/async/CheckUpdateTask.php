@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\task\async;
 
+use brokiem\snpc\SimpleNPC;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
@@ -14,9 +15,10 @@ class CheckUpdateTask extends AsyncTask
     /** @var string */
     private $version;
 
-    public function __construct(string $version)
+    public function __construct(string $version, SimpleNPC $plugin)
     {
         $this->version = $version;
+        $this->storeLocal([$plugin]);
     }
 
     public function onRun(): void
@@ -35,9 +37,11 @@ class CheckUpdateTask extends AsyncTask
         [$latestVersion, $updateDate, $updateUrl] = $this->getResult();
 
         if ($this->version !== $latestVersion) {
-            $server->getLogger()->notice(
-                "SimpleNPC v$latestVersion has been released on $updateDate. Download the new update at $updateUrl"
-            );
+            $server->getLogger()->notice("SimpleNPC v$latestVersion has been released on $updateDate. Download the new update at $updateUrl");
+
+            /** @var SimpleNPC $plugin */
+            [$plugin] = $this->fetchLocal();
+            $plugin->cachedUpdate = [$latestVersion, $updateDate, $updateUrl];
         }
     }
 }

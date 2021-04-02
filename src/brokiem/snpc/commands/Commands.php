@@ -46,7 +46,22 @@ class Commands extends PluginCommand
         $plugin = $this->getPlugin();
 
         if (isset($args[0])) {
-            switch ($args[0]) {
+            switch (strtolower($args[0])) {
+                case "ui":
+                    if (!$sender->hasPermission("snpc.ui")) {
+                        return true;
+                    }
+
+                    //TODO: Add form
+                    break;
+                case "reload":
+                    if (!$sender->hasPermission("snpc.reload")) {
+                        return true;
+                    }
+
+                    $plugin->reloadConfig();
+                    $sender->sendMessage(TextFormat::GREEN . "Plugin reloaded successfully!");
+                    break;
                 case "spawn":
                 case "add":
                     if (!$sender instanceof Player) {

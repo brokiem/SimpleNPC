@@ -9,18 +9,25 @@
 ### Features
 - Migration from Slapper supported!
 - NPC can walk!
-- Set NPC skin with uRL!
+- Set NPC skin with URL!
 - Register your own entity!
 - NPC with Emote! <b>(TODO!)</b>
+- NPC without nametag
+- Edit NPC with UI/Form
+- Live updates without restart
+- Cooldown for commands
 - NPC can look at players
 - Lightweight & Open Source ❤
 
 ### Commands
+<b>For more command info, please look directly at /snpc help</b><br>
+
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/snpc``` | ```SimpleNPC command list and credits``` | ```none``` | ```true``` |
 | ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
-| ```/snpc edit [args]``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
+| ```/snpc edit``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
+| ```/snpc reload``` | ```Reload plugin config``` | ```snpc.reload``` | ```op``` |
 | ```/snpc remove``` | ```Remove the npc``` | ```snpc.remove``` | ```op``` |
 | ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```snpc.migrate``` | ```op``` |
 | ```/snpc list``` | ```See the npc list``` | ```snpc.list``` | ```op``` |

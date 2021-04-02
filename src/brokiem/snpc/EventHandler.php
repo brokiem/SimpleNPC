@@ -11,6 +11,7 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\math\Vector2;
@@ -28,6 +29,19 @@ class EventHandler implements Listener
     public function __construct(SimpleNPC $plugin)
     {
         $this->plugin = $plugin;
+    }
+
+    public function onJoin(PlayerJoinEvent $event): void
+    {
+        $player = $event->getPlayer();
+
+        if ($player->hasPermission("snpc.notify")) {
+            [$latestVersion, $updateDate, $updateUrl] = $this->plugin->cachedUpdate;
+
+            if ($this->plugin->getDescription()->getVersion() !== $latestVersion) {
+                $player->sendMessage(" \n§aSimpleNPC §bv$latestVersion §ahas been released on §b$updateDate. §aDownload the new update at §b$updateUrl\n ");
+            }
+        }
     }
 
     public function onDamage(EntityDamageEvent $event): void

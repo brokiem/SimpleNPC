@@ -14,6 +14,12 @@ permissions:
     default: op
   snpc.edit:
     default: op
+  snpc.notify:
+    default: op
+  snpc.ui:
+    default: op
+  snpc.reload:
+    default: op
   snpc.remove:
     default: op
   snpc.migrate:

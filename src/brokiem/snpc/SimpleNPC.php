@@ -13,6 +13,7 @@ use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\task\async\CheckUpdateTask;
 use pocketmine\entity\Entity;
 use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\ClosureTask;
 use ReflectionClass;
 
 class SimpleNPC extends PluginBase
@@ -32,6 +33,8 @@ class SimpleNPC extends PluginBase
     public $settings = [];
     /** @var array */
     public $lastHit = [];
+    /** @var array $cachedUpdate */
+    public $cachedUpdate = [];
 
     public function onEnable(): void
     {
@@ -45,7 +48,10 @@ class SimpleNPC extends PluginBase
             new RcaCommand("rca", $this)
         ]);
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
-        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getVersion()));
+
+        $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
+            $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getVersion(), $this));
+        }), 1728000); // 1 day
     }
 
     private function initConfiguration(): void
@@ -56,10 +62,9 @@ class SimpleNPC extends PluginBase
 
             rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.old.yml");
 
+            $this->saveDefaultConfig();
             $this->reloadConfig();
         }
-
-        $this->saveDefaultConfig();
 
         $this->settings["lookToPlayersEnabled"] = $this->getConfig()->get("enable-look-to-players", true);
         $this->settings["maxLookDistance"] = $this->getConfig()->get("max-look-distance", 8);
