@@ -172,7 +172,7 @@ class Commands extends PluginCommand
 
                         $editUI->addButton(new Button("Command list", null, function (Player $sender) use ($editUI, $entity, $simpleForm) {
                             $commands = $entity->namedtag->getCompoundTag("Commands");
-                            $cmds = "This NPC does not have any commands.";
+                            $cmds = "This NPC (ID: {$entity->getId()}) does not have any commands.";
                             if ($commands !== null && $commands->getCount() > 0) {
                                 $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list ({$commands->getCount()})\n";
 
@@ -219,7 +219,7 @@ class Commands extends PluginCommand
 
                                 $commands->removeTag($rmcmd, $rmcmd);
                                 $entity->namedtag->setTag($commands);
-                                $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId().")");
+                                $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($addcmd !== "") {
                                 $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
 
@@ -230,7 +230,7 @@ class Commands extends PluginCommand
 
                                 $commands->setString($addcmd, $addcmd);
                                 $entity->namedtag->setTag($commands);
-                                $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId().")");
+                                $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($chnmtd !== "") {
                                 $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
 
@@ -248,7 +248,7 @@ class Commands extends PluginCommand
                                     $entity->setSkin($pSkin->getSkin());
                                     $entity->sendSkin($player->getServer()->getOnlinePlayers());
 
-                                    $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId().")");
+                                    $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                                     return true;
                                 }
 
@@ -261,7 +261,7 @@ class Commands extends PluginCommand
                                 if (!$entity->isFlaggedForDespawn()) {
                                     $entity->flagForDespawn();
                                 }
-                                $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId().")");
+                                $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                             } else {
                                 $player->sendMessage(TextFormat::RED . "Please enter a valid value!");
                             }
@@ -310,7 +310,7 @@ class Commands extends PluginCommand
                                 }));
 
                                 if (count($entity) === 0) {
-                                    $sender->sendMessage(TextFormat::RED . "Migrating failed: No Slapper entity found!");
+                                    $sender->sendMessage(TextFormat::RED . "Migrating failed: No Slapper-NPC found!");
                                     return true;
                                 }
 
