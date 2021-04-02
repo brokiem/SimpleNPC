@@ -35,26 +35,26 @@ class NPCManager
 {
 
     private static $npcs = [
-        BatNPC::class => ["bat_snpc", "simplenpc:bat"],
-        BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
-        ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],
-        CowNPC::class => ["cow_snpc", "simplenpc:cow"],
-        CreeperNPC::class => ["creeper_snpc", "simplenpc:creeper"],
-        EndermanNPC::class => ["enderman_snpc", "simplenpc:enderman"],
-        HorseNPC::class => ["horse_snpc", "simplenpc:horse"],
-        OcelotNPC::class => ["ocelot_snpc", "simplenpc:ocelot"],
-        PigNPC::class => ["pig_snpc", "simplenpc:pig"],
-        PolarBearNPC::class => ["polar_bear_snpc", "simplenpc:polarbear"],
-        SheepNPC::class => ["sheep_snpc", "simplenpc:sheep"],
-        ShulkerNPC::class => ["shulker_snpc", "simplenpc:shulker"],
-        SkeletonNPC::class => ["skeleton_snpc", "simplenpc:skeleton"],
-        SlimeNPC::class => ["slime_snpc", "simplenpc:slime"],
-        SnowGolem::class => ["snow_golem_snpc", "simplenpc:snowgolem"],
-        SpiderNPC::class => ["spider_snpc", "simplenpc:spider"],
-        VillagerNPC::class => ["villager_snpc", "simplenpc:villager"],
-        WitchNPC::class => ["witch_snpc", "simplenpc:witch"],
-        WolfNPC::class => ["wolf_snpc", "simplenpc:wolf"],
-        ZombieNPC::class => ["zombie_snpc", "simplenpc:zombie"]
+        BatNPC::class => ["bat_npc", "simplenpc:bat"],
+        BlazeNPC::class => ["blaze_npc", "simplenpc:blaze"],
+        ChickenNPC::class => ["chicken_npc", "simplenpc:chicken"],
+        CowNPC::class => ["cow_npc", "simplenpc:cow"],
+        CreeperNPC::class => ["creeper_npc", "simplenpc:creeper"],
+        EndermanNPC::class => ["enderman_npc", "simplenpc:enderman"],
+        HorseNPC::class => ["horse_npc", "simplenpc:horse"],
+        OcelotNPC::class => ["ocelot_npc", "simplenpc:ocelot"],
+        PigNPC::class => ["pig_npc", "simplenpc:pig"],
+        PolarBearNPC::class => ["polar_bear_npc", "simplenpc:polarbear"],
+        SheepNPC::class => ["sheep_npc", "simplenpc:sheep"],
+        ShulkerNPC::class => ["shulker_npc", "simplenpc:shulker"],
+        SkeletonNPC::class => ["skeleton_npc", "simplenpc:skeleton"],
+        SlimeNPC::class => ["slime_npc", "simplenpc:slime"],
+        SnowGolem::class => ["snow_golem_npc", "simplenpc:snowgolem"],
+        SpiderNPC::class => ["spider_npc", "simplenpc:spider"],
+        VillagerNPC::class => ["villager_npc", "simplenpc:villager"],
+        WitchNPC::class => ["witch_npc", "simplenpc:witch"],
+        WolfNPC::class => ["wolf_npc", "simplenpc:wolf"],
+        ZombieNPC::class => ["zombie_npc", "simplenpc:zombie"]
     ];
 
     public static function registerAllNPC(): void
