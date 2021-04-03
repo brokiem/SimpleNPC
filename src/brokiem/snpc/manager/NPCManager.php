@@ -71,12 +71,14 @@ class NPCManager
     public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null): bool
     {
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
-        $nbt->setTag($commands ?? new CompoundTag("Commands", []));
-        $nbt->setShort("Walk", 0);
-
         if ($customPos !== null) {
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
+
+        $nbt->setTag($commands ?? new CompoundTag("Commands", []));
+        $nbt->setShort("Walk", 0);
+        $position = $customPos ?? $player;
+        $nbt->setString("Identifier", self::saveNPC($type, ["type" => $type, "nametag" => $nametag, "world" => $player->getLevel()->getFolderName(), "showNametag" => $nametag !== null, "skinId" => null, "skinData" => null, "walk" => 0, "commands" => $commands === null ? [] : $commands->getValue(), "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]]));
 
         $entity = self::createEntity($type, $player->getLevel(), $nbt);
 
@@ -89,9 +91,6 @@ class NPCManager
             $entity->setNameTag($nametag);
             $entity->setNameTagAlwaysVisible();
         }
-
-        $position = $customPos ?? $player;
-        self::saveNPC($type, ["type" => $type, "nametag" => $nametag, "world" => $player->getLevel()->getFolderName(), "showNametag" => $nametag !== null, "skinId" => null, "skinData" => null, "walk" => 0, "commands" => $commands === null ? [] : $commands->getValue(), "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]]);
 
         $entity->spawnToAll();
         $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully!");
@@ -110,7 +109,7 @@ class NPCManager
         return null;
     }
 
-    public static function saveNPC(string $type, array $saves): void
+    public static function saveNPC(string $type, array $saves): string
     {
         if (!is_dir(SimpleNPC::getInstance()->getDataFolder() . "npcs")) {
             mkdir(SimpleNPC::getInstance()->getDataFolder() . "npcs");
@@ -125,6 +124,7 @@ class NPCManager
         }
 
         $npcConfig->save();
+        return $identifier;
     }
 
     public static function removeNPC(string $identifier, Entity $entity): bool

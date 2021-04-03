@@ -124,6 +124,9 @@ class SpawnHumanNPCTask extends AsyncTask
             ])
         );
         $nbt->setShort("Walk", $this->canWalk ? 1 : 0);
+        $position = $customPos ?? $player;
+        $saves = ["type" => $this->canWalk ? SimpleNPC::ENTITY_WALKING_HUMAN : SimpleNPC::ENTITY_HUMAN, "nametag" => $this->nametag, "world" => $position->getLevel()->getFolderName(), "showNametag" => $this->nametag !== null, "skinId" => $player->getSkin()->getSkinId(), "skinData" => in_array(strlen($skin ?? "somerandomstring"), Skin::ACCEPTED_SKIN_SIZES, true) ? base64_encode($skin) : base64_encode($player->getSkin()->getSkinData()), "walk" => $this->canWalk, "commands" => $commands ?? [], "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]];
+        $nbt->setString("Identifier", NPCManager::saveNPC($this->canWalk ? SimpleNPC::ENTITY_WALKING_HUMAN : SimpleNPC::ENTITY_HUMAN, $saves));
 
         $entity = $this->canWalk ? new WalkingHuman($player->getLevel(), $nbt) : new CustomHuman($player->getLevel(), $nbt);
 
@@ -131,10 +134,6 @@ class SpawnHumanNPCTask extends AsyncTask
             $entity->setNameTag(str_replace("{line}", PHP_EOL, $this->nametag));
             $entity->setNameTagAlwaysVisible();
         }
-
-        $position = $customPos ?? $player;
-        $saves = ["type" => $this->canWalk ? SimpleNPC::ENTITY_WALKING_HUMAN : SimpleNPC::ENTITY_HUMAN, "nametag" => $this->nametag, "world" => $position->getLevel()->getFolderName(), "showNametag" => $this->nametag !== null, "skinId" => $player->getSkin()->getSkinId(), "skinData" => in_array(strlen($skin ?? "somerandomstring"), Skin::ACCEPTED_SKIN_SIZES, true) ? base64_encode($skin) : base64_encode($player->getSkin()->getSkinData()), "walk" => $this->canWalk, "commands" => $commands ?? [], "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]];
-        NPCManager::saveNPC($this->canWalk ? SimpleNPC::ENTITY_WALKING_HUMAN : SimpleNPC::ENTITY_HUMAN, $saves);
 
         $entity->spawnToAll();
         (new SNPCCreationEvent($entity))->call();

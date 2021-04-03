@@ -123,7 +123,14 @@ class SimpleNPC extends PluginBase
             $decoded = json_decode($fileContents, true);
 
             if (in_array(strtolower($decoded["type"]), self::$npcType, true)) {
+                $this->getServer()->loadLevel($decoded["world"]);
                 $world = $this->getServer()->getLevelByName($decoded["world"]);
+                if ($world === null) {
+                    continue;
+                }
+                if (!$world->isChunkGenerated($decoded["position"][0], $decoded["position"][2])) {
+                    continue;
+                }
                 $nbt = Entity::createBaseNBT(new Location($decoded["position"][0], $decoded["position"][1], $decoded["position"][2], $decoded["position"][3], $decoded["position"][4], $world));
                 $nbt->setTag(new CompoundTag("Commands", $decoded["commands"]));
                 $nbt->setShort("Walk", $decoded["walk"] ? 0 : 1);
