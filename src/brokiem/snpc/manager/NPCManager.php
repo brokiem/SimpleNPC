@@ -89,7 +89,7 @@ class NPCManager
         }
 
         $position = $customPos ?? $player;
-        self::saveNPC($type, ["nametag" => $nametag, "world" => $player->getLevel()->getFolderName(), "walk" => 0, "commands" => $commands === null ? [] : $commands->getValue(), "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]]);
+        self::saveNPC($type, ["type" => $type, "nametag" => $nametag, "world" => $player->getLevel()->getFolderName(), "showNametag" => $nametag !== null, "skinId" => null, "skinData" => null, "walk" => 0, "commands" => $commands === null ? [] : $commands->getValue(), "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]]);
 
         $entity->spawnToAll();
         $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully!");
