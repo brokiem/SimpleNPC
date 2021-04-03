@@ -54,7 +54,6 @@ class SimpleNPC extends PluginBase
         self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN);
         NPCManager::registerAllNPC();
 
-        $this->saveResource("npcs.json");
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [
             new Commands("snpc", $this),

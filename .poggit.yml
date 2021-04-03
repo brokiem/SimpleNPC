@@ -3,6 +3,7 @@ build-by-default: true
 branches:
 - master
 - dev
+- "2.0"
 projects:
   SimpleNPC:
     path: ""
