@@ -17,6 +17,8 @@
 - Register your own entity!
 - NPC with Emote! <b>(TODO!)</b>
 - NPC without nametag
+- NPC with Cape supported!
+- NPC with Custom Geometry!
 - Edit NPC with UI/Form
 - Live updates without restart
 - Cooldown for commands

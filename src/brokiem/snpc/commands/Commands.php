@@ -114,10 +114,10 @@ class Commands extends PluginCommand
                     $sender->sendForm($form);
 
                     $cusForm->setSubmitListener(function (Player $player, FormResponse $response) use ($plugin) {
-                        $type = $response->getInputSubmittedText("type") === "" ? null : $response->getInputSubmittedText("type");
-                        $nametag = $response->getInputSubmittedText("nametag") === "" ? null : $response->getInputSubmittedText("nametag");
-                        $walk = $response->getDropdownSubmittedOptionId("walk") === "" ? null : $response->getDropdownSubmittedOptionId("walk");
-                        $skin = $response->getInputSubmittedText("skin") === "" ? null : $response->getInputSubmittedText("skin");
+                        $type = $response->getInputSubmittedText("type");
+                        $nametag = $response->getInputSubmittedText("nametag");
+                        $walk = $response->getDropdownSubmittedOptionId("walk");
+                        $skin = $response->getInputSubmittedText("skin");
 
                         $npcEditId = $response->getInputSubmittedText("snpcid_edit");
                         if ($npcEditId !== "") {
@@ -255,12 +255,12 @@ class Commands extends PluginCommand
                     }
 
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
-                    $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
 
                     $customForm = new CustomForm("Manage NPC");
                     $simpleForm = new SimpleForm("Manage NPC");
 
                     if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+                        $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
                         $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
                         $editUI->addButton(new Button("Add Command", null, function (Player $sender) use ($customForm) {
@@ -323,16 +323,18 @@ class Commands extends PluginCommand
                             $sender->sendForm($simpleForm);
                         }));
 
-                        $editUI->addButton(new Button("Teleport", null, function (Player $sender) use ($simpleForm, $entity) {
+                        $editUI->addButton(new Button("Teleport", null, function (Player $sender) use ($npcConfig, $simpleForm, $entity) {
                             $simpleForm->addButton(new Button("You to Entity", null, function (Player $sender) use ($entity): void {
                                 $sender->teleport($entity->getLocation());
                                 $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                             }));
-                            $simpleForm->addButton(new Button("Entity to You", null, function (Player $sender) use ($entity): void {
+                            $simpleForm->addButton(new Button("Entity to You", null, function (Player $sender) use ($npcConfig, $entity): void {
                                 $entity->teleport($sender->getLocation());
                                 if ($entity instanceof WalkingHuman) {
                                     $entity->randomPosition = $entity->asVector3();
                                 }
+                                $npcConfig->set("position", [$entity->getX(), $entity->getY(), $entity->getZ(), $entity->getYaw(), $entity->getPitch()]);
+                                $npcConfig->save();
                                 $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                             }));
 
@@ -347,8 +349,8 @@ class Commands extends PluginCommand
                             $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
 
                             if ($rmcmd !== "") {
-                                if (!isset($npcConfig->get("commands")[$rmcmd])) {
-                                    $player->sendMessage(TextFormat::RED . "'$rmcmd' command not found in command list.");
+                                if (!in_array($rmcmd, $npcConfig->get("commands"), true)) {
+                                    $player->sendMessage(TextFormat::RED . "Command '$rmcmd' not found in command list.");
                                     return true;
                                 }
 
@@ -356,7 +358,7 @@ class Commands extends PluginCommand
                                 $npcConfig->save();
                                 $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($addcmd !== "") {
-                                if (isset($npcConfig->get("commands")[$addcmd])) {
+                                if (in_array($addcmd, $npcConfig->get("commands"), true)) {
                                     $player->sendMessage(TextFormat::RED . "'$addcmd' command has already been added.");
                                     return true;
                                 }
