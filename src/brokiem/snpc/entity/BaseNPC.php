@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace brokiem\snpc\entity;
 
 use pocketmine\entity\Entity;
+use pocketmine\level\Level;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
 
@@ -13,6 +15,12 @@ class BaseNPC extends Entity
     public const SNPC_ENTITY_ID = 0;
 
     protected $gravity = 0.0;
+
+    public function __construct(Level $level, CompoundTag $nbt)
+    {
+        $this->setCanSaveWithChunk(false);
+        parent::__construct($level, $nbt);
+    }
 
     protected function sendSpawnPacket(Player $player): void
     {
