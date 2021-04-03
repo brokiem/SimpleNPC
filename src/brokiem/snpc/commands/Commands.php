@@ -255,7 +255,7 @@ class Commands extends PluginCommand
                     }
 
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
-                $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
+                    $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
 
                     $customForm = new CustomForm("Manage NPC");
                     $simpleForm = new SimpleForm("Manage NPC");
