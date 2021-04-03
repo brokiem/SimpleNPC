@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\manager;
 
+use brokiem\snpc\entity\BaseNPC;
+use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\npc\BatNPC;
 use brokiem\snpc\entity\npc\BlazeNPC;
 use brokiem\snpc\entity\npc\ChickenNPC;
@@ -123,5 +125,23 @@ class NPCManager
         }
 
         $npcConfig->save();
+    }
+
+    public static function removeNPC(string $identifier, Entity $entity): bool
+    {
+        if ($entity instanceof BaseNPC or $entity instanceof CustomHuman) {
+            $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
+
+            if (is_file($path)) {
+                unlink($path);
+                SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
+            }
+
+            if (!$entity->isFlaggedForDespawn()) {
+                $entity->flagForDespawn();
+            }
+        }
+
+        return false;
     }
 }

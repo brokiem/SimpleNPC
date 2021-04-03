@@ -127,6 +127,7 @@ class SimpleNPC extends PluginBase
                 $nbt = Entity::createBaseNBT(new Location($decoded["position"][0], $decoded["position"][1], $decoded["position"][2], $decoded["position"][3], $decoded["position"][4], $world));
                 $nbt->setTag(new CompoundTag("Commands", $decoded["commands"]));
                 $nbt->setShort("Walk", $decoded["walk"] ? 0 : 1);
+                $nbt->setString("Identifier", basename($path, ".json"));
 
                 if ($decoded["type"] === self::ENTITY_HUMAN) {
                     $nbt->setTag(new CompoundTag("Skin", [

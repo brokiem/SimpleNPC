@@ -6,6 +6,7 @@ namespace brokiem\snpc;
 
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
+use brokiem\snpc\manager\NPCManager;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -64,7 +65,7 @@ class EventHandler implements Listener
                     }
 
                     if (isset($this->plugin->removeNPC[$damager->getName()]) && !$entity->isFlaggedForDespawn()) {
-                        $entity->flagForDespawn();
+                        NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
                         $damager->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
                         unset($this->plugin->removeNPC[$damager->getName()]);
                         return;

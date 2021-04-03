@@ -20,12 +20,11 @@ use EasyUI\variant\SimpleForm;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\entity\Entity;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\scheduler\ClosureTask;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use slapper\entities\SlapperEntity;
 use slapper\entities\SlapperHuman;
@@ -226,7 +225,7 @@ class Commands extends PluginCommand
 
                         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
                             if (!$entity->isFlaggedForDespawn()) {
-                                $entity->flagForDespawn();
+                                NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
                                 $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
                             }
                         } else {
@@ -256,6 +255,7 @@ class Commands extends PluginCommand
                     }
 
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
+                    $npcConfig = new Config($plugin->getDataFolder() . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
 
                     $customForm = new CustomForm("Manage NPC");
                     $simpleForm = new SimpleForm("Manage NPC");
@@ -278,7 +278,8 @@ class Commands extends PluginCommand
                             $sender->sendForm($customForm);
                         }));
 
-                        $editUI->addButton(new Button("Remove Nametag", null, function (Player $sender) use ($entity) {
+                        $editUI->addButton(new Button("Remove Nametag", null, function (Player $sender) use ($npcConfig, $entity) {
+                            $npcConfig->set("showNametag", false);
                             $entity->setNameTag("");
                             $entity->setNameTagAlwaysVisible(false);
                             $entity->setNameTagVisible(false);
@@ -291,15 +292,13 @@ class Commands extends PluginCommand
                             $sender->sendForm($customForm);
                         }));
 
-                        $editUI->addButton(new Button("Command list", null, function (Player $sender) use ($editUI, $entity, $simpleForm) {
-                            $commands = $entity->namedtag->getCompoundTag("Commands");
+                        $editUI->addButton(new Button("Command list", null, function (Player $sender) use ($npcConfig, $editUI, $entity, $simpleForm) {
                             $cmds = "This NPC (ID: {$entity->getId()}) does not have any commands.";
-                            if ($commands !== null && $commands->getCount() > 0) {
-                                $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list ({$commands->getCount()})\n";
+                            if (!empty($npcConfig->get("commands"))) {
+                                $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list (" . count($npcConfig->get("commands")) . ")\n";
 
-                                /** @var StringTag $stringTag */
-                                foreach ($commands as $stringTag) {
-                                    $cmds .= TextFormat::GREEN . "- " . $stringTag->getValue() . "\n";
+                                foreach ($npcConfig->get("commands") as $cmd) {
+                                    $cmds .= TextFormat::GREEN . "- " . $cmd . "\n";
                                 }
                             }
 
@@ -334,29 +333,26 @@ class Commands extends PluginCommand
                             $rmcmd = $response->getInputSubmittedText("removecmd");
                             $chnmtd = $response->getInputSubmittedText("changenametag");
                             $skin = $response->getInputSubmittedText("changeskin");
+                            $npcConfig = new Config($plugin->getDataFolder() . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
 
                             if ($rmcmd !== "") {
-                                $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
-
-                                $commands->removeTag($rmcmd, $rmcmd);
-                                $entity->namedtag->setTag($commands);
+                                $npcConfig->removeNested("commands.$rmcmd");
                                 $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($addcmd !== "") {
-                                $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
-
-                                if ($commands->hasTag($addcmd)) {
+                                if ($npcConfig->getNested("commands.$addcmd") !== null) {
                                     $player->sendMessage(TextFormat::RED . "'$addcmd' command has already been added.");
                                     return true;
                                 }
 
-                                $commands->setString($addcmd, $addcmd);
-                                $entity->namedtag->setTag($commands);
+                                $npcConfig->setNested("commands", array_merge([$addcmd], $npcConfig->getNested("commands")));
                                 $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($chnmtd !== "") {
                                 $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
 
                                 $entity->setNameTag($chnmtd);
                                 $entity->setNameTagAlwaysVisible();
+
+                                $npcConfig->set("nametag", $chnmtd);
                             } elseif ($skin !== "") {
                                 if (!$entity instanceof CustomHuman) {
                                     $player->sendMessage(TextFormat::RED . "Only human NPC can change skin!");
@@ -369,6 +365,8 @@ class Commands extends PluginCommand
                                     $entity->setSkin($pSkin->getSkin());
                                     $entity->sendSkin($player->getServer()->getOnlinePlayers());
 
+                                    $npcConfig->set("skinId", $player->getSkin()->getSkinId());
+                                    $npcConfig->set("skinData", base64_encode($player->getSkin()->getSkinData()));
                                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                                     return true;
                                 }
@@ -379,9 +377,7 @@ class Commands extends PluginCommand
                                 }
 
                                 $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($entity->getNameTag(), $player->getName(), $plugin->getDataFolder(), !($entity->namedtag->getShort("Walk") === 0), $skin, $entity->namedtag->getCompoundTag("Commands"), null, $entity->getLocation()));
-                                if (!$entity->isFlaggedForDespawn()) {
-                                    $entity->flagForDespawn();
-                                }
+                                NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
                                 $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                             } else {
                                 $player->sendMessage(TextFormat::RED . "Please enter a valid value!");
