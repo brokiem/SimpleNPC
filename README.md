@@ -1,6 +1,6 @@
 <h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/image.png" height="64" width="64" align="left" alt=""></h1><br>
 
-<b>Free open source resource NPC plugin made by brokiem for PocketMine-MP (_to ditch slapper_).</b><br>
+<b>An Ultimate NPC plugin made by brokiem for PocketMine-MP (_to ditch slapper_).</b><br>
 [![License](https://img.shields.io/github/license/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC)
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC/stargazers)
 [![](https://poggit.pmmp.io/shield.state/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)

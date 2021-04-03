@@ -21,12 +21,14 @@ class SimpleNPC extends PluginBase
     public const ENTITY_HUMAN = "human_snpc";
     public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
 
+    /** @var self */
+    private static $i;
     /** @var array */
     public $migrateNPC = [];
     /** @var array */
     public static $npcType = [];
     /** @var array */
-    private static $entities = [];
+    public static $entities = [];
     /** @var array */
     public $removeNPC = [];
     /** @var array */
@@ -42,6 +44,8 @@ class SimpleNPC extends PluginBase
 
     public function onEnable(): void
     {
+        self::$i = $this;
+
         if ($this->isDev) {
             $this->getLogger()->warning("You are using the Development version of SimpleNPC. The plugin will experience errors, crashes, or bugs. Only use this version if you are testing. Don't use the Dev version in production!");
         }
@@ -50,6 +54,7 @@ class SimpleNPC extends PluginBase
         self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN);
         NPCManager::registerAllNPC();
 
+        $this->saveResource("npcs.json");
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [
             new Commands("snpc", $this),
@@ -60,6 +65,11 @@ class SimpleNPC extends PluginBase
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
             $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getVersion(), $this));
         }), 864000); // 12 hours
+    }
+
+    public static function getInstance(): self
+    {
+        return self::$i;
     }
 
     private function initConfiguration(): void
@@ -85,6 +95,10 @@ class SimpleNPC extends PluginBase
         if (is_a($entityClass, BaseNPC::class, true) or is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
             self::$entities[$entityClass] = array_merge($saveNames, [$name]);
             self::$npcType[] = $name;
+
+            foreach (array_merge($saveNames, [$name]) as $saveName) {
+                self::$entities[$saveName] = $entityClass;
+            }
 
             return Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
         }

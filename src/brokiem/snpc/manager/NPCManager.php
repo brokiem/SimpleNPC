@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection MkdirRaceConditionInspection */
 
 declare(strict_types=1);
 
@@ -26,9 +26,11 @@ use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\entity\Entity;
+use pocketmine\level\Level;
 use pocketmine\level\Location;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 class NPCManager
@@ -74,7 +76,7 @@ class NPCManager
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
-        $entity = Entity::createEntity($type, $player->getLevel(), $nbt); // TODO: get rid of this function (doesn't exist in PM4)
+        $entity = self::createEntity($type, $player->getLevel(), $nbt);
 
         if ($entity === null) {
             $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid, make sure you register the entity first!");
@@ -86,8 +88,40 @@ class NPCManager
             $entity->setNameTagAlwaysVisible();
         }
 
+        $position = $customPos ?? $player;
+        self::saveNPC($type, ["nametag" => $nametag, "world" => $player->getLevel()->getFolderName(), "walk" => 0, "commands" => $commands === null ? [] : $commands->getValue(), "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]]);
+
         $entity->spawnToAll();
         $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully!");
         return true;
+    }
+
+    public static function createEntity($type, Level $world, CompoundTag $nbt): ?Entity
+    {
+        if (isset(SimpleNPC::$entities[$type])) {
+            /** @var Entity $class */
+            $class = SimpleNPC::$entities[$type];
+
+            return new $class($world, $nbt);
+        }
+
+        return null;
+    }
+
+    public static function saveNPC(string $type, array $saves): void
+    {
+        if (!is_dir(SimpleNPC::getInstance()->getDataFolder() . "npcs")) {
+            mkdir(SimpleNPC::getInstance()->getDataFolder() . "npcs");
+        }
+
+        $identifier = uniqid("$type-", true);
+        $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . "$identifier.json";
+
+        $npcConfig = new Config($path, Config::JSON);
+        foreach ($saves as $save => $value) {
+            $npcConfig->set($save, $value);
+        }
+
+        $npcConfig->save();
     }
 }
