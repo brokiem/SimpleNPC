@@ -61,7 +61,6 @@ class Commands extends PluginCommand
                     $form->addButton(new Button("Reload Config", null, function (Player $sender) use ($plugin) {
                         $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc reload");
                     }));
-
                     $form->addButton(new Button("Spawn NPC", null, function (Player $sender) use ($cusForm) {
                         $cusForm->addElement("type", new Input("NPC Type: (human | mob like sheep, cow)"));
                         $cusForm->addElement("nametag", new Input("NPC Nametag (null | string)"));
@@ -71,24 +70,19 @@ class Commands extends PluginCommand
                         $dropdown->addOption(new Option("true", "True"));
                         $dropdown->addOption(new Option("false", "False"));
                         $cusForm->addElement("walk", $dropdown);
-
                         $cusForm->addElement("skin", new Input("NPC SkinUrl (null | string)"));
                         $sender->sendForm($cusForm);
                     }));
-
                     $form->addButton(new Button("Edit NPC", null, function (Player $sender) use ($cusForm) {
                         $cusForm->addElement("snpcid_edit", new Input("Enter the NPC ID"));
                         $sender->sendForm($cusForm);
                     }));
-
                     $form->addButton(new Button("Get NPC ID", null, function (Player $sender) use ($plugin) {
                         $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc id");
                     }));
-
                     $form->addButton(new Button("Migrate NPC", null, function (Player $sender) use ($plugin) {
                         $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc migrate");
                     }));
-
                     $form->addButton(new Button("NPC List", null, function (Player $sender) use ($simpleForm, $plugin) {
                         if (!$sender->hasPermission("snpc.list")) {
                             return;
@@ -125,17 +119,14 @@ class Commands extends PluginCommand
                             $plugin->getServer()->getCommandMap()->dispatch($player, "snpc edit $npcEditId");
                             return;
                         }
-
                         if ($type === null) {
                             $player->sendMessage(TextFormat::YELLOW . "Please enter a valid NPC type");
                             return;
                         }
-
                         if ($walk === "choose") {
                             $player->sendMessage(TextFormat::YELLOW . "Please select whether NPC can walk or not.");
                             return;
                         }
-
                         $plugin->getServer()->getCommandMap()->dispatch($player, "snpc add $type $nametag $walk $skin");
                     });
                     break;
@@ -179,24 +170,20 @@ class Commands extends PluginCommand
                                         $sender->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
                                         return true;
                                     }
-
                                     $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true", $args[4]));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
-
                                 if (isset($args[3])) {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true"));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
-
                                 if (isset($args[2])) {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
-
                                 $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
                             } else {
                                 if (isset($args[2])) {
@@ -204,7 +191,6 @@ class Commands extends PluginCommand
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
-
                                 NPCManager::createNPC(strtolower($args[1]) . "_snpc", $sender);
                             }
                             $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
@@ -220,7 +206,6 @@ class Commands extends PluginCommand
                     if (!$sender->hasPermission("snpc.remove")) {
                         return true;
                     }
-
                     if (isset($args[1]) and is_numeric($args[1])) {
                         $entity = $plugin->getServer()->findEntity((int)$args[1]);
 
@@ -229,20 +214,21 @@ class Commands extends PluginCommand
                                 NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
                                 $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
                             }
-                        } else {
-                            $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
+                            return true;
                         }
 
+                        $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                         return true;
                     }
 
                     if (!isset($plugin->removeNPC[$sender->getName()])) {
                         $plugin->removeNPC[$sender->getName()] = true;
                         $sender->sendMessage(TextFormat::DARK_GREEN . "Hit the npc that you want to delete or remove");
-                    } else {
-                        unset($plugin->removeNPC[$sender->getName()]);
-                        $sender->sendMessage(TextFormat::GREEN . "Remove npc by hitting has been canceled");
+                        return true;
                     }
+
+                    unset($plugin->removeNPC[$sender->getName()]);
+                    $sender->sendMessage(TextFormat::GREEN . "Remove npc by hitting has been canceled");
                     break;
                 case "edit":
                 case "manage":
@@ -268,42 +254,34 @@ class Commands extends PluginCommand
                             $customForm->addElement("addcmd", new Input("Enter the command here"));
                             $sender->sendForm($customForm);
                         }));
-
                         $editUI->addButton(new Button("Remove Command", null, function (Player $sender) use ($customForm) {
                             $customForm->addElement("removecmd", new Input("Enter the command here"));
                             $sender->sendForm($customForm);
                         }));
-
                         $editUI->addButton(new Button("Change Nametag", null, function (Player $sender) use ($customForm) {
                             $customForm->addElement("changenametag", new Input("Enter the new nametag here"));
                             $sender->sendForm($customForm);
                         }));
-
                         $editUI->addButton(new Button("Show Nametag", null, function (Player $sender) use ($npcConfig, $entity) {
                             $npcConfig->set("showNametag", true);
                             $npcConfig->save();
                             $entity->setNameTag($npcConfig->get("nametag"));
                             $entity->setNameTagAlwaysVisible(true);
                             $entity->setNameTagVisible(true);
-
                             $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
                         }));
-
                         $editUI->addButton(new Button("Remove Nametag", null, function (Player $sender) use ($npcConfig, $entity) {
                             $npcConfig->set("showNametag", false);
                             $npcConfig->save();
                             $entity->setNameTag("");
                             $entity->setNameTagAlwaysVisible(false);
                             $entity->setNameTagVisible(false);
-
                             $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
                         }));
-
                         $editUI->addButton(new Button("Change Skin\n(Only Human NPC)", null, function (Player $sender) use ($customForm) {
                             $customForm->addElement("changeskin", new Input("Enter the skin URL or online player name"));
                             $sender->sendForm($customForm);
                         }));
-
                         $editUI->addButton(new Button("Command list", null, function (Player $sender) use ($npcConfig, $editUI, $entity, $simpleForm) {
                             $cmds = "This NPC (ID: {$entity->getId()}) does not have any commands.";
                             if (!empty($npcConfig->get("commands"))) {
@@ -323,7 +301,6 @@ class Commands extends PluginCommand
                             }));
                             $sender->sendForm($simpleForm);
                         }));
-
                         $editUI->addButton(new Button("Teleport", null, function (Player $sender) use ($npcConfig, $simpleForm, $entity) {
                             $simpleForm->addButton(new Button("You to Entity", null, function (Player $sender) use ($entity): void {
                                 $sender->teleport($entity->getLocation());
@@ -415,7 +392,6 @@ class Commands extends PluginCommand
                             } else {
                                 $player->sendMessage(TextFormat::RED . "Please enter a valid value!");
                             }
-
                             return true;
                         });
 
@@ -520,11 +496,11 @@ class Commands extends PluginCommand
                     }
                     break;
                 default:
-                    $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
+                    $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload	\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
                     break;
             }
         } else {
-            $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
+            $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload	\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
         }
 
         return parent::execute($sender, $commandLabel, $args);

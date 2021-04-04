@@ -119,6 +119,7 @@ class NPCManager
         $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . "$identifier.json";
 
         $npcConfig = new Config($path, Config::JSON);
+        $npcConfig->set("identifier", $identifier);
         foreach ($saves as $save => $value) {
             $npcConfig->set($save, $value);
         }
@@ -132,14 +133,18 @@ class NPCManager
         if ($entity instanceof BaseNPC or $entity instanceof CustomHuman) {
             $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
 
-            if (is_file($path)) {
-                unlink($path);
-                SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
+            if (!is_file($path)) {
+                return false;
             }
+
+            unlink($path);
+            SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
 
             if (!$entity->isFlaggedForDespawn()) {
                 $entity->flagForDespawn();
             }
+
+            return true;
         }
 
         return false;
