@@ -129,7 +129,7 @@ class EventHandler implements Listener
 
         if ($this->plugin->settings["lookToPlayersEnabled"]) {
             // code taken from slapper
-            if ($event->getFrom()->distance($event->getTo()) < 0.1) {
+            if ($event->getFrom()->distance($event->getTo()) < 0.2) {
                 return;
             }
 

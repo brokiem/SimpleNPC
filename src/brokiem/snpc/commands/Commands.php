@@ -10,6 +10,7 @@ use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
 use brokiem\snpc\task\async\SpawnHumanNPCTask;
+use brokiem\snpc\task\async\URLToCapeTask;
 use EasyUI\element\Button;
 use EasyUI\element\Dropdown;
 use EasyUI\element\Input;
@@ -20,6 +21,7 @@ use EasyUI\variant\SimpleForm;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\entity\Entity;
+use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
@@ -119,11 +121,11 @@ class Commands extends PluginCommand
                             $plugin->getServer()->getCommandMap()->dispatch($player, "snpc edit $npcEditId");
                             return;
                         }
-                        if ($type === null) {
+                        if ($type === "") {
                             $player->sendMessage(TextFormat::YELLOW . "Please enter a valid NPC type");
                             return;
                         }
-                        if ($walk === "choose") {
+                        if ($walk === "choose" && strtolower($type) === "human") {
                             $player->sendMessage(TextFormat::YELLOW . "Please select whether NPC can walk or not.");
                             return;
                         }
@@ -282,6 +284,10 @@ class Commands extends PluginCommand
                             $customForm->addElement("changeskin", new Input("Enter the skin URL or online player name"));
                             $sender->sendForm($customForm);
                         }));
+                        $editUI->addButton(new Button("Change Cape\n(Only Human NPC)", null, function (Player $sender) use ($customForm) {
+                            $customForm->addElement("changecape", new Input("Enter the Cape URL or online player name"));
+                            $sender->sendForm($customForm);
+                        }));
                         $editUI->addButton(new Button("Command list", null, function (Player $sender) use ($npcConfig, $editUI, $entity, $simpleForm) {
                             $cmds = "This NPC (ID: {$entity->getId()}) does not have any commands.";
                             if (!empty($npcConfig->get("commands"))) {
@@ -324,6 +330,7 @@ class Commands extends PluginCommand
                             $rmcmd = $response->getInputSubmittedText("removecmd");
                             $chnmtd = $response->getInputSubmittedText("changenametag");
                             $skin = $response->getInputSubmittedText("changeskin");
+                            $cape = $response->getInputSubmittedText("changecape");
                             $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
 
                             if ($rmcmd !== "") {
@@ -362,6 +369,30 @@ class Commands extends PluginCommand
 
                                 $npcConfig->set("nametag", $chnmtd);
                                 $npcConfig->save();
+                            } elseif ($cape !== "") {
+                                if (!$entity instanceof CustomHuman) {
+                                    $player->sendMessage(TextFormat::RED . "Only human NPC can change cape!");
+                                    return true;
+                                }
+
+                                $pCape = $player->getServer()->getPlayerExact($cape);
+
+                                if ($pCape instanceof Player) {
+                                    $capeSkin = new Skin(
+                                        $entity->getSkin()->getSkinId(), $entity->getSkin()->getSkinData(),
+                                        $player->getSkin()->getCapeData(), $entity->getSkin()->getGeometryName(),
+                                        $entity->getSkin()->getGeometryData()
+                                    );
+                                    $entity->setSkin($capeSkin);
+                                    $entity->sendSkin();
+
+                                    $npcConfig->set("capeData", base64_encode($player->getSkin()->getCapeData()));
+                                    $npcConfig->save();
+                                    $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
+                                    return true;
+                                }
+
+                                $plugin->getServer()->getAsyncPool()->submitTask(new URLToCapeTask($cape, $plugin->getDataFolder(), $entity, $player->getName()));
                             } elseif ($skin !== "") {
                                 if (!$entity instanceof CustomHuman) {
                                     $player->sendMessage(TextFormat::RED . "Only human NPC can change skin!");
@@ -372,7 +403,7 @@ class Commands extends PluginCommand
 
                                 if ($pSkin instanceof Player) {
                                     $entity->setSkin($pSkin->getSkin());
-                                    $entity->sendSkin($player->getServer()->getOnlinePlayers());
+                                    $entity->sendSkin();
 
                                     $npcConfig->set("skinId", $player->getSkin()->getSkinId());
                                     $npcConfig->set("skinData", base64_encode($player->getSkin()->getSkinData()));
