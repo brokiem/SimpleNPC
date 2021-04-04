@@ -98,7 +98,7 @@ class URLToCapeTask extends AsyncTask
         $npc->setSkin($capeSkin);
         $npc->sendSkin();
 
-        $npcConfig->set("capeData", strlen($this->getResult()) === 8192 ? base64_encode($this->getResult()) : "");
+        $npcConfig->set("capeData", base64_encode($this->getResult()));
         $npcConfig->save();
         $player->sendMessage(TextFormat::GREEN . "Successfull set cape to npc (ID: " . $npc->getId() . ")");
     }
