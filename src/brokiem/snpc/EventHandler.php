@@ -128,13 +128,12 @@ class EventHandler implements Listener
         $player = $event->getPlayer();
 
         if ($this->plugin->settings["lookToPlayersEnabled"]) {
-            // code taken from slapper
-            if ($event->getFrom()->distance($event->getTo()) < 0.2) {
+            if ($event->getFrom()->distance($event->getTo()) <= 0.2) {
                 return;
             }
 
             foreach ($player->getLevel()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"]), $player) as $entity) {
-                if ($entity instanceof Player) {
+                if ((!$entity instanceof CustomHuman) or !$entity instanceof BaseNPC) {
                     continue;
                 }
 

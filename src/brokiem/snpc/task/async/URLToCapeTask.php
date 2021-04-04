@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace brokiem\snpc\task\async;
 
 use brokiem\snpc\entity\CustomHuman;
-use brokiem\snpc\SimpleNPC;
 use pocketmine\entity\Skin;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -15,7 +14,6 @@ use pocketmine\utils\TextFormat;
 
 class URLToCapeTask extends AsyncTask
 {
-
     /** @var string */
     private $url;
     /** @var string */
@@ -63,7 +61,6 @@ class URLToCapeTask extends AsyncTask
             return;
         }
 
-        $img = imagecreatefrompng($file);
         $rgba = "";
         for ($y = 0; $y < imagesy($img); $y++) {
             for ($x = 0; $x < imagesx($img); $x++) {
@@ -87,12 +84,16 @@ class URLToCapeTask extends AsyncTask
         [$npc] = $this->fetchLocal();
         $player = $server->getPlayerExact($this->player);
 
+        if ($this->getResult() === null) {
+            $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid link detected (the link doesn't contain images)");
+            return;
+        }
         if (strlen($this->getResult()) !== 8192) {
             $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid cape detected [bytes=" . strlen($this->getResult()) . "] [supported=8192]");
             return;
         }
 
-        $npcConfig = new Config(SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $npc->namedtag->getString("Identifier") . ".json", Config::JSON);
+        $npcConfig = new Config($this->dataPath . "npcs/" . $npc->namedtag->getString("Identifier") . ".json", Config::JSON);
         $capeSkin = new Skin(
             $npc->getSkin()->getSkinId(), $npc->getSkin()->getSkinData(),
             $this->getResult(), $npc->getSkin()->getGeometryName(),
