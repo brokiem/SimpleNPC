@@ -60,56 +60,62 @@ class Commands extends PluginCommand
                     $simpleForm = new SimpleForm("Manage NPC");
                     $cusForm = new CustomForm("Manage NPC");
 
-                    $form->addButton(new Button("Reload Config", null, function (Player $sender) use ($plugin) {
-                        $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc reload");
-                    }));
-                    $form->addButton(new Button("Spawn NPC", null, function (Player $sender) use ($cusForm) {
-                        $cusForm->addElement("type", new Input("NPC Type: (human | mob like sheep, cow)"));
-                        $cusForm->addElement("nametag", new Input('NPC Nametag (null | string) ' . PHP_EOL . 'NOTE: use (" ") if nametag has space'));
+                    $buttons = [
+                        "Reload Config" => ["text" => "Reload Config", "icon" => null, "command" => "snpc reload", "function" => null],
+                        "Spawn NPC" => ["text" => "Spawn NPC", "icon" => null, "command" => null, "function" => "spawnNPC"],
+                        "Edit NPC" => ["text" => "Edit NPC", "icon" => null, "command" => null, "function" => "editNPC"],
+                        "Get NPC ID" => ["text" => "Get NPC ID", "icon" => null, "command" => "snpc id", "function" => null],
+                        "Migrate NPC" => ["text" => "Migrate NPC", "icon" => null, "command" => "snpc migrate", "function" => null],
+                        "Remove NPC" => ["text" => "Remove NPC", "icon" => null, "command" => "snpc remove", "function" => null],
+                        "List NPC" => ["text" => "List NPC", "icon" => null, "command" => null, "function" => "npcList"],
+                    ];
 
-                        $dropdown = new Dropdown("NPC Walk");
-                        $dropdown->addOption(new Option("choose", "Choose"));
-                        $dropdown->addOption(new Option("true", "True"));
-                        $dropdown->addOption(new Option("false", "False"));
-                        $cusForm->addElement("walk", $dropdown);
-                        $cusForm->addElement("skin", new Input("NPC SkinUrl (null | string)"));
-                        $sender->sendForm($cusForm);
-                    }));
-                    $form->addButton(new Button("Edit NPC", null, function (Player $sender) use ($cusForm) {
-                        $cusForm->addElement("snpcid_edit", new Input("Enter the NPC ID"));
-                        $sender->sendForm($cusForm);
-                    }));
-                    $form->addButton(new Button("Get NPC ID", null, function (Player $sender) use ($plugin) {
-                        $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc id");
-                    }));
-                    $form->addButton(new Button("Migrate NPC", null, function (Player $sender) use ($plugin) {
-                        $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc migrate");
-                    }));
-                    $form->addButton(new Button("Remove NPC", null, function (Player $sender) use ($plugin) {
-                        $plugin->getServer()->getCommandMap()->dispatch($sender, "snpc remove");
-                    }));
-                    $form->addButton(new Button("NPC List", null, function (Player $sender) use ($simpleForm, $plugin) {
-                        if (!$sender->hasPermission("snpc.list")) {
-                            return;
-                        }
+                    foreach ($buttons as $button) {
+                        $form->addButton(new Button($button["text"], $button["icon"], function (Player $sender) use ($simpleForm, $cusForm, $button, $plugin) {
+                            if ($button["function"] !== null) {
+                                switch ($button["function"]) {
+                                    case "spawnNPC":
+                                        $cusForm->addElement("type", new Input("NPC Type: (human | mob like sheep, cow)"));
+                                        $cusForm->addElement("nametag", new Input('NPC Nametag (null | string) ' . PHP_EOL . 'NOTE: use (" ") if nametag has space'));
 
-                        $list = "";
-                        foreach ($plugin->getServer()->getLevels() as $world) {
-                            $entityNames = array_map(static function (Entity $entity): string {
-                                return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
-                            }, array_filter($world->getEntities(), static function (Entity $entity): bool {
-                                return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
-                            }));
+                                        $dropdown = new Dropdown("NPC Walk");
+                                        $dropdown->addOption(new Option("choose", "Choose"));
+                                        $dropdown->addOption(new Option("true", "True"));
+                                        $dropdown->addOption(new Option("false", "False"));
+                                        $cusForm->addElement("walk", $dropdown);
+                                        $cusForm->addElement("skin", new Input("NPC SkinUrl (null | string)"));
+                                        $sender->sendForm($cusForm);
+                                        break;
+                                    case "editNPC":
+                                        $cusForm->addElement("snpcid_edit", new Input("Enter the NPC ID"));
+                                        $sender->sendForm($cusForm);
+                                        break;
+                                    case "npcList":
+                                        if ($sender->hasPermission("snpc.list")) {
+                                            $list = "";
+                                            foreach ($plugin->getServer()->getLevels() as $world) {
+                                                $entityNames = array_map(static function (Entity $entity): string {
+                                                    return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                                                }, array_filter($world->getEntities(), static function (Entity $entity): bool {
+                                                    return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
+                                                }));
 
-                            $list .= "§cNPC List and Location: (" . count($entityNames) . ")\n §f- " . implode("\n - ", $entityNames);
-                        }
+                                                $list .= "§cNPC List and Location: (" . count($entityNames) . ")\n §f- " . implode("\n - ", $entityNames);
+                                            }
 
-                        $simpleForm->setHeaderText($list);
-                        $simpleForm->addButton(new Button("Print", null, function (Player $sender) use ($list) {
-                            $sender->sendMessage($list);
+                                            $simpleForm->setHeaderText($list);
+                                            $simpleForm->addButton(new Button("Print", null, function (Player $sender) use ($list) {
+                                                $sender->sendMessage($list);
+                                            }));
+                                            $sender->sendForm($simpleForm);
+                                        }
+                                        break;
+                                }
+                            } else {
+                                $plugin->getServer()->getCommandMap()->dispatch($sender, $button["command"]);
+                            }
                         }));
-                        $sender->sendForm($simpleForm);
-                    }));
+                    }
 
                     $sender->sendForm($form);
                     $cusForm->setSubmitListener(function (Player $player, FormResponse $response) use ($plugin) {

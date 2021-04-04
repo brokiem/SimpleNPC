@@ -128,38 +128,36 @@ class EventHandler implements Listener
         $player = $event->getPlayer();
 
         if ($this->plugin->settings["lookToPlayersEnabled"]) {
-            if ($event->getFrom()->distance($event->getTo()) !== 0.0) {
+            if ($event->getFrom()->distance($event->getTo()) < 0.3) {
                 return;
             }
 
             foreach ($player->getLevel()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"]), $player) as $entity) {
-                if ((!$entity instanceof CustomHuman) or !$entity instanceof BaseNPC) {
-                    continue;
-                }
+                if (($entity instanceof CustomHuman) or $entity instanceof BaseNPC) {
+                    $angle = atan2($player->z - $entity->z, $player->x - $entity->x);
+                    $yaw = (($angle * 180) / M_PI) - 90;
+                    $angle = atan2((new Vector2($entity->x, $entity->z))->distance($player->x, $player->z), $player->y - $entity->y);
+                    $pitch = (($angle * 180) / M_PI) - 90;
 
-                $angle = atan2($player->z - $entity->z, $player->x - $entity->x);
-                $yaw = (($angle * 180) / M_PI) - 90;
-                $angle = atan2((new Vector2($entity->x, $entity->z))->distance($player->x, $player->z), $player->y - $entity->y);
-                $pitch = (($angle * 180) / M_PI) - 90;
-
-                if ($entity->namedtag->hasTag("Walk")) {
-                    if ($entity instanceof CustomHuman and $entity->namedtag->getShort("Walk") === 0) {
-                        $pk = new MovePlayerPacket();
-                        $pk->entityRuntimeId = $entity->getId();
-                        $pk->position = $entity->add(0, $entity->getEyeHeight());
-                        $pk->yaw = $yaw;
-                        $pk->pitch = $pitch;
-                        $pk->headYaw = $yaw;
-                        $pk->onGround = $entity->onGround;
-                        $player->sendDataPacket($pk, false, false);
-                    } elseif ($entity instanceof BaseNPC and $entity->namedtag->getShort("Walk") === 0) {
-                        $pk = new MoveActorAbsolutePacket();
-                        $pk->entityRuntimeId = $entity->getId();
-                        $pk->position = $entity->asVector3();
-                        $pk->xRot = $pitch;
-                        $pk->yRot = $yaw;
-                        $pk->zRot = $yaw;
-                        $player->sendDataPacket($pk, false, false);
+                    if ($entity->namedtag->hasTag("Walk")) {
+                        if ($entity instanceof CustomHuman and $entity->namedtag->getShort("Walk") === 0) {
+                            $pk = new MovePlayerPacket();
+                            $pk->entityRuntimeId = $entity->getId();
+                            $pk->position = $entity->add(0, $entity->getEyeHeight());
+                            $pk->yaw = $yaw;
+                            $pk->pitch = $pitch;
+                            $pk->headYaw = $yaw;
+                            $pk->onGround = $entity->onGround;
+                            $player->sendDataPacket($pk, false, false);
+                        } elseif ($entity instanceof BaseNPC and $entity->namedtag->getShort("Walk") === 0) {
+                            $pk = new MoveActorAbsolutePacket();
+                            $pk->entityRuntimeId = $entity->getId();
+                            $pk->position = $entity->asVector3();
+                            $pk->xRot = $pitch;
+                            $pk->yRot = $yaw;
+                            $pk->zRot = $yaw;
+                            $player->sendDataPacket($pk, false, false);
+                        }
                     }
                 }
             }
