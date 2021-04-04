@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace brokiem\snpc\task\async;
 
 use brokiem\snpc\entity\CustomHuman;
@@ -76,6 +75,10 @@ class URLToCapeTask extends AsyncTask
         }
         $this->setResult($rgba);
         imagedestroy($img);
+
+        if (is_file($file)) {
+            unlink($file);
+        }
     }
 
     public function onCompletion(Server $server): void
