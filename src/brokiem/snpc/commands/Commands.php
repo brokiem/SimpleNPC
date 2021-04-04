@@ -20,6 +20,7 @@ use EasyUI\variant\SimpleForm;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
 use pocketmine\entity\Entity;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
@@ -93,7 +94,7 @@ class Commands extends PluginCommand
                             return;
                         }
 
-                        $list = " ";
+                        $list = "";
                         foreach ($plugin->getServer()->getLevels() as $world) {
                             $entityNames = array_map(static function (Entity $entity): string {
                                 return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
@@ -354,16 +355,26 @@ class Commands extends PluginCommand
                                     return true;
                                 }
 
-                                $npcConfig->removeNested("commands.$rmcmd");
+                                $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
+                                $commands->removeTag($rmcmd);
+                                $entity->namedtag->setTag($commands);
+
+                                $commands = $npcConfig->get("commands");
+                                unset($commands[array_search($rmcmd, $commands, true)]);
+                                $npcConfig->set("commands", $commands);
                                 $npcConfig->save();
                                 $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($addcmd !== "") {
                                 if (in_array($addcmd, $npcConfig->get("commands"), true)) {
-                                    $player->sendMessage(TextFormat::RED . "'$addcmd' command has already been added.");
+                                    $player->sendMessage(TextFormat::RED . "Command '$addcmd' has already been added.");
                                     return true;
                                 }
 
-                                $npcConfig->setNested("commands", array_merge([$addcmd], $npcConfig->getNested("commands")));
+                                $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
+                                $commands->setString($addcmd, $addcmd);
+                                $entity->namedtag->setTag($commands);
+
+                                $npcConfig->set("commands", array_merge([$addcmd], $npcConfig->getNested("commands")));
                                 $npcConfig->save();
                                 $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($chnmtd !== "") {

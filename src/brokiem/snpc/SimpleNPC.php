@@ -128,7 +128,7 @@ class SimpleNPC extends PluginBase
                 if ($world === null) {
                     continue;
                 }
-                if (!$world->loadChunk((int)$decoded["position"][0], (int)$decoded["position"][2])) {
+                if (!$world->loadChunk((int)$decoded["position"][0] >> 4, (int)$decoded["position"][2] >> 4)) {
                     $this->getLogger()->debug("Spawn Ignored for NPC " . basename($path, ".json") . " because chunk is not populated or chunk is can't loaded");
                     continue;
                 }
