@@ -94,9 +94,11 @@ class SpawnHumanNPCTask extends AsyncTask
             if (is_file($file)) {
                 unlink($file);
             }
-        } else {
-            $this->setResult(null);
+
+            return;
         }
+
+        $this->setResult(null);
     }
 
     public function onCompletion(Server $server): void
@@ -120,7 +122,7 @@ class SpawnHumanNPCTask extends AsyncTask
         $nbt->setTag($commands ?? new CompoundTag("Commands", []));
         $nbt->setTag(new CompoundTag("Skin", [
                 "Name" => new StringTag("Name", $player->getSkin()->getSkinId()),
-                "Data" => new ByteArrayTag("Data", in_array(strlen($skin ?? "somerandomstring"), Skin::ACCEPTED_SKIN_SIZES, true) ? $skin : $player->getSkin()->getSkinData()),
+                "Data" => new ByteArrayTag("Data", in_array(strlen($skin ?? ""), Skin::ACCEPTED_SKIN_SIZES, true) ? $skin : $player->getSkin()->getSkinData()),
                 "CapeData" => new ByteArrayTag("CapeData", $player->getSkin()->getCapeData()),
                 "GeometryName" => new StringTag("GeometryName", $player->getSkin()->getGeometryName()),
                 "GeometryData" => new ByteArrayTag("GeometryData", $player->getSkin()->getGeometryData())

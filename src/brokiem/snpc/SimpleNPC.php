@@ -19,6 +19,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
+use pocketmine\utils\UUID;
 use ReflectionClass;
 use RuntimeException;
 
@@ -123,6 +124,13 @@ class SimpleNPC extends PluginBase
             $decoded = json_decode($fileContents, true);
 
             if (in_array(strtolower($decoded["type"]), self::$npcType, true)) {
+                if (($decoded["type"] === self::ENTITY_HUMAN) || $decoded["type"] === self::ENTITY_WALKING_HUMAN) {
+                    if ($decoded["skinId"] === null || $decoded["skinData"] === null) {
+                        $decoded["skinId"] = UUID::fromRandom()->toString() . ".steveSkin";
+                        $decoded["skinData"] = base64_encode($this->getSteveSkinData());
+                    }
+                }
+
                 $this->getServer()->loadLevel($decoded["world"]);
                 $world = $this->getServer()->getLevelByName($decoded["world"]);
                 if ($world === null) {
@@ -141,7 +149,7 @@ class SimpleNPC extends PluginBase
                 $nbt->setShort("Walk", !$decoded["walk"] ? 0 : 1);
                 $nbt->setString("Identifier", basename($path, ".json"));
 
-                if ($decoded["type"] === self::ENTITY_HUMAN) {
+                if ($decoded["type"] === self::ENTITY_HUMAN || $decoded["type"] === self::ENTITY_WALKING_HUMAN) {
                     $nbt->setTag(new CompoundTag("Skin", [
                             "Name" => new StringTag("Name", $decoded["skinId"]),
                             "Data" => new ByteArrayTag("Data", in_array(strlen(base64_decode($decoded["skinData"])), Skin::ACCEPTED_SKIN_SIZES, true) ? base64_decode($decoded["skinData"]) : $this->getSteveSkinData()),
@@ -165,7 +173,7 @@ class SimpleNPC extends PluginBase
                     $entity->setNameTagAlwaysVisible();
                 }
 
-                $this->getLogger()->debug("Spawned NPC Entity: " . get_class($entity));
+                $this->getLogger()->debug("Spawned NPC Entity: " . get_class($entity) . " (" . basename($path) . ")");
                 $entity->spawnToAll();
             }
         }
