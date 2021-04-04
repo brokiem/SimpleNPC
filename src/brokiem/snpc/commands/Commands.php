@@ -65,7 +65,7 @@ class Commands extends PluginCommand
                     }));
                     $form->addButton(new Button("Spawn NPC", null, function (Player $sender) use ($cusForm) {
                         $cusForm->addElement("type", new Input("NPC Type: (human | mob like sheep, cow)"));
-                        $cusForm->addElement("nametag", new Input('NPC Nametag (null | string)\nNOTE: use (" ") if nametag has a space'));
+                        $cusForm->addElement("nametag", new Input('NPC Nametag (null | string) ' . PHP_EOL . 'NOTE: use (" ") if nametag has space'));
 
                         $dropdown = new Dropdown("NPC Walk");
                         $dropdown->addOption(new Option("choose", "Choose"));
@@ -254,81 +254,124 @@ class Commands extends PluginCommand
                         $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
                         $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
-                        $editUI->addButton(new Button("Add Command", null, function (Player $sender) use ($customForm) {
-                            $customForm->addElement("addcmd", new Input("Enter the command here"));
-                            $sender->sendForm($customForm);
-                        }));
-                        $editUI->addButton(new Button("Remove Command", null, function (Player $sender) use ($customForm) {
-                            $customForm->addElement("removecmd", new Input("Enter the command here"));
-                            $sender->sendForm($customForm);
-                        }));
-                        $editUI->addButton(new Button("Change Nametag", null, function (Player $sender) use ($customForm) {
-                            $customForm->addElement("changenametag", new Input("Enter the new nametag here"));
-                            $sender->sendForm($customForm);
-                        }));
-                        if (!$npcConfig->get("showNametag")) {
-                            $editUI->addButton(new Button("Show Nametag", null, function (Player $sender) use ($npcConfig, $entity) {
-                                $npcConfig->set("showNametag", true);
-                                $npcConfig->save();
-                                $entity->setNameTag($npcConfig->get("nametag"));
-                                $entity->setNameTagAlwaysVisible(true);
-                                $entity->setNameTagVisible(true);
-                                $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
-                            }));
-                        } else {
-                            $editUI->addButton(new Button("Remove Nametag", null, function (Player $sender) use ($npcConfig, $entity) {
-                                $npcConfig->set("showNametag", false);
-                                $npcConfig->save();
-                                $entity->setNameTag("");
-                                $entity->setNameTagAlwaysVisible(false);
-                                $entity->setNameTagVisible(false);
-                                $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
-                            }));
-                        }
-                        $editUI->addButton(new Button("Change Skin\n(Only Human NPC)", null, function (Player $sender) use ($customForm) {
-                            $customForm->addElement("changeskin", new Input("Enter the skin URL or online player name"));
-                            $sender->sendForm($customForm);
-                        }));
-                        $editUI->addButton(new Button("Change Cape\n(Only Human NPC)", null, function (Player $sender) use ($customForm) {
-                            $customForm->addElement("changecape", new Input("Enter the Cape URL or online player name"));
-                            $sender->sendForm($customForm);
-                        }));
-                        $editUI->addButton(new Button("Command list", null, function (Player $sender) use ($npcConfig, $editUI, $entity, $simpleForm) {
-                            $cmds = "This NPC (ID: {$entity->getId()}) does not have any commands.";
-                            if (!empty($npcConfig->get("commands"))) {
-                                $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list (" . count($npcConfig->get("commands")) . ")\n";
+                        $buttons = [
+                            "Add Command" => ["text" => "Add Command", "icon" => null,
+                                "element" => ["id" => "addcmd", "element" => new Input("Enter the command here")],
+                                "additional" => []
+                            ],
+                            "Remove Command" => ["text" => "Remove Command", "icon" => null,
+                                "element" => ["id" => "removecmd", "element" => new Input("Enter the command here")],
+                                "additional" => []
+                            ],
+                            "Change Nametag" => ["text" => "Change Nametag", "icon" => null,
+                                "element" => ["id" => "changenametag", "element" => new Input("Enter the new nametag here")],
+                                "additional" => []
+                            ],
+                            "Change Skin" => ["text" => "Change Skin\n(Only Human NPC)", "icon" => null,
+                                "element" => ["id" => "changeskin", "element" => new Input("Enter the skin URL or online player name")],
+                                "additional" => []
+                            ],
+                            "Change Cape" => ["text" => "Change Cape\n(Only Human NPC)", "icon" => null,
+                                "element" => ["id" => "changecape", "element" => new Input("Enter the Cape URL or online player name")],
+                                "additional" => []
+                            ],
+                            "Show Nametag" => [
+                                "text" => "Show Nametag", "icon" => null, "element" => [], "additional" => ["form" => "editUI",
+                                    "button" => ["text" => "Show Nametag", "icon" => null, "function" => "showNametag", "force" => true]
+                                ]
+                            ],
+                            "Hide Nametag" => [
+                                "text" => "Hide Nametag", "icon" => null, "element" => [], "additional" => ["form" => "editUI",
+                                    "button" => ["text" => "Hide Nametag", "icon" => null, "function" => "hideNametag", "force" => true]
+                                ]
+                            ],
+                            "Command List" => [
+                                "text" => "Command List", "icon" => null, "element" => [], "additional" => ["form" => "",
+                                    "button" => ["text" => null, "icon" => null, "function" => "commandList", "force" => false]
+                                ]
+                            ],
+                            "Teleport" => [
+                                "text" => "Teleport", "icon" => null, "element" => [], "additional" => ["form" => "",
+                                    "button" => ["text" => null, "icon" => null, "function" => "teleport", "force" => false]
+                                ]
+                            ]
+                        ];
 
-                                foreach ($npcConfig->get("commands") as $cmd) {
-                                    $cmds .= TextFormat::GREEN . "- " . $cmd . "\n";
-                                }
+                        foreach ($buttons as $button) {
+                            if (empty($button["element"]) && !empty($button["additional"]) && $button["additional"]["button"]["force"]) {
+                                $editUI->addButton(new Button($button["additional"]["button"]["text"], $button["additional"]["button"]["icon"], function (Player $sender) use ($entity, $npcConfig, $button) {
+                                    switch ($button["additional"]["button"]["function"]) {
+                                        case "showNametag":
+                                            $npcConfig->set("showNametag", true);
+                                            $npcConfig->save();
+                                            $entity->setNameTag($npcConfig->get("nametag"));
+                                            $entity->setNameTagAlwaysVisible(true);
+                                            $entity->setNameTagVisible(true);
+                                            $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
+                                            break;
+                                        case "hideNametag":
+                                            $npcConfig->set("showNametag", false);
+                                            $npcConfig->save();
+                                            $entity->setNameTag("");
+                                            $entity->setNameTagAlwaysVisible(false);
+                                            $entity->setNameTagVisible(false);
+                                            $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
+                                            break;
+                                    }
+                                }));
+
+                                continue;
                             }
 
-                            $simpleForm->setHeaderText($cmds);
-                            $simpleForm->addButton(new Button("Print", null, function (Player $sender) use ($cmds) {
-                                $sender->sendMessage($cmds);
-                            }));
-                            $simpleForm->addButton(new Button("< Back", null, function (Player $sender) use ($editUI) {
-                                $sender->sendForm($editUI);
-                            }));
-                            $sender->sendForm($simpleForm);
-                        }));
-                        $editUI->addButton(new Button("Teleport", null, function (Player $sender) use ($npcConfig, $simpleForm, $entity) {
-                            $simpleForm->addButton(new Button("You to Entity", null, function (Player $sender) use ($entity): void {
-                                $sender->teleport($entity->getLocation());
-                                $sender->sendMessage(TextFormat::GREEN . "Teleported!");
-                            }));
-                            $simpleForm->addButton(new Button("Entity to You", null, function (Player $sender) use ($npcConfig, $entity): void {
-                                $entity->teleport($sender->getLocation());
-                                if ($entity instanceof WalkingHuman) {
-                                    $entity->randomPosition = $entity->asVector3();
-                                }
-                                $npcConfig->set("position", [$entity->getX(), $entity->getY(), $entity->getZ(), $entity->getYaw(), $entity->getPitch()]);
-                                $npcConfig->save();
-                                $sender->sendMessage(TextFormat::GREEN . "Teleported!");
-                            }));
+                            $editUI->addButton(new Button($button["text"], $button["icon"], function (Player $sender) use ($npcConfig, $entity, $simpleForm, $editUI, $customForm, $button) {
+                                if (!empty($button["element"]) && empty($button["additional"])) {
+                                    $customForm->addElement($button["element"]["id"], $button["element"]["element"]);
+                                    $sender->sendForm($customForm);
+                                } elseif (empty($button["element"]) && !empty($button["additional"])) {
+                                    if ($button["additional"]["button"]["text"] === null) {
+                                        switch ($button["additional"]["button"]["function"]) {
+                                            case "commandList":
+                                                $cmds = "This NPC (ID: {$entity->getId()}) does not have any commands.";
+                                                if (!empty($npcConfig->get("commands"))) {
+                                                    $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list (" . count($npcConfig->get("commands")) . ")\n";
 
-                            $sender->sendForm($simpleForm);
-                        }));
+                                                    foreach ($npcConfig->get("commands") as $cmd) {
+                                                        $cmds .= TextFormat::GREEN . "- " . $cmd . "\n";
+                                                    }
+                                                }
+
+                                                $simpleForm->setHeaderText($cmds);
+                                                $simpleForm->addButton(new Button("Print", null, function (Player $sender) use ($cmds) {
+                                                    $sender->sendMessage($cmds);
+                                                }));
+                                                $simpleForm->addButton(new Button("< Back", null, function (Player $sender) use ($editUI) {
+                                                    $sender->sendForm($editUI);
+                                                }));
+                                                $sender->sendForm($simpleForm);
+                                                break;
+                                            case "teleport":
+                                                $simpleForm->addButton(new Button("You to Entity", null, function (Player $sender) use ($entity): void {
+                                                    $sender->teleport($entity->getLocation());
+                                                    $sender->sendMessage(TextFormat::GREEN . "Teleported!");
+                                                }));
+                                                $simpleForm->addButton(new Button("Entity to You", null, function (Player $sender) use ($npcConfig, $entity): void {
+                                                    $entity->teleport($sender->getLocation());
+                                                    if ($entity instanceof WalkingHuman) {
+                                                        $entity->randomPosition = $entity->asVector3();
+                                                    }
+                                                    $npcConfig->set("position", [$entity->getX(), $entity->getY(), $entity->getZ(), $entity->getYaw(), $entity->getPitch()]);
+                                                    $npcConfig->save();
+                                                    $sender->sendMessage(TextFormat::GREEN . "Teleported!");
+                                                }));
+
+                                                $sender->sendForm($simpleForm);
+                                                break;
+                                        }
+                                        return;
+                                    }
+                                }
+                            }));
+                        }
 
                         $customForm->setSubmitListener(function (Player $player, FormResponse $response) use ($plugin, $entity) {
                             $addcmd = $response->getInputSubmittedText("addcmd");
@@ -434,7 +477,6 @@ class Commands extends PluginCommand
                         $sender->sendForm($editUI);
                         return true;
                     }
-
                     $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                     break;
                 case "migrate":

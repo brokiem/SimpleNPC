@@ -119,6 +119,7 @@ class NPCManager
         $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . "$identifier.json";
 
         $npcConfig = new Config($path, Config::JSON);
+        $npcConfig->set("version", SimpleNPC::getInstance()->getDescription()->getVersion());
         $npcConfig->set("identifier", $identifier);
         foreach ($saves as $save => $value) {
             $npcConfig->set($save, $value);
