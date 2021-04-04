@@ -85,7 +85,7 @@ class URLToCapeTask extends AsyncTask
         $player = $server->getPlayerExact($this->player);
 
         if (strlen($this->getResult()) !== 8192) {
-            $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid cape detected [bytes=" . $this->getResult() . "] [supported=8192]");
+            $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid cape detected [bytes=" . strlen($this->getResult()) . "] [supported=8192]");
             return;
         }
 
