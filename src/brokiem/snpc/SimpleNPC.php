@@ -127,7 +127,7 @@ class SimpleNPC extends PluginBase
                 if (($decoded["type"] === self::ENTITY_HUMAN) || $decoded["type"] === self::ENTITY_WALKING_HUMAN) {
                     if ($decoded["skinId"] === null || $decoded["skinData"] === null) {
                         $decoded["skinId"] = UUID::fromRandom()->toString() . ".steveSkin";
-                        $decoded["skinData"] = base64_encode($this->getSteveSkinData());
+                        $decoded["skinData"] = $this->getSteveSkinData();
                     }
                 }
 
@@ -166,6 +166,7 @@ class SimpleNPC extends PluginBase
                         $this->getLogger()->warning("Entity {$decoded["type"]} is invalid, make sure you register the entity first!");
                         return;
                     }
+                    $entity->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
                 }
 
                 if ($decoded["showNametag"]) {
