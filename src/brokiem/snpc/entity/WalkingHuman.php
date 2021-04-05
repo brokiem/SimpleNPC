@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\entity;
 
+use pocketmine\block\Air;
 use pocketmine\block\Flowable;
 use pocketmine\block\Liquid;
 use pocketmine\math\Vector3;
@@ -55,6 +56,7 @@ class WalkingHuman extends CustomHuman
 
         $this->yaw = rad2deg(atan2(-$x, $z));
         $this->pitch = 0.0;
+
         $this->move($this->motion->x, $this->motion->y, $this->motion->z);
         $this->updateMovement();
 
@@ -91,13 +93,13 @@ class WalkingHuman extends CustomHuman
                 $y--;
             }
 
-            if ($y < 0) {
+            if ($y < 5) {
                 continue;
             }
 
             $blockAboveEntity = $world->getBlockAt($x, $y + 1, $z);
-            $blockBelowEntity = $world->getBlockAt($x + 1, $y - 1, $z);
-            if ($blockAboveEntity->isSolid() || $blockAboveEntity->getId() !== 0 || $blockBelowEntity instanceof Liquid) {
+            $blockBelowEntity = $world->getBlockAt($x, $y - 1, $z);
+            if (!$blockAboveEntity instanceof Air || $blockBelowEntity instanceof Liquid) {
                 continue;
             }
 

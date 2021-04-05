@@ -80,7 +80,7 @@ class Commands extends PluginCommand
                                             $dropdown->addOption(new Option("human", "Human NPC"));
                                             $cusForm->addElement("type", $dropdown);
 
-                                            $cusForm->addElement("nametag", new Input("NPC Nametag: [null/string]\n" . 'Note: Use (" ") if nametag has space'));
+                                            $cusForm->addElement("nametag", new Input("NPC Nametag: [string]\n" . 'Note: Use (" ") if nametag has space'));
                                             $dropdown = new Dropdown("NPC Can Walk? [Yes/No]");
                                             $dropdown->addOption(new Option("choose", "Choose"));
                                             $dropdown->addOption(new Option("true", "Yes"));
@@ -96,7 +96,7 @@ class Commands extends PluginCommand
                                                 $dropdown->addOption(new Option(str_replace("_snpc", "", $saveNames[0]), ucfirst(str_replace("_snpc", " NPC", $saveNames[0]))));
                                                 $cusForm->addElement("type", $dropdown);
 
-                                                $cusForm->addElement("nametag", new Input("NPC Nametag: [null/string]\n" . 'Note: Use (" ") if nametag has space'));
+                                                $cusForm->addElement("nametag", new Input("NPC Nametag: [string]\n" . 'Note: Use (" ") if nametag has space'));
                                                 $player->sendForm($cusForm);
                                             }));
                                         }
@@ -137,7 +137,7 @@ class Commands extends PluginCommand
                     $sender->sendForm($form);
                     $cusForm->setSubmitListener(function (Player $player, FormResponse $response) use ($plugin) {
                         $type = strtolower($response->getDropdownSubmittedOptionId("type"));
-                        $nametag = $response->getInputSubmittedText("nametag");
+                        $nametag = $response->getInputSubmittedText("nametag") === "" ? $player->getName() : $response->getInputSubmittedText("nametag");
                         $walk = $response->getDropdownSubmittedOptionId("walk");
                         $skin = $response->getInputSubmittedText("skin") === "null" ? "" : $response->getInputSubmittedText("skin");
                         $npcEditId = $response->getInputSubmittedText("snpcid_edit");

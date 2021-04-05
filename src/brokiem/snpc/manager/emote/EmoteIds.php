@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace brokiem\snpc\manager\emote;
 
 class EmoteIds
