@@ -28,12 +28,22 @@ class CheckUpdateTask extends AsyncTask
         if ($data !== false) {
             $updates = json_decode($data, true);
 
-            $this->setResult([$updates["latest-version"], $updates["update-date"], $updates["update-url"]]);
+            if ($updates["latest-version"] != null or $updates["update-date"] != "" or $updates["update-url"] !== "") {
+                $this->setResult([$updates["latest-version"], $updates["update-date"], $updates["update-url"]]);
+                return;
+            }
+
+            $this->setResult(null);
         }
     }
 
     public function onCompletion(Server $server): void
     {
+        if ($this->getResult() === null) {
+            $server->getLogger()->debug("[SimpleNPC] Async update check failed");
+            return;
+        }
+
         [$latestVersion, $updateDate, $updateUrl] = $this->getResult();
 
         if ($this->version !== $latestVersion) {

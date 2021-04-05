@@ -1,22 +1,21 @@
 <h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/image.png" height="64" width="64" align="left" alt=""></h1><br>
 
-<b>Free open source resource NPC plugin made by brokiem for PocketMine-MP (_to ditch slapper_).</b><br>
+<b>An _Ultimate_ NPC plugin made by brokiem for PocketMine-MP.</b><br>
 [![License](https://img.shields.io/github/license/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC)
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC/stargazers)
+[![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbrokiem%26type%3Dpatrons&style=flat)](https://patreon.com/brokiem)
 [![](https://poggit.pmmp.io/shield.state/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
 [![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
-
-### Planned Features in V2.0
-- NPC with database saving
-- More more and more!
 
 ### Features
 - Migration from Slapper supported!
 - NPC can walk!
 - Set NPC skin with URL!
 - Register your own entity!
-- NPC with Emote! <b>(TODO!)</b>
 - NPC without nametag
+- NPC with custom data saving!
+- NPC with Cape supported!
+- NPC with Custom Geometry!
 - Edit NPC with UI/Form
 - Live updates without restart
 - Cooldown for commands
@@ -43,9 +42,10 @@ Did you find a bug or error when using this plugin? feel free to open the
 issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
 
 ### Developers
-If you want to register your own entity, take a look at this [plugin](https://github.com/brokiem/CustomEntity/)
+If you want to register your own entity, take a look at this [plugin](https://github.com/brokiem/CustomEntity/)<br>
+You can also customize NPCs geometry by customizing the NPC skins
 
-### Donate me
+### Donation
 Patreon - https://www.patreon.com/join/brokiem <br>
 Saweria - https://saweria.co/brokiem
 

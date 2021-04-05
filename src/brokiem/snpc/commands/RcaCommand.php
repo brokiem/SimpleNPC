@@ -27,7 +27,7 @@ class RcaCommand extends PluginCommand
         }
 
         if (count($args) < 2) {
-            $sender->sendMessage(TextFormat::RED . "Please enter a player and a command.");
+            $sender->sendMessage(TextFormat::YELLOW . "Please enter a player and a command.");
             return true;
         }
 
@@ -38,7 +38,6 @@ class RcaCommand extends PluginCommand
         }
 
         $sender->sendMessage(TextFormat::RED . "Player not found.");
-
         return parent::execute($sender, $commandLabel, $args);
     }
 }

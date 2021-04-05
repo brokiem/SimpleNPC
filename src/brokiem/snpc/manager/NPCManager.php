@@ -1,9 +1,11 @@
-<?php
+<?php /** @noinspection MkdirRaceConditionInspection */
 
 declare(strict_types=1);
 
 namespace brokiem\snpc\manager;
 
+use brokiem\snpc\entity\BaseNPC;
+use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\npc\BatNPC;
 use brokiem\snpc\entity\npc\BlazeNPC;
 use brokiem\snpc\entity\npc\ChickenNPC;
@@ -26,15 +28,17 @@ use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\entity\Entity;
+use pocketmine\level\Level;
 use pocketmine\level\Location;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 class NPCManager
 {
 
-    private static $npcs = [
+    public static $npcs = [
         BatNPC::class => ["bat_snpc", "simplenpc:bat"],
         BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
         ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],
@@ -67,14 +71,16 @@ class NPCManager
     public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null): bool
     {
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
-        $nbt->setTag($commands ?? new CompoundTag("Commands", []));
-        $nbt->setShort("Walk", 0);
-
         if ($customPos !== null) {
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
-        $entity = Entity::createEntity($type, $player->getLevel(), $nbt); // TODO: get rid of this function (doesn't exist in PM4)
+        $nbt->setTag($commands ?? new CompoundTag("Commands", []));
+        $nbt->setShort("Walk", 0);
+        $position = $customPos ?? $player;
+        $nbt->setString("Identifier", self::saveNPC($type, ["type" => $type, "nametag" => $nametag, "world" => $player->getLevel()->getFolderName(), "showNametag" => $nametag !== null, "skinId" => null, "skinData" => null, "capeData" => "", "geometryName" => "", "geometryData" => "", "walk" => 0, "commands" => $commands === null ? [] : $commands->getValue(), "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]]));
+
+        $entity = self::createEntity($type, $player->getLevel(), $nbt);
 
         if ($entity === null) {
             $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid, make sure you register the entity first!");
@@ -86,8 +92,61 @@ class NPCManager
             $entity->setNameTagAlwaysVisible();
         }
 
+        $entity->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
         $entity->spawnToAll();
         $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully!");
         return true;
+    }
+
+    public static function createEntity($type, Level $world, CompoundTag $nbt): ?Entity
+    {
+        if (isset(SimpleNPC::$entities[$type])) {
+            /** @var Entity $class */
+            $class = SimpleNPC::$entities[$type];
+
+            return new $class($world, $nbt);
+        }
+
+        return null;
+    }
+
+    public static function saveNPC(string $type, array $saves): string
+    {
+        if (!is_dir(SimpleNPC::getInstance()->getDataFolder() . "npcs")) {
+            mkdir(SimpleNPC::getInstance()->getDataFolder() . "npcs");
+        }
+
+        $identifier = uniqid("$type-", true);
+        $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . "$identifier.json";
+
+        $npcConfig = new Config($path, Config::JSON);
+        $npcConfig->set("version", SimpleNPC::getInstance()->getDescription()->getVersion());
+        $npcConfig->set("identifier", $identifier);
+        foreach ($saves as $save => $value) {
+            $npcConfig->set($save, $value);
+        }
+
+        $npcConfig->save();
+        return $identifier;
+    }
+
+    public static function removeNPC(string $identifier, Entity $entity): bool
+    {
+        if ($entity instanceof BaseNPC or $entity instanceof CustomHuman) {
+            if (!$entity->isFlaggedForDespawn()) {
+                $entity->flagForDespawn();
+            }
+
+            $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
+            if (!is_file($path)) {
+                return false;
+            }
+
+            unlink($path);
+            SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
+            return true;
+        }
+
+        return false;
     }
 }
