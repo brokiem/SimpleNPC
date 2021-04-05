@@ -35,7 +35,7 @@ class WalkingHuman extends CustomHuman
 
         if ($this->isUnderwater()) {
             $this->motion->y = $this->gravity * 2;
-            $this->jumpVelocity = 0.48;
+            $this->jumpVelocity = 0.54;
         }
 
         if ($this->shouldJump()) {
@@ -98,7 +98,7 @@ class WalkingHuman extends CustomHuman
             }
 
             $blockAboveEntity = $world->getBlockAt($x, $y + 1, $z);
-            $blockBelowEntity = $world->getBlockAt($x, $y - 1, $z);
+            $blockBelowEntity = $world->getBlockAt($x + 1, $y - 1, $z);
             if (!$blockAboveEntity instanceof Air || $blockBelowEntity instanceof Liquid) {
                 continue;
             }
