@@ -38,7 +38,7 @@ use pocketmine\utils\TextFormat;
 class NPCManager
 {
 
-    private static $npcs = [
+    public static $npcs = [
         BatNPC::class => ["bat_snpc", "simplenpc:bat"],
         BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
         ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],

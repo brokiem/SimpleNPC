@@ -75,16 +75,24 @@ class Commands extends PluginCommand
                             if ($button["function"] !== null) {
                                 switch ($button["function"]) {
                                     case "spawnNPC":
-                                        $cusForm->addElement("type", new Input("NPC Type: [Human, Cow, Etc]"));
-                                        $cusForm->addElement("nametag", new Input("NPC Nametag: [null/string]\n" . 'Note: Use (" ") if nametag has space'));
+                                        foreach (NPCManager::$npcs as $class => $saveNames) {
+                                            $simpleForm->addButton(new Button(ucfirst(str_replace("_snpc", " NPC", $saveNames[0])), null, function (Player $player) use ($saveNames, $cusForm) {
+                                                $dropdown = new Dropdown("Selected NPC:");
+                                                $dropdown->addOption(new Option(str_replace("_snpc", "", $saveNames[0]), ucfirst(str_replace("_snpc", " NPC", $saveNames[0]))));
+                                                $cusForm->addElement("type", $dropdown);
 
-                                        $dropdown = new Dropdown("NPC Can Walk? [Yes/No]\nOnly Human NPC");
-                                        $dropdown->addOption(new Option("choose", "Choose"));
-                                        $dropdown->addOption(new Option("true", "Yes"));
-                                        $dropdown->addOption(new Option("false", "No"));
-                                        $cusForm->addElement("walk", $dropdown);
-                                        $cusForm->addElement("skin", new Input("NPC Skin URL: [null/string]\nOnly Human NPC"));
-                                        $sender->sendForm($cusForm);
+                                                $cusForm->addElement("nametag", new Input("NPC Nametag: [null/string]\n" . 'Note: Use (" ") if nametag has space'));
+                                                $dropdown = new Dropdown("NPC Can Walk? [Yes/No]\nOnly Human NPC");
+                                                $dropdown->addOption(new Option("choose", "Choose"));
+                                                $dropdown->addOption(new Option("true", "Yes"));
+                                                $dropdown->addOption(new Option("false", "No"));
+                                                $cusForm->addElement("walk", $dropdown);
+                                                $cusForm->addElement("skin", new Input("NPC Skin URL: [null/string]\nOnly Human NPC"));
+                                                $player->sendForm($cusForm);
+                                            }));
+                                        }
+                                        $simpleForm->setHeaderText("Select NPC:");
+                                        $sender->sendForm($simpleForm);
                                         break;
                                     case "editNPC":
                                         $cusForm->addElement("snpcid_edit", new Input("Enter the NPC ID"));
@@ -119,7 +127,7 @@ class Commands extends PluginCommand
 
                     $sender->sendForm($form);
                     $cusForm->setSubmitListener(function (Player $player, FormResponse $response) use ($plugin) {
-                        $type = strtolower($response->getInputSubmittedText("type"));
+                        $type = strtolower($response->getDropdownSubmittedOptionId("type"));
                         $nametag = $response->getInputSubmittedText("nametag");
                         $walk = $response->getDropdownSubmittedOptionId("walk");
                         $skin = $response->getInputSubmittedText("skin") === "null" ? "" : $response->getInputSubmittedText("skin");
