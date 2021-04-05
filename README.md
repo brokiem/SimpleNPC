@@ -7,17 +7,13 @@
 [![](https://poggit.pmmp.io/shield.state/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
 [![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
 
-### Planned Features in V2.0
-- NPC with database saving
-- More more and more!
-
 ### Features
 - Migration from Slapper supported!
 - NPC can walk!
 - Set NPC skin with URL!
 - Register your own entity!
-- NPC with Emote! <b>(TODO!)</b>
 - NPC without nametag
+- NPC with custom data saving!
 - NPC with Cape supported!
 - NPC with Custom Geometry!
 - Edit NPC with UI/Form

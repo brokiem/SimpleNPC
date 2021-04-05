@@ -65,8 +65,11 @@ class EventHandler implements Listener
                     }
 
                     if (isset($this->plugin->removeNPC[$damager->getName()]) && !$entity->isFlaggedForDespawn()) {
-                        NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
-                        $damager->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+                        if (NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
+                            $damager->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+                        } else {
+                            $damager->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
+                        }
                         unset($this->plugin->removeNPC[$damager->getName()]);
                         return;
                     }

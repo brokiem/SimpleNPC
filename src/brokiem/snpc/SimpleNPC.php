@@ -137,7 +137,7 @@ class SimpleNPC extends PluginBase
                     continue;
                 }
                 if (!$world->loadChunk((int)$decoded["position"][0] >> 4, (int)$decoded["position"][2] >> 4)) {
-                    $this->getLogger()->debug("Spawn Ignored for NPC " . basename($path, ".json") . " because chunk is not populated or chunk is can't loaded");
+                    $this->getLogger()->debug("Spawn Ignored for NPC " . basename($path, ".json") . " because chunk is not populated or chunk can't loaded");
                     continue;
                 }
                 $nbt = Entity::createBaseNBT(new Location($decoded["position"][0], $decoded["position"][1], $decoded["position"][2], $decoded["position"][3], $decoded["position"][4], $world));
@@ -159,7 +159,7 @@ class SimpleNPC extends PluginBase
                         ])
                     );
 
-                    $entity = $decoded["walk"] === 0 ? new WalkingHuman($world, $nbt) : new CustomHuman($world, $nbt);
+                    $entity = $decoded["walk"] ? new WalkingHuman($world, $nbt) : new CustomHuman($world, $nbt);
                 } else {
                     $entity = NPCManager::createEntity($decoded["type"], $world, $nbt);
                     if ($entity === null) {
@@ -174,8 +174,10 @@ class SimpleNPC extends PluginBase
                     $entity->setNameTagAlwaysVisible();
                 }
 
-                $this->getLogger()->debug("Spawned NPC Entity: " . get_class($entity) . " (" . basename($path) . ")");
-                $entity->spawnToAll();
+                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($path, $entity): void {
+                    $this->getLogger()->debug("Spawned NPC Entity: " . get_class($entity) . " (" . basename($path) . ")");
+                    $entity->spawnToAll();
+                }), 80); // wait for chunk load
             }
         }
     }

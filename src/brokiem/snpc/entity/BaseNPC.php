@@ -36,4 +36,9 @@ class BaseNPC extends Entity
 
         $player->dataPacket($pk);
     }
+
+    public function getIdentifier(): string
+    {
+        return $this->namedtag->getString("Identifier");
+    }
 }

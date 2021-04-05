@@ -88,6 +88,7 @@ class URLToCapeTask extends AsyncTask
             $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid link detected (the link doesn't contain images)");
             return;
         }
+
         if (strlen($this->getResult()) !== 8192) {
             $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid cape detected [bytes=" . strlen($this->getResult()) . "] [supported=8192]");
             return;

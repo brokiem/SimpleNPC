@@ -133,19 +133,17 @@ class NPCManager
     public static function removeNPC(string $identifier, Entity $entity): bool
     {
         if ($entity instanceof BaseNPC or $entity instanceof CustomHuman) {
-            $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
+            if (!$entity->isFlaggedForDespawn()) {
+                $entity->flagForDespawn();
+            }
 
+            $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
             if (!is_file($path)) {
                 return false;
             }
 
             unlink($path);
             SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
-
-            if (!$entity->isFlaggedForDespawn()) {
-                $entity->flagForDespawn();
-            }
-
             return true;
         }
 

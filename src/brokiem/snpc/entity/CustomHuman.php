@@ -17,4 +17,9 @@ class CustomHuman extends Human
         $this->setCanSaveWithChunk(false);
         parent::__construct($level, $nbt);
     }
+
+    public function getIdentifier(): string
+    {
+        return $this->namedtag->getString("Identifier");
+    }
 }

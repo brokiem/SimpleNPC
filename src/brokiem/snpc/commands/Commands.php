@@ -220,8 +220,11 @@ class Commands extends PluginCommand
                         $entity = $plugin->getServer()->findEntity((int)$args[1]);
 
                         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                            NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
-                            $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+                            if (NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
+                                $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+                            } else {
+                                $sender->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
+                            }
                             return true;
                         }
 
