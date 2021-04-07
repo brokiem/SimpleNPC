@@ -35,44 +35,20 @@ use pocketmine\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
-class NPCManager
-{
+class NPCManager {
 
-    public static $npcs = [
-        BatNPC::class => ["bat_snpc", "simplenpc:bat"],
-        BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
-        ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],
-        CowNPC::class => ["cow_snpc", "simplenpc:cow"],
-        CreeperNPC::class => ["creeper_snpc", "simplenpc:creeper"],
-        EndermanNPC::class => ["enderman_snpc", "simplenpc:enderman"],
-        HorseNPC::class => ["horse_snpc", "simplenpc:horse"],
-        OcelotNPC::class => ["ocelot_snpc", "simplenpc:ocelot"],
-        PigNPC::class => ["pig_snpc", "simplenpc:pig"],
-        PolarBearNPC::class => ["polar_bear_snpc", "simplenpc:polarbear"],
-        SheepNPC::class => ["sheep_snpc", "simplenpc:sheep"],
-        ShulkerNPC::class => ["shulker_snpc", "simplenpc:shulker"],
-        SkeletonNPC::class => ["skeleton_snpc", "simplenpc:skeleton"],
-        SlimeNPC::class => ["slime_snpc", "simplenpc:slime"],
-        SnowGolem::class => ["snow_golem_snpc", "simplenpc:snowgolem"],
-        SpiderNPC::class => ["spider_snpc", "simplenpc:spider"],
-        VillagerNPC::class => ["villager_snpc", "simplenpc:villager"],
-        WitchNPC::class => ["witch_snpc", "simplenpc:witch"],
-        WolfNPC::class => ["wolf_snpc", "simplenpc:wolf"],
-        ZombieNPC::class => ["zombie_snpc", "simplenpc:zombie"]
-    ];
+    public static $npcs = [BatNPC::class => ["bat_snpc", "simplenpc:bat"], BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"], ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"], CowNPC::class => ["cow_snpc", "simplenpc:cow"], CreeperNPC::class => ["creeper_snpc", "simplenpc:creeper"], EndermanNPC::class => ["enderman_snpc", "simplenpc:enderman"], HorseNPC::class => ["horse_snpc", "simplenpc:horse"], OcelotNPC::class => ["ocelot_snpc", "simplenpc:ocelot"], PigNPC::class => ["pig_snpc", "simplenpc:pig"], PolarBearNPC::class => ["polar_bear_snpc", "simplenpc:polarbear"], SheepNPC::class => ["sheep_snpc", "simplenpc:sheep"], ShulkerNPC::class => ["shulker_snpc", "simplenpc:shulker"], SkeletonNPC::class => ["skeleton_snpc", "simplenpc:skeleton"], SlimeNPC::class => ["slime_snpc", "simplenpc:slime"], SnowGolem::class => ["snow_golem_snpc", "simplenpc:snowgolem"], SpiderNPC::class => ["spider_snpc", "simplenpc:spider"], VillagerNPC::class => ["villager_snpc", "simplenpc:villager"], WitchNPC::class => ["witch_snpc", "simplenpc:witch"], WolfNPC::class => ["wolf_snpc", "simplenpc:wolf"], ZombieNPC::class => ["zombie_snpc", "simplenpc:zombie"]];
 
-    public static function registerAllNPC(): void
-    {
-        foreach (self::$npcs as $class => $saveNames) {
+    public static function registerAllNPC(): void{
+        foreach(self::$npcs as $class => $saveNames){
             $saveName = array_shift($saveNames);
             SimpleNPC::registerEntity($class, $saveName, true, $saveNames);
         }
     }
 
-    public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null): bool
-    {
+    public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null): bool{
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
-        if ($customPos !== null) {
+        if($customPos !== null){
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
@@ -83,12 +59,12 @@ class NPCManager
 
         $entity = self::createEntity($type, $player->getLevel(), $nbt);
 
-        if ($entity === null) {
+        if($entity === null){
             $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid, make sure you register the entity first!");
             return false;
         }
 
-        if ($nametag !== null) {
+        if($nametag !== null){
             $entity->setNameTag($nametag);
             $entity->setNameTagAlwaysVisible();
         }
@@ -99,9 +75,8 @@ class NPCManager
         return true;
     }
 
-    public static function createEntity($type, Level $world, CompoundTag $nbt): ?Entity
-    {
-        if (isset(SimpleNPC::$entities[$type])) {
+    public static function createEntity($type, Level $world, CompoundTag $nbt): ?Entity{
+        if(isset(SimpleNPC::$entities[$type])){
             /** @var Entity $class */
             $class = SimpleNPC::$entities[$type];
 
@@ -111,9 +86,8 @@ class NPCManager
         return null;
     }
 
-    public static function saveNPC(string $type, array $saves): string
-    {
-        if (!is_dir(SimpleNPC::getInstance()->getDataFolder() . "npcs")) {
+    public static function saveNPC(string $type, array $saves): string{
+        if(!is_dir(SimpleNPC::getInstance()->getDataFolder() . "npcs")){
             mkdir(SimpleNPC::getInstance()->getDataFolder() . "npcs");
         }
 
@@ -123,7 +97,7 @@ class NPCManager
         $npcConfig = new Config($path, Config::JSON);
         $npcConfig->set("version", SimpleNPC::getInstance()->getDescription()->getVersion());
         $npcConfig->set("identifier", $identifier);
-        foreach ($saves as $save => $value) {
+        foreach($saves as $save => $value){
             $npcConfig->set($save, $value);
         }
 
@@ -131,15 +105,14 @@ class NPCManager
         return $identifier;
     }
 
-    public static function removeNPC(string $identifier, Entity $entity): bool
-    {
-        if ($entity instanceof BaseNPC or $entity instanceof CustomHuman) {
-            if (!$entity->isFlaggedForDespawn()) {
+    public static function removeNPC(string $identifier, Entity $entity): bool{
+        if($entity instanceof BaseNPC or $entity instanceof CustomHuman){
+            if(!$entity->isFlaggedForDespawn()){
                 $entity->flagForDespawn();
             }
 
             $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
-            if (!is_file($path)) {
+            if(!is_file($path)){
                 return false;
             }
 
@@ -154,13 +127,12 @@ class NPCManager
     /**
      * @return null|BaseNPC[]|CustomHuman[]
      */
-    public static function getAllNPCs(): ?array
-    {
+    public static function getAllNPCs(): ?array{
         $npcs = null;
-        foreach (SimpleNPC::getInstance()->getServer()->getLevels() as $world) {
-            $npcs = array_map(static function (Entity $entity): Entity {
+        foreach(SimpleNPC::getInstance()->getServer()->getLevels() as $world){
+            $npcs = array_map(static function (Entity $entity): Entity{
                 return $entity;
-            }, array_filter($world->getEntities(), static function (Entity $entity): bool {
+            }, array_filter($world->getEntities(), static function (Entity $entity): bool{
                 return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
             }));
         }
