@@ -149,4 +149,21 @@ class NPCManager
 
         return false;
     }
+
+    /**
+     * @return null|BaseNPC[]|CustomHuman[]
+     */
+    public static function getAllNPCs(): ?array
+    {
+        $npcs = null;
+        foreach (SimpleNPC::getInstance()->getServer()->getLevels() as $world) {
+            $npcs = array_map(static function (Entity $entity): Entity {
+                return $entity;
+            }, array_filter($world->getEntities(), static function (Entity $entity): bool {
+                return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
+            }));
+        }
+
+        return $npcs;
+    }
 }
