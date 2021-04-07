@@ -81,7 +81,7 @@ class SimpleNPC extends PluginBase
 
     private function initConfiguration(): void
     {
-        if (!is_dir(self::getInstance()->getDataFolder() . "npcs") && !mkdir($concurrentDirectory = self::getInstance()->getDataFolder() . "npcs") && !is_dir($concurrentDirectory)) {
+        if (!is_dir($this->getDataFolder() . "npcs") && !mkdir($concurrentDirectory = $this->getDataFolder() . "npcs") && !is_dir($concurrentDirectory)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
@@ -98,6 +98,8 @@ class SimpleNPC extends PluginBase
         $this->settings["lookToPlayersEnabled"] = $this->getConfig()->get("enable-look-to-players", true);
         $this->settings["maxLookDistance"] = $this->getConfig()->get("max-look-distance", 8);
         $this->settings["commandExecuteColdown"] = (float)$this->getConfig()->get("command-execute-coldown", 1.0);
+
+        $this->getLogger()->debug("InitConfig: Successfully!");
     }
 
     public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): bool
@@ -111,7 +113,13 @@ class SimpleNPC extends PluginBase
                 self::$entities[$saveName] = $entityClass;
             }
 
-            return Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
+            $register = Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
+            if ($register) {
+                self::getInstance()->getLogger()->debug("Entity $name ({$class->getShortName()}): Registered successfully!");
+            } else {
+                self::getInstance()->getLogger()->debug("Entity $name ({$class->getShortName()}): Register failed!");
+            }
+            return $register;
         }
 
         return false;
@@ -180,6 +188,8 @@ class SimpleNPC extends PluginBase
                 }), 80); // wait for chunk load
             }
         }
+
+        $this->getLogger()->debug("SpawnAllNPCs: Successfully!");
     }
 
     public function getSteveSkinData()

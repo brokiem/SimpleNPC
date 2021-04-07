@@ -32,9 +32,9 @@ class CheckUpdateTask extends AsyncTask
                 $this->setResult([$updates["latest-version"], $updates["update-date"], $updates["update-url"]]);
                 return;
             }
-
-            $this->setResult(null);
         }
+
+        $this->setResult(null);
     }
 
     public function onCompletion(Server $server): void

@@ -64,7 +64,8 @@ class NPCManager
     public static function registerAllNPC(): void
     {
         foreach (self::$npcs as $class => $saveNames) {
-            SimpleNPC::registerEntity($class, array_shift($saveNames), true, $saveNames);
+            $saveName = array_shift($saveNames);
+            SimpleNPC::registerEntity($class, $saveName, true, $saveNames);
         }
     }
 
