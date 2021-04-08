@@ -180,7 +180,7 @@ class Commands extends PluginCommand {
 
                     if(isset($args[1])){
                         if(in_array(strtolower($args[1]) . "_snpc", SimpleNPC::$npcType, true)){
-                            if($args[1] . "_snpc" === SimpleNPC::ENTITY_HUMAN){
+                            if(strtolower($args[1]) . "_snpc" === SimpleNPC::ENTITY_HUMAN){
                                 if(isset($args[4])){
                                     if(!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[4])){
                                         $sender->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
