@@ -46,6 +46,7 @@ class NPCManager {
         }
     }
 
+    /** @phpstan-ignore-next-line */
     public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null): bool{
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
         if($customPos !== null){
