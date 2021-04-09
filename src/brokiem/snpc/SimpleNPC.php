@@ -120,9 +120,8 @@ class SimpleNPC extends PluginBase {
     private function spawnAllNPCs(): void{
         foreach(glob($this->getDataFolder() . "npcs/*.json") as $path){
             $fileContents = file_get_contents($path);
+            /** @var array $decoded */
             $decoded = json_decode($fileContents, true);
-
-            if ($decoded === false) { continue; }
 
             if(in_array(strtolower($decoded["type"]), self::$npcType, true)){
                 if(($decoded["type"] === self::ENTITY_HUMAN) || $decoded["type"] === self::ENTITY_WALKING_HUMAN){

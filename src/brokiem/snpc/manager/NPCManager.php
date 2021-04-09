@@ -42,19 +42,10 @@ class NPCManager {
 
     public static function registerAllNPC(): void{
         foreach(self::$npcs as $class => $saveNames){
-            /** @phpstan-ignore-next-line */
             SimpleNPC::registerEntity($class, array_shift($saveNames), true, $saveNames);
         }
     }
 
-    /**
-     * @param string $type
-     * @param \pocketmine\Player $player
-     * @param string|null $nametag
-     * @param \pocketmine\nbt\tag\CompoundTag|null $commands
-     * @param \pocketmine\level\Location|null $customPos
-     * @return bool
-     */
     public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null): bool{
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
         if($customPos !== null){
