@@ -20,3 +20,5 @@ jobs:
           args: -O vendor/libEasyUI.phar https://poggit.pmmp.io/r/120837/libEasyUI_dev-5.phar
       - name: Run PHPStan
         uses: paroxity/pmmp-phpstan-action@3.19.0
+        with:
+          phpstan-config: phpstan.neon.dist
