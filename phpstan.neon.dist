@@ -1,0 +1,11 @@
+parameters:
+  paths:
+    - /source/src
+  level: 7
+  bootstrapFiles:
+    - phar:///pocketmine/PocketMine-MP.phar/vendor/autoload.php
+    - phpstan/bootstrap.php
+  scanDirectories:
+    - phar:///source/vendor/libEasyUI.phar/src/
+  excludes_analyse:
+    - source/vendor
