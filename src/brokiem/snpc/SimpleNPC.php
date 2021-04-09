@@ -118,6 +118,8 @@ class SimpleNPC extends PluginBase {
     }
 
     private function spawnAllNPCs(): void{
+        if (empty(glob($this->getDataFolder() . "npcs/*.json"))) { return; }
+
         foreach(glob($this->getDataFolder() . "npcs/*.json") as $path){
             $fileContents = file_get_contents($path);
             if ($fileContents === false) { continue; }
