@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.ref }}
-      - name: Create Vendor Directory
+      - name: Create vendor Directory
         run: |
           echo Making directory...
           mkdir vendor

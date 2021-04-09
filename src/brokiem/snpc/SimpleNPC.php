@@ -149,7 +149,6 @@ class SimpleNPC extends PluginBase {
                 $nbt->setString("Identifier", basename($path, ".json"));
 
                 if($decoded["type"] === self::ENTITY_HUMAN || $decoded["type"] === self::ENTITY_WALKING_HUMAN){
-                    /** @phpstan-ignore-next-line */
                     $nbt->setTag(new CompoundTag("Skin", ["Name" => new StringTag("Name", $decoded["skinId"]), "Data" => new ByteArrayTag("Data", in_array(strlen(base64_decode($decoded["skinData"])), Skin::ACCEPTED_SKIN_SIZES, true) ? base64_decode($decoded["skinData"]) : $this->getSteveSkinData()), "CapeData" => new ByteArrayTag("CapeData", strlen(base64_decode($decoded["capeData"])) === 8192 ? base64_decode($decoded["capeData"]) : ""), "GeometryName" => new StringTag("GeometryName", $decoded["geometryName"]), "GeometryData" => new ByteArrayTag("GeometryData", base64_decode($decoded["geometryData"]))]));
 
                     $entity = $decoded["walk"] ? new WalkingHuman($world, $nbt) : new CustomHuman($world, $nbt);
