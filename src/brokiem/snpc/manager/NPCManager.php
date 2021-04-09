@@ -46,7 +46,6 @@ class NPCManager {
         }
     }
 
-    /** @phpstan-ignore-next-line */
     public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null): bool{
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
         if($customPos !== null){
@@ -76,7 +75,7 @@ class NPCManager {
         return true;
     }
 
-    public static function createEntity($type, Level $world, CompoundTag $nbt): ?Entity{
+    public static function createEntity(string $type, Level $world, CompoundTag $nbt): ?Entity{
         if(isset(SimpleNPC::$entities[$type])){
             /** @var Entity $class */
             $class = SimpleNPC::$entities[$type];
