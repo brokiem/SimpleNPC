@@ -96,6 +96,10 @@ class SimpleNPC extends PluginBase {
     }
 
     public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): bool{
+        if(!class_exists($entityClass)){
+            throw new \ClassNotFoundException("Class $entityClass not found.");
+        }
+
         $class = new ReflectionClass($entityClass);
         if(is_a($entityClass, BaseNPC::class, true) or is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()){
             self::$entities[$entityClass] = array_merge($saveNames, [$name]);
@@ -105,13 +109,7 @@ class SimpleNPC extends PluginBase {
                 self::$entities[$saveName] = $entityClass;
             }
 
-            $register = Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
-            if($register){
-                self::getInstance()->getLogger()->debug("Entity $name ({$class->getShortName()}): Registered successfully!");
-            }else{
-                self::getInstance()->getLogger()->debug("Entity $name ({$class->getShortName()}): Register failed!");
-            }
-            return $register;
+            return Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
         }
 
         return false;
