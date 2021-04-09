@@ -10,4 +10,4 @@ parameters:
   excludes_analyse:
     - source/vendor
   checkMissingIterableValueType: false
-  checkGenericClassInNonGenericObjectType:
+  checkGenericClassInNonGenericObjectType: false
