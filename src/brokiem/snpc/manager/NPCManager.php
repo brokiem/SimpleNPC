@@ -37,12 +37,12 @@ use pocketmine\utils\TextFormat;
 
 class NPCManager {
 
+    /** @var array */
     public static $npcs = [BatNPC::class => ["bat_snpc", "simplenpc:bat"], BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"], ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"], CowNPC::class => ["cow_snpc", "simplenpc:cow"], CreeperNPC::class => ["creeper_snpc", "simplenpc:creeper"], EndermanNPC::class => ["enderman_snpc", "simplenpc:enderman"], HorseNPC::class => ["horse_snpc", "simplenpc:horse"], OcelotNPC::class => ["ocelot_snpc", "simplenpc:ocelot"], PigNPC::class => ["pig_snpc", "simplenpc:pig"], PolarBearNPC::class => ["polar_bear_snpc", "simplenpc:polarbear"], SheepNPC::class => ["sheep_snpc", "simplenpc:sheep"], ShulkerNPC::class => ["shulker_snpc", "simplenpc:shulker"], SkeletonNPC::class => ["skeleton_snpc", "simplenpc:skeleton"], SlimeNPC::class => ["slime_snpc", "simplenpc:slime"], SnowGolem::class => ["snow_golem_snpc", "simplenpc:snowgolem"], SpiderNPC::class => ["spider_snpc", "simplenpc:spider"], VillagerNPC::class => ["villager_snpc", "simplenpc:villager"], WitchNPC::class => ["witch_snpc", "simplenpc:witch"], WolfNPC::class => ["wolf_snpc", "simplenpc:wolf"], ZombieNPC::class => ["zombie_snpc", "simplenpc:zombie"]];
 
     public static function registerAllNPC(): void{
         foreach(self::$npcs as $class => $saveNames){
-            $saveName = array_shift($saveNames);
-            SimpleNPC::registerEntity($class, $saveName, true, $saveNames);
+            SimpleNPC::registerEntity($class, array_shift($saveNames), true, $saveNames);
         }
     }
 
@@ -75,7 +75,7 @@ class NPCManager {
         return true;
     }
 
-    public static function createEntity($type, Level $world, CompoundTag $nbt): ?Entity{
+    public static function createEntity(string $type, Level $world, CompoundTag $nbt): ?Entity{
         if(isset(SimpleNPC::$entities[$type])){
             /** @var Entity $class */
             $class = SimpleNPC::$entities[$type];

@@ -1,0 +1,13 @@
+parameters:
+  paths:
+    - /source/src
+  level: 7
+  bootstrapFiles:
+    - phar:///pocketmine/PocketMine-MP.phar/vendor/autoload.php
+  scanDirectories:
+    - phar:///source/vendor/libEasyUI.phar/src/
+    - phar:///source/vendor/Slapper.phar/src/
+  excludes_analyse:
+    - source/vendor
+  checkMissingIterableValueType: false
+  checkGenericClassInNonGenericObjectType: false

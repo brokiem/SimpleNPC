@@ -1,0 +1,28 @@
+name: PHPStan
+
+on: [push, pull_request]
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - name: Create vendor Directory
+        run: |
+          echo Making directory...
+          mkdir vendor
+          echo Directory made.
+      - name: Getting libEasyUI
+        uses: wei/wget@v1
+        with:
+          args: -O vendor/libEasyUI.phar https://poggit.pmmp.io/r/120837/libEasyUI_dev-5.phar
+      - name: Getting Slapper
+        uses: wei/wget@v1
+        with:
+          args: -O vendor/Slapper.phar https://poggit.pmmp.io/r/99841/Slapper.phar
+      - name: Run PHPStan
+        uses: paroxity/pmmp-phpstan-action@3.19.0
+        with:
+          phpstan-config: phpstan.neon.dist
