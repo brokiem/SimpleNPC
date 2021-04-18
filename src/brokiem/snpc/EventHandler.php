@@ -51,6 +51,8 @@ class EventHandler implements Listener {
 
         if($event instanceof EntityDamageByEntityEvent){
             if($entity instanceof CustomHuman || $entity instanceof BaseNPC){
+                $event->setCancelled();
+
                 $damager = $event->getDamager();
 
                 if($damager instanceof Player){
@@ -88,8 +90,6 @@ class EventHandler implements Listener {
                         }
                     }
                 }
-
-                $event->setCancelled();
             }
         }
     }

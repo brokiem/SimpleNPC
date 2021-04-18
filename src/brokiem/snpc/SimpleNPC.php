@@ -21,7 +21,6 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\UUID;
 use ReflectionClass;
-use RuntimeException;
 
 class SimpleNPC extends PluginBase {
     public const ENTITY_HUMAN = "human_snpc";
@@ -93,8 +92,8 @@ class SimpleNPC extends PluginBase {
     }
 
     private function initConfiguration(): void{
-        if(!is_dir($this->getDataFolder() . "npcs") && !mkdir($concurrentDirectory = $this->getDataFolder() . "npcs") && !is_dir($concurrentDirectory)){
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        if(!is_dir($this->getDataFolder() . "npcs")){
+            mkdir($this->getDataFolder() . "npcs");
         }
 
         if($this->getConfig()->get("config-version") !== 2){

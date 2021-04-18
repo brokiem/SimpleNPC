@@ -1,4 +1,4 @@
-name: PHPStan
+name: PHPStan Checker
 
 on: [push, pull_request]
 
