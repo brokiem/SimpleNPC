@@ -18,8 +18,9 @@ use EasyUI\element\Option;
 use EasyUI\utils\FormResponse;
 use EasyUI\variant\CustomForm;
 use EasyUI\variant\SimpleForm;
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
@@ -32,14 +33,18 @@ use pocketmine\utils\TextFormat;
 use slapper\entities\SlapperEntity;
 use slapper\entities\SlapperHuman;
 
-class Commands extends PluginCommand {
-    public function __construct(string $name, Plugin $owner){
-        parent::__construct($name, $owner);
-        $this->setDescription("SimpleNPC commands");
+class Commands extends Command implements PluginIdentifiableCommand {
+
+    /** @var SimpleNPC */
+    private $plugin;
+
+    public function __construct(string $name, SimpleNPC $owner){
+        $this->plugin = $owner;
+        parent::__construct($name, "SimpleNPC commands");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool{
-        if(!$this->testPermission($sender)){
+        if (!$this->testPermission($sender)) {
             return true;
         }
 
@@ -79,7 +84,7 @@ class Commands extends PluginCommand {
                                             $player->sendForm($cusForm);
                                         }));
 
-                                        foreach(NPCManager::$npcs as $class => $saveNames){
+                                        foreach(NPCManager::$npcs as $saveNames){
                                             $simpleForm->addButton(new Button(ucfirst(str_replace("_snpc", " NPC", $saveNames[0])), null, function (Player $player) use ($saveNames, $cusForm){
                                                 $dropdown = new Dropdown("Selected NPC:");
                                                 $dropdown->addOption(new Option(str_replace("_snpc", "", $saveNames[0]), ucfirst(str_replace("_snpc", " NPC", $saveNames[0]))));
@@ -552,6 +557,10 @@ class Commands extends PluginCommand {
             $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n§7---- ---- ---- - ---- ---- ----");
         }
 
-        return parent::execute($sender, $commandLabel, $args);
+        return true;
+    }
+
+    public function getPlugin(): Plugin{
+        return $this->plugin;
     }
 }

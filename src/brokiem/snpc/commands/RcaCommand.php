@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\commands;
 
+use brokiem\snpc\SimpleNPC;
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
 
-class RcaCommand extends PluginCommand {
+class RcaCommand extends Command implements PluginIdentifiableCommand {
 
-    public function __construct(string $name, Plugin $owner){
-        parent::__construct($name, $owner);
+    /** @var SimpleNPC */
+    private $plugin;
+
+    public function __construct(string $name, SimpleNPC $owner){
+        $this->plugin = $owner;
+        parent::__construct($name, "Execute command by player like sudo");
         $this->setPermission("simplenpc.rca");
-        $this->setDescription("Execute command by player like sudo");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool{
@@ -35,6 +40,10 @@ class RcaCommand extends PluginCommand {
         }
 
         $sender->sendMessage(TextFormat::RED . "Player not found.");
-        return parent::execute($sender, $commandLabel, $args);
+        return true;
+    }
+
+    public function getPlugin(): Plugin{
+        return $this->plugin;
     }
 }
