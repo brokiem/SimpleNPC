@@ -55,9 +55,9 @@ class NPCManager {
         $nbt->setTag($commands ?? new CompoundTag("Commands", []));
         $nbt->setShort("Walk", 0);
         $position = $customPos ?? $player;
-        $nbt->setString("Identifier", self::saveNPC($type, ["type" => $type, "nametag" => $nametag, "world" => $player->getLevel()->getFolderName(), "showNametag" => $nametag !== null, "skinId" => null, "skinData" => null, "capeData" => "", "geometryName" => "", "geometryData" => "", "walk" => 0, "commands" => $commands === null ? [] : $commands->getValue(), "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]]));
+        $nbt->setString("Identifier", self::saveNPC($type, ["type" => $type, "nametag" => $nametag, "world" => $player->getLevelNonNull()->getFolderName(), "showNametag" => $nametag !== null, "skinId" => null, "skinData" => null, "capeData" => "", "geometryName" => "", "geometryData" => "", "walk" => 0, "commands" => $commands === null ? [] : $commands->getValue(), "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]]));
 
-        $entity = self::createEntity($type, $player->getLevel(), $nbt);
+        $entity = self::createEntity($type, $player->getLevelNonNull(), $nbt);
 
         if($entity === null){
             $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid, make sure you register the entity first!");

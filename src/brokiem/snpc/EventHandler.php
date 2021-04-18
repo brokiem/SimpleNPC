@@ -128,7 +128,7 @@ class EventHandler implements Listener {
                 return;
             }
 
-            foreach($player->getLevel()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"]), $player) as $entity){
+            foreach($player->getLevelNonNull()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"]), $player) as $entity){
                 if(($entity instanceof CustomHuman) or $entity instanceof BaseNPC){
                     $angle = atan2($player->z - $entity->z, $player->x - $entity->x);
                     $yaw = (($angle * 180) / M_PI) - 90;

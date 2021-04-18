@@ -68,7 +68,7 @@ class WalkingHuman extends CustomHuman {
         $maxY = $minY + 16;
         $minZ = $this->getFloorZ() - 8;
         $maxZ = $minZ + 16;
-        $world = $this->getLevel();
+        $world = $this->getLevelNonNull();
 
         $x = mt_rand($minX, $maxX);
         $y = mt_rand($minY, $maxY);
@@ -99,7 +99,7 @@ class WalkingHuman extends CustomHuman {
         if($this->jumpTick === 0){
             $this->jumpTick = 30;
             $pos = $this->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
-            return $this->getLevel()->getBlock($pos)->getId() !== 0 and !$this->getLevel()->getBlock($pos) instanceof Flowable;
+            return $this->getLevelNonNull()->getBlock($pos)->getId() !== 0 and !$this->getLevelNonNull()->getBlock($pos) instanceof Flowable;
         }
 
         return false;

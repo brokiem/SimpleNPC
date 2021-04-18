@@ -106,7 +106,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                             $list = "";
                                             foreach($plugin->getServer()->getLevels() as $world){
                                                 $entityNames = array_map(static function (Entity $entity): string{
-                                                    return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                                                    return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevelNonNull()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
                                                 }, array_filter($world->getEntities(), static function (Entity $entity): bool{
                                                     return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                                                 }));
@@ -327,11 +327,11 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                                 $sender->sendForm($simpleForm);
                                                 break;
                                             case "teleport":
-                                                $simpleForm->addButton(new Button("You to Entity", null, function (Player $sender) use ($entity): void{
+                                                $simpleForm->addButton(new Button("You to NPC", null, function (Player $sender) use ($entity): void{
                                                     $sender->teleport($entity->getLocation());
                                                     $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                                                 }));
-                                                $simpleForm->addButton(new Button("Entity to You", null, function (Player $sender) use ($npcConfig, $entity): void{
+                                                $simpleForm->addButton(new Button("NPC to You", null, function (Player $sender) use ($npcConfig, $entity): void{
                                                     $entity->teleport($sender->getLocation());
                                                     if($entity instanceof WalkingHuman){
                                                         $entity->randomPosition = $entity->asVector3();
@@ -538,7 +538,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
 
                     foreach($plugin->getServer()->getLevels() as $world){
                         $entityNames = array_map(static function (Entity $entity): string{
-                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevel()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevelNonNull()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
                         }, array_filter($world->getEntities(), static function (Entity $entity): bool{
                             return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                         }));
