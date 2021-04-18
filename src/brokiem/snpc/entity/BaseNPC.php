@@ -17,6 +17,11 @@ class BaseNPC extends Entity {
         return $this->namedtag->getString("Identifier");
     }
 
+    protected function initEntity(): void{
+        $this->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
+        parent::initEntity();
+    }
+
     protected function sendSpawnPacket(Player $player): void{
         $pk = new AddActorPacket();
         $pk->entityRuntimeId = $this->getId();
