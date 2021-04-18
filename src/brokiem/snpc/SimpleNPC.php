@@ -26,15 +26,14 @@ use RuntimeException;
 class SimpleNPC extends PluginBase {
     public const ENTITY_HUMAN = "human_snpc";
     public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
-
-    /** @var self */
-    private static $i;
-    /** @var array */
-    public $migrateNPC = [];
     /** @var array */
     public static $npcType = [];
     /** @var array */
     public static $entities = [];
+    /** @var self */
+    private static $i;
+    /** @var array */
+    public $migrateNPC = [];
     /** @var array */
     public $removeNPC = [];
     /** @var array */
@@ -43,10 +42,14 @@ class SimpleNPC extends PluginBase {
     public $lastHit = [];
     /** @var array */
     public $cachedUpdate = [];
-    /** @var bool */
-    private $isDev = false;
     /** @var array */
     public $idPlayers = [];
+    /** @var bool */
+    private $isDev = false;
+
+    public static function getInstance(): self{
+        return self::$i;
+    }
 
     public function onEnable(): void{
         self::$i = $this;
@@ -69,8 +72,24 @@ class SimpleNPC extends PluginBase {
         }), 864000); // 12 hours
     }
 
-    public static function getInstance(): self{
-        return self::$i;
+    public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): bool{
+        if(!class_exists($entityClass)){
+            throw new \ClassNotFoundException("Class $entityClass not found.");
+        }
+
+        $class = new ReflectionClass($entityClass);
+        if(is_a($entityClass, BaseNPC::class, true) or is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()){
+            self::$entities[$entityClass] = array_merge($saveNames, [$name]);
+            self::$npcType[] = $name;
+
+            foreach(array_merge($saveNames, [$name]) as $saveName){
+                self::$entities[$saveName] = $entityClass;
+            }
+
+            return Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
+        }
+
+        return false;
     }
 
     private function initConfiguration(): void{
@@ -95,33 +114,18 @@ class SimpleNPC extends PluginBase {
         $this->getLogger()->debug("InitConfig: Successfully!");
     }
 
-    public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): bool{
-        if(!class_exists($entityClass)){
-            throw new \ClassNotFoundException("Class $entityClass not found.");
-        }
-
-        $class = new ReflectionClass($entityClass);
-        if(is_a($entityClass, BaseNPC::class, true) or is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()){
-            self::$entities[$entityClass] = array_merge($saveNames, [$name]);
-            self::$npcType[] = $name;
-
-            foreach(array_merge($saveNames, [$name]) as $saveName){
-                self::$entities[$saveName] = $entityClass;
-            }
-
-            return Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
-        }
-
-        return false;
-    }
-
     // entity now save with chunk again
+
     private function spawnAllNPCs(): void{
-        if (empty(glob($this->getDataFolder() . "npcs/*.json"))) { return; }
+        if(empty(glob($this->getDataFolder() . "npcs/*.json"))){
+            return;
+        }
 
         foreach(glob($this->getDataFolder() . "npcs/*.json") as $path){
             $fileContents = file_get_contents($path);
-            if ($fileContents === false) { continue; }
+            if($fileContents === false){
+                continue;
+            }
             /** @var array $decoded */
             $decoded = json_decode($fileContents, true);
 
@@ -135,7 +139,9 @@ class SimpleNPC extends PluginBase {
 
                 $this->getServer()->loadLevel($decoded["world"]);
                 $world = $this->getServer()->getLevelByName($decoded["world"]);
-                if($world === null){ continue; }
+                if($world === null){
+                    continue;
+                }
                 if(!$world->loadChunk((int)$decoded["position"][0] >> 4, (int)$decoded["position"][2] >> 4)){
                     $this->getLogger()->debug("Spawn Ignored for NPC " . basename($path, ".json") . " because chunk is not populated or chunk can't loaded");
                     continue;

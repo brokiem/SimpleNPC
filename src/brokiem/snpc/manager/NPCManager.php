@@ -75,17 +75,6 @@ class NPCManager {
         return true;
     }
 
-    public static function createEntity(string $type, Level $world, CompoundTag $nbt): ?Entity{
-        if(isset(SimpleNPC::$entities[$type])){
-            /** @var Entity $class */
-            $class = SimpleNPC::$entities[$type];
-
-            return new $class($world, $nbt);
-        }
-
-        return null;
-    }
-
     public static function saveNPC(string $type, array $saves): string{
         if(!is_dir(SimpleNPC::getInstance()->getDataFolder() . "npcs")){
             mkdir(SimpleNPC::getInstance()->getDataFolder() . "npcs");
@@ -103,6 +92,17 @@ class NPCManager {
 
         $npcConfig->save();
         return $identifier;
+    }
+
+    public static function createEntity(string $type, Level $world, CompoundTag $nbt): ?Entity{
+        if(isset(SimpleNPC::$entities[$type])){
+            /** @var Entity $class */
+            $class = SimpleNPC::$entities[$type];
+
+            return new $class($world, $nbt);
+        }
+
+        return null;
     }
 
     public static function removeNPC(string $identifier, Entity $entity): bool{

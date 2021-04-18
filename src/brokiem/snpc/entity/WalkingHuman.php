@@ -10,17 +10,17 @@ use pocketmine\block\Liquid;
 use pocketmine\math\Vector3;
 
 class WalkingHuman extends CustomHuman {
-    protected $gravity = 0.08;
     /** @var Vector3 */
     public $randomPosition;
+    protected $gravity = 0.08;
+    /** @var float */
+    protected $jumpVelocity = 0.45;
     /** @var int */
     private $findNewPosition = 0;
     /** @var float */
     private $speed = 0.35;
     /** @var int */
     private $jumpTick = 30;
-    /** @var float */
-    protected $jumpVelocity = 0.45;
 
     public function onUpdate(int $currentTick): bool{
         if($this->findNewPosition === 0 or $this->distance($this->randomPosition) <= 2){
@@ -61,16 +61,6 @@ class WalkingHuman extends CustomHuman {
         return parent::onUpdate($currentTick);
     }
 
-    public function shouldJump(): bool{
-        if($this->jumpTick === 0){
-            $this->jumpTick = 30;
-            $pos = $this->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
-            return $this->getLevel()->getBlock($pos)->getId() !== 0 and !$this->getLevel()->getBlock($pos) instanceof Flowable;
-        }
-
-        return false;
-    }
-
     public function generateRandomPosition(): void{
         $minX = $this->getFloorX() - 8;
         $maxX = $minX + 16;
@@ -105,7 +95,17 @@ class WalkingHuman extends CustomHuman {
         $this->randomPosition = new Vector3($x, $y + 1, $z);
     }
 
-    /** 
+    public function shouldJump(): bool{
+        if($this->jumpTick === 0){
+            $this->jumpTick = 30;
+            $pos = $this->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
+            return $this->getLevel()->getBlock($pos)->getId() !== 0 and !$this->getLevel()->getBlock($pos) instanceof Flowable;
+        }
+
+        return false;
+    }
+
+    /**
      * @return float
      */
     public function getSpeed(): float{

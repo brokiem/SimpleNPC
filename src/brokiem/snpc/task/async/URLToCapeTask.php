@@ -78,7 +78,9 @@ class URLToCapeTask extends AsyncTask {
         [$npc] = $this->fetchLocal();
         $player = $server->getPlayerExact($this->player);
 
-        if ($player === null) { return; }
+        if($player === null){
+            return;
+        }
 
         if($this->getResult() === null){
             $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid link detected (the link doesn't contain images)");
