@@ -125,7 +125,7 @@ class SpawnHumanNPCTask extends AsyncTask {
         $entity = $this->canWalk ? new WalkingHuman($player->getLevel(), $nbt) : new CustomHuman($player->getLevel(), $nbt);
 
         if($this->nametag !== null){
-            $entity->setNameTag(str_replace("{line}", PHP_EOL, $this->nametag));
+            $entity->setNameTag(str_replace("{line}", "\n", $this->nametag));
             $entity->setNameTagAlwaysVisible();
         }
 

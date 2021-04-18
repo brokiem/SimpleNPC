@@ -277,8 +277,8 @@ class Commands extends PluginCommand {
                                             $npcConfig->set("showNametag", true);
                                             $npcConfig->save();
                                             $entity->setNameTag($npcConfig->get("nametag"));
-                                            $entity->setNameTagAlwaysVisible(true);
-                                            $entity->setNameTagVisible(true);
+                                            $entity->setNameTagAlwaysVisible();
+                                            $entity->setNameTagVisible();
                                             $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
                                             break;
                                         case "hideNametag":

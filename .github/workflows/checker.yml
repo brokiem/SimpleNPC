@@ -14,11 +14,11 @@ jobs:
           echo Making directory...
           mkdir vendor
           echo Directory made.
-      - name: Getting libEasyUI
+      - name: Getting libEasyUI.phar
         uses: wei/wget@v1
         with:
           args: -O vendor/libEasyUI.phar https://poggit.pmmp.io/r/120837/libEasyUI_dev-5.phar
-      - name: Getting Slapper
+      - name: Getting Slapper.phar
         uses: wei/wget@v1
         with:
           args: -O vendor/Slapper.phar https://poggit.pmmp.io/r/99841/Slapper.phar

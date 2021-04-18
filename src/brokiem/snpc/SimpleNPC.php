@@ -60,7 +60,7 @@ class SimpleNPC extends PluginBase {
         NPCManager::registerAllNPC();
 
         $this->initConfiguration();
-        $this->spawnAllNPCs();
+        //$this->spawnAllNPCs();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [new Commands("snpc", $this), new RcaCommand("rca", $this)]);
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
 
@@ -115,6 +115,7 @@ class SimpleNPC extends PluginBase {
         return false;
     }
 
+    // entity now save with chunk again
     private function spawnAllNPCs(): void{
         if (empty(glob($this->getDataFolder() . "npcs/*.json"))) { return; }
 
@@ -163,7 +164,7 @@ class SimpleNPC extends PluginBase {
                 }
 
                 if($decoded["showNametag"]){
-                    $entity->setNameTag(str_replace("{line}", PHP_EOL, $decoded["nametag"]));
+                    $entity->setNameTag(str_replace("{line}", "\n", $decoded["nametag"]));
                     $entity->setNameTagAlwaysVisible();
                 }
 
