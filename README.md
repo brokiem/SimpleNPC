@@ -30,14 +30,14 @@ Join this Discord server for support [![Discord](https://img.shields.io/discord/
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/snpc``` | ```SimpleNPC command list``` | ```none``` | ```true``` |
-| ```/snpc ui``` | ```Manage npc with UI/Form``` | ```snpc.ui``` | ```op``` |
-| ```/snpc spawn``` | ```Spawn an npc``` | ```snpc.spawn``` | ```op``` |
-| ```/snpc edit``` | ```Edit the npc``` | ```snpc.edit``` | ```op``` |
-| ```/snpc id``` | ```Get the npc id``` | ```snpc.id``` | ```op``` |
-| ```/snpc reload``` | ```Reload plugin config``` | ```snpc.reload``` | ```op``` |
-| ```/snpc remove``` | ```Remove the npc``` | ```snpc.remove``` | ```op``` |
-| ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```snpc.migrate``` | ```op``` |
-| ```/snpc list``` | ```See the npc list``` | ```snpc.list``` | ```op``` |
+| ```/snpc ui``` | ```Manage npc with UI/Form``` | ```simplenpc.ui``` | ```op``` |
+| ```/snpc spawn``` | ```Spawn an npc``` | ```simplenpc.spawn``` | ```op``` |
+| ```/snpc edit``` | ```Edit the npc``` | ```simplenpc.edit``` | ```op``` |
+| ```/snpc id``` | ```Get the npc id``` | ```simplenpc.id``` | ```op``` |
+| ```/snpc reload``` | ```Reload plugin config``` | ```simplenpc.reload``` | ```op``` |
+| ```/snpc remove``` | ```Remove the npc``` | ```simplenpc.remove``` | ```op``` |
+| ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```simplenpc.migrate``` | ```op``` |
+| ```/snpc list``` | ```See the npc list``` | ```simplenpc.list``` | ```op``` |
 
 ### Issues
 Did you find a bug or error when using this plugin? feel free to open the

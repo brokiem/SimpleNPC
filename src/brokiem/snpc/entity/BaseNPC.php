@@ -15,11 +15,6 @@ class BaseNPC extends Entity {
 
     protected $gravity = 0.0;
 
-    public function __construct(Level $level, CompoundTag $nbt){
-        $this->setCanSaveWithChunk(false);
-        parent::__construct($level, $nbt);
-    }
-
     protected function sendSpawnPacket(Player $player): void{
         $pk = new AddActorPacket();
         $pk->entityRuntimeId = $this->getId();

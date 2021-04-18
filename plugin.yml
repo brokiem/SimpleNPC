@@ -10,23 +10,23 @@ softdepend: ["Slapper"]
 website: https://github.com/brokiem/SimpleNPC/
 
 permissions:
-  snpc.spawn:
+  simplenpc.spawn:
     default: op
-  snpc.edit:
+  simplenpc.edit:
     default: op
-  snpc.id:
+  simplenpc.id:
     default: op
-  snpc.notify:
+  simplenpc.notify:
     default: op
-  snpc.ui:
+  simplenpc.ui:
     default: op
-  snpc.reload:
+  simplenpc.reload:
     default: op
-  snpc.remove:
+  simplenpc.remove:
     default: op
-  snpc.migrate:
+  simplenpc.migrate:
     default: op
-  snpc.list:
+  simplenpc.list:
     default: op
-  snpc.rca:
+  simplenpc.rca:
     default: op

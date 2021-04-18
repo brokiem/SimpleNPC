@@ -33,7 +33,7 @@ class EventHandler implements Listener {
     public function onJoin(PlayerJoinEvent $event): void{
         $player = $event->getPlayer();
 
-        if($player->hasPermission("snpc.notify") && !empty($this->plugin->cachedUpdate)){
+        if($player->hasPermission("simplenpc.notify") && !empty($this->plugin->cachedUpdate)){
             [$latestVersion, $updateDate, $updateUrl] = $this->plugin->cachedUpdate;
 
             if($this->plugin->getDescription()->getVersion() !== $latestVersion){

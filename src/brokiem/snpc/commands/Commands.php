@@ -49,7 +49,7 @@ class Commands extends PluginCommand {
         if(isset($args[0])){
             switch(strtolower($args[0])){
                 case "ui":
-                    if(!$sender->hasPermission("snpc.ui") or (!$sender instanceof Player)){
+                    if(!$sender->hasPermission("simplenpc.ui") or (!$sender instanceof Player)){
                         return true;
                     }
 
@@ -97,7 +97,7 @@ class Commands extends PluginCommand {
                                         $sender->sendForm($cusForm);
                                         break;
                                     case "npcList":
-                                        if($sender->hasPermission("snpc.list")){
+                                        if($sender->hasPermission("simplenpc.list")){
                                             $list = "";
                                             foreach($plugin->getServer()->getLevels() as $world){
                                                 $entityNames = array_map(static function (Entity $entity): string{
@@ -147,7 +147,7 @@ class Commands extends PluginCommand {
                     });
                     break;
                 case "reload":
-                    if(!$sender->hasPermission("snpc.reload")){
+                    if(!$sender->hasPermission("simplenpc.reload")){
                         return true;
                     }
 
@@ -155,7 +155,7 @@ class Commands extends PluginCommand {
                     $sender->sendMessage(TextFormat::GREEN . "SimpleNPC Config reloaded successfully!");
                     break;
                 case "id":
-                    if(!$sender->hasPermission("snpc.id")){
+                    if(!$sender->hasPermission("simplenpc.id")){
                         return true;
                     }
 
@@ -174,7 +174,7 @@ class Commands extends PluginCommand {
                         return true;
                     }
 
-                    if(!$sender->hasPermission("snpc.spawn")){
+                    if(!$sender->hasPermission("simplenpc.spawn")){
                         return true;
                     }
 
@@ -219,7 +219,7 @@ class Commands extends PluginCommand {
                     break;
                 case "delete":
                 case "remove":
-                    if(!$sender->hasPermission("snpc.remove")){
+                    if(!$sender->hasPermission("simplenpc.remove")){
                         return true;
                     }
                     if(isset($args[1]) and is_numeric($args[1])){
@@ -249,7 +249,7 @@ class Commands extends PluginCommand {
                     break;
                 case "edit":
                 case "manage":
-                    if(!$sender->hasPermission("snpc.edit") or !$sender instanceof Player){
+                    if(!$sender->hasPermission("simplenpc.edit") or !$sender instanceof Player){
                         return true;
                     }
 
@@ -448,7 +448,7 @@ class Commands extends PluginCommand {
                     $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                     break;
                 case "migrate":
-                    if(!$sender->hasPermission("snpc.migrate")){
+                    if(!$sender->hasPermission("simplenpc.migrate")){
                         return true;
                     }
 
@@ -527,7 +527,7 @@ class Commands extends PluginCommand {
                     }
                     break;
                 case "list":
-                    if(!$sender->hasPermission("snpc.list")){
+                    if(!$sender->hasPermission("simplenpc.list")){
                         return true;
                     }
 
