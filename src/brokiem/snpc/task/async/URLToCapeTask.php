@@ -29,7 +29,7 @@ class URLToCapeTask extends AsyncTask {
     }
 
     public function onRun(): void{
-        $uniqId = uniqid('', true);
+        $uniqId = uniqid('cape', true);
         $parse = parse_url($this->url, PHP_URL_PATH);
 
         if($parse === null || $parse === false){

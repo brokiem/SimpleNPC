@@ -1,6 +1,6 @@
 <h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/image.png" height="64" width="64" align="left" alt=""></h1><br>
 
-<b>An _Ultimate_ NPC plugin made by brokiem for PocketMine-MP.</b><br>
+<b>An Ultimate NPC plugin made by brokiem for PocketMine-MP.</b><br>
 [![License](https://img.shields.io/github/license/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC)
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC/stargazers)
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbrokiem%26type%3Dpatrons&style=flat)](https://patreon.com/brokiem)
