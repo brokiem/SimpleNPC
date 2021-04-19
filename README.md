@@ -3,11 +3,9 @@
 <b>An Ultimate NPC plugin made by brokiem for PocketMine-MP.</b><br>
 [![License](https://img.shields.io/github/license/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC)
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC/stargazers)
+[![Discord](https://img.shields.io/discord/830063409000087612.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/jek7QnRDYy)
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbrokiem%26type%3Dpatrons&style=flat)](https://patreon.com/brokiem)
-[![](https://poggit.pmmp.io/shield.state/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
-[![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC) <br>
-
-Join this Discord server for support [![Discord](https://img.shields.io/discord/830063409000087612.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/jek7QnRDYy)
+[![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC) 
 
 ### Features
 - Migration from Slapper supported!

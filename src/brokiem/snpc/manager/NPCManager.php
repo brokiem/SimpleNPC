@@ -112,13 +112,12 @@ class NPCManager {
             }
 
             $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
-            if(!is_file($path)){
-                return false;
+            
+            if(is_file($path)){
+                unlink($path);
+                SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
+                return true;
             }
-
-            unlink($path);
-            SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
-            return true;
         }
 
         return false;

@@ -44,7 +44,7 @@ class SimpleNPC extends PluginBase {
     /** @var array */
     public $idPlayers = [];
     /** @var bool */
-    private $isDev = false;
+    private $isDev = true;
 
     public static function getInstance(): self{
         return self::$i;
