@@ -20,6 +20,7 @@ class BaseNPC extends Entity {
     protected function initEntity(): void{
         $this->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
         parent::initEntity();
+        $this->setNameTagAlwaysVisible();
     }
 
     protected function sendSpawnPacket(Player $player): void{

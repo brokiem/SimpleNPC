@@ -133,7 +133,7 @@ class SpawnHumanNPCTask extends AsyncTask {
         $ev->call();
         if(!$ev->isCancelled()){
             $entity->spawnToAll();
-            $player->sendMessage(TextFormat::GREEN . "NPC created successfully!");
+            $player->sendMessage(TextFormat::GREEN . "NPC created successfully! ID: " . $entity->getId());
         }
     }
 }

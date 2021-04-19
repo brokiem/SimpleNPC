@@ -71,7 +71,7 @@ class NPCManager {
 
         $entity->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
         $entity->spawnToAll();
-        $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully!");
+        $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully! ID: " . $entity->getId());
         return true;
     }
 
@@ -110,10 +110,8 @@ class NPCManager {
             if(!$entity->isFlaggedForDespawn()){
                 $entity->flagForDespawn();
             }
-
-            $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
             
-            if(is_file($path)){
+            if(is_file($path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json")){
                 unlink($path);
                 SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
                 return true;
