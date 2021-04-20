@@ -109,9 +109,6 @@ class WalkingHuman extends CustomHuman {
         return false;
     }
 
-    /**
-     * @return float
-     */
     public function getSpeed(): float{
         return ($this->isUnderwater() ? $this->speed / 2 : $this->speed);
     }

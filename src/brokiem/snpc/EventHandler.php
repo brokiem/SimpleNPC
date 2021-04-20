@@ -72,17 +72,18 @@ class EventHandler implements Listener {
                         return;
                     }
 
-                    if(!isset($this->plugin->lastHit[$damager->getName()][$entity->getId()])){
+                    if ($this->plugin->settings["enableCommandCooldown"] ?? true){
+                        if(!isset($this->plugin->lastHit[$damager->getName()][$entity->getId()])){
+                            $this->plugin->lastHit[$damager->getName()][$entity->getId()] = microtime(true);
+                        }
+
+                        $coldown = $this->plugin->settings["commandExecuteColdown"] ?? 1.0;
+                        if(($coldown + (float)$this->plugin->lastHit[$damager->getName()][$entity->getId()]) > microtime(true)){
+                            return;
+                        }
+
                         $this->plugin->lastHit[$damager->getName()][$entity->getId()] = microtime(true);
-                        return;
                     }
-
-                    $coldown = $this->plugin->settings["commandExecuteColdown"] ?? 1.0;
-                    if(($coldown + (float)$this->plugin->lastHit[$damager->getName()][$entity->getId()]) > microtime(true)){
-                        return;
-                    }
-
-                    $this->plugin->lastHit[$damager->getName()][$entity->getId()] = microtime(true);
 
                     if(($commands = $entity->namedtag->getCompoundTag("Commands")) !== null){
                         foreach($commands as $stringTag){
