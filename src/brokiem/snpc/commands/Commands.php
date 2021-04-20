@@ -156,6 +156,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         return true;
                     }
 
+                    $plugin->reloadConfig();
                     $plugin->initConfiguration();
                     $sender->sendMessage(TextFormat::GREEN . "SimpleNPC Config reloaded successfully!");
                     break;

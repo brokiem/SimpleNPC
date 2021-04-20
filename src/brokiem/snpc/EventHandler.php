@@ -72,7 +72,7 @@ class EventHandler implements Listener {
                         return;
                     }
 
-                    if ($this->plugin->settings["enableCommandCooldown"] ?? true){
+                    if($this->plugin->settings["enableCommandCooldown"] ?? true){
                         if(!isset($this->plugin->lastHit[$damager->getName()][$entity->getId()])){
                             $this->plugin->lastHit[$damager->getName()][$entity->getId()] = microtime(true);
                         }
