@@ -69,7 +69,6 @@ class NPCManager {
             $entity->setNameTagAlwaysVisible();
         }
 
-        $entity->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
         $entity->spawnToAll();
         $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully! ID: " . $entity->getId());
         return true;

@@ -23,6 +23,7 @@ use pocketmine\utils\UUID;
 use ReflectionClass;
 
 class SimpleNPC extends PluginBase {
+
     public const ENTITY_HUMAN = "human_snpc";
     public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
     /** @var array */
@@ -96,15 +97,15 @@ class SimpleNPC extends PluginBase {
             mkdir($this->getDataFolder() . "npcs");
         }
 
-        if($this->getConfig()->get("config-version") !== 3){
+        if($this->getConfig()->get("config-version", 1) !== 3){
             $this->getLogger()->notice("Your configuration file is outdated, updating the config.yml...");
             $this->getLogger()->notice("The old configuration file can be found at config.old.yml");
 
             rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.old.yml");
-
-            $this->saveDefaultConfig();
-            $this->reloadConfig();
         }
+
+        $this->saveDefaultConfig();
+        $this->reloadConfig();
 
         $this->settings["lookToPlayersEnabled"] = $this->getConfig()->get("enable-look-to-players", true);
         $this->settings["maxLookDistance"] = $this->getConfig()->get("max-look-distance", 8);

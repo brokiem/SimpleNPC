@@ -18,8 +18,8 @@ class BaseNPC extends Entity {
     }
 
     protected function initEntity(): void{
-        $this->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
         parent::initEntity();
+        $this->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
         $this->setNameTagAlwaysVisible();
     }
 
