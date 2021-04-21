@@ -9,14 +9,15 @@
 
 ### Features
 - Migration from Slapper supported!
+- Right click to interact!
 - NPC can walk!
 - Set NPC skin with URL!
 - Register your own entity!
-- NPC without nametag
 - NPC with custom data saving!
 - NPC with Cape supported!
 - NPC with Custom Geometry!
-- Edit NPC with UI/Form
+- Edit NPC with UI/Form!
+- NPC without nametag
 - Live updates without restart
 - Cooldown for commands
 - NPC can look at players
