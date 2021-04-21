@@ -46,7 +46,7 @@ class NPCManager {
         }
     }
 
-    public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null): bool{
+    public static function createNPC(string $type, Player $player, ?string $nametag = null, CompoundTag $commands = null, Location $customPos = null, bool $sendMessage = true): bool{
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
         if($customPos !== null){
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
@@ -60,7 +60,7 @@ class NPCManager {
         $entity = self::createEntity($type, $player->getLevelNonNull(), $nbt);
 
         if($entity === null){
-            $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid, make sure you register the entity first!");
+            if($sendMessage) $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid, make sure you register the entity first!");
             return false;
         }
 
@@ -70,7 +70,7 @@ class NPCManager {
         }
 
         $entity->spawnToAll();
-        $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully! ID: " . $entity->getId());
+        if($sendMessage) $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully! ID: " . $entity->getId());
         return true;
     }
 
