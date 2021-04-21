@@ -6,7 +6,6 @@ author: brokiem
 
 mcpe-protocol: [407, 408, 418, 419, 421, 422, 428, 431]
 
-softdepend: ["Slapper"]
 website: https://github.com/brokiem/SimpleNPC/
 
 permissions:
