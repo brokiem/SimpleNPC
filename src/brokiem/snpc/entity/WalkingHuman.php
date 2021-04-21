@@ -24,7 +24,7 @@ class WalkingHuman extends CustomHuman {
 
     public function onUpdate(int $currentTick): bool{
         if ($this->y <= 1) {
-            $this->teleport($this->getLevelNonNull()->getSafeSpawn());
+            $this->teleport($this->getLevelNonNull()->getSpawnLocation());
         }
 
         if($this->findNewPosition === 0 or $this->distance($this->randomPosition) <= 2){

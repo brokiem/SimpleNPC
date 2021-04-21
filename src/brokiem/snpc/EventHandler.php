@@ -8,6 +8,7 @@ use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\NPCManager;
 use pocketmine\command\ConsoleCommandSender;
+use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityMotionEvent;
@@ -15,28 +16,46 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\event\server\CommandEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\math\Vector2;
+use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\network\mcpe\protocol\MoveActorAbsolutePacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
+use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionData;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class EventHandler implements Listener {
+class EventHandler implements Listener
+{
 
     /** @var SimpleNPC */
     private $plugin;
 
-    public function __construct(SimpleNPC $plugin){
+    public function __construct(SimpleNPC $plugin)
+    {
         $this->plugin = $plugin;
     }
 
-    public function onJoin(PlayerJoinEvent $event): void{
+    public function onCommand(CommandEvent $event): void
+    {
+        $command = strtolower($event->getCommand());
+
+        // TODO: find another way to fix this
+        if ($command === "reload") {
+            $event->getSender()->sendMessage(TextFormat::RED . "[SimpleNPC] Don't use reload command or SimpleNPC NPC's will duplicate!");
+            $event->setCancelled();
+        }
+    }
+
+    public function onJoin(PlayerJoinEvent $event): void
+    {
         $player = $event->getPlayer();
 
-        if($player->hasPermission("simplenpc.notify") && !empty($this->plugin->cachedUpdate)){
+        if ($player->hasPermission("simplenpc.notify") && !empty($this->plugin->cachedUpdate)) {
             [$latestVersion, $updateDate, $updateUrl] = $this->plugin->cachedUpdate;
 
-            if($this->plugin->getDescription()->getVersion() !== $latestVersion){
+            if ($this->plugin->getDescription()->getVersion() !== $latestVersion) {
                 $player->sendMessage(" \n§aSimpleNPC §bv$latestVersion §ahas been released on §b$updateDate. §aDownload the new update at §b$updateUrl\n ");
             }
         }
@@ -55,51 +74,72 @@ class EventHandler implements Listener {
 
                 $damager = $event->getDamager();
 
-                if($damager instanceof Player){
-                    if(isset($this->plugin->idPlayers[$damager->getName()])){
-                        $damager->sendMessage(TextFormat::GREEN . "NPC ID: " . $entity->getId());
-                        unset($this->plugin->idPlayers[$damager->getName()]);
-                        return;
-                    }
-
-                    if(isset($this->plugin->removeNPC[$damager->getName()]) && !$entity->isFlaggedForDespawn()){
-                        if(NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity)){
-                            $damager->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
-                        }else{
-                            $damager->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
-                        }
-                        unset($this->plugin->removeNPC[$damager->getName()]);
-                        return;
-                    }
-
-                    if($this->plugin->settings["enableCommandCooldown"] ?? true){
-                        if(!isset($this->plugin->lastHit[$damager->getName()][$entity->getId()])){
-                            $this->plugin->lastHit[$damager->getName()][$entity->getId()] = microtime(true);
-                        }
-
-                        $coldown = $this->plugin->settings["commandExecuteColdown"] ?? 1.0;
-                        if(($coldown + (float)$this->plugin->lastHit[$damager->getName()][$entity->getId()]) > microtime(true)){
-                            return;
-                        }
-
-                        $this->plugin->lastHit[$damager->getName()][$entity->getId()] = microtime(true);
-                    }
-
-                    if(($commands = $entity->namedtag->getCompoundTag("Commands")) !== null){
-                        foreach($commands as $stringTag){
-                            $this->plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender(), str_replace("{player}", '"' . $damager->getName() . '"', $stringTag->getValue()));
-                        }
-                    }
+                if ($damager instanceof Player) {
+                    $this->interact($entity, $damager);
                 }
             }
         }
     }
 
-    public function onMotion(EntityMotionEvent $event): void{
+    public function onDataPacketRecieve(DataPacketReceiveEvent $event): void
+    {
+        $player = $event->getPlayer();
+        $packet = $event->getPacket();
+
+        if ($packet instanceof InventoryTransactionPacket && $packet->trData instanceof UseItemOnEntityTransactionData && $packet->trData->getActionType() === UseItemOnEntityTransactionData::ACTION_INTERACT) {
+            $entity = $this->plugin->getServer()->findEntity($packet->trData->getEntityRuntimeId());
+
+            if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+                $this->interact($entity, $player);
+            }
+        }
+    }
+
+    // TODO: move this to npc manager
+    public function interact(Entity $entity, Player $player): void
+    {
+        if (isset($this->plugin->idPlayers[$player->getName()])) {
+            $player->sendMessage(TextFormat::GREEN . "NPC ID: " . $entity->getId());
+            unset($this->plugin->idPlayers[$player->getName()]);
+            return;
+        }
+
+        if (isset($this->plugin->removeNPC[$player->getName()]) && !$entity->isFlaggedForDespawn()) {
+            if (NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
+                $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+            } else {
+                $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
+            }
+            unset($this->plugin->removeNPC[$player->getName()]);
+            return;
+        }
+
+        if ($this->plugin->settings["enableCommandCooldown"] ?? true) {
+            if (!isset($this->plugin->lastHit[$player->getName()][$entity->getId()])) {
+                $this->plugin->lastHit[$player->getName()][$entity->getId()] = microtime(true);
+            }
+
+            $coldown = $this->plugin->settings["commandExecuteColdown"] ?? 1.0;
+            if (($coldown + (float)$this->plugin->lastHit[$player->getName()][$entity->getId()]) > microtime(true)) {
+                return;
+            }
+
+            $this->plugin->lastHit[$player->getName()][$entity->getId()] = microtime(true);
+        }
+
+        if (($commands = $entity->namedtag->getCompoundTag("Commands")) !== null) {
+            foreach ($commands as $stringTag) {
+                $this->plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender(), str_replace("{player}", '"' . $player->getName() . '"', $stringTag->getValue()));
+            }
+        }
+    }
+
+    public function onMotion(EntityMotionEvent $event): void
+    {
         $entity = $event->getEntity();
 
-        if($entity instanceof CustomHuman || $entity instanceof BaseNPC){
-            if($entity->namedtag->hasTag("Walk") && $entity->namedtag->getShort("Walk") === 0){
+        if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
+            if ($entity->namedtag->hasTag("Walk") && $entity->namedtag->getShort("Walk") === 0) {
                 $event->setCancelled();
             }
         }
