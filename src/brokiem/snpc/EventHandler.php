@@ -43,7 +43,7 @@ class EventHandler implements Listener
 
         // TODO: find another way to fix this
         if ($command === "reload") {
-            $event->getSender()->sendMessage(TextFormat::RED . "[SimpleNPC] Don't use reload command or SimpleNPC NPC's will duplicate!");
+            $event->getSender()->sendMessage(TextFormat::RED . "[SimpleNPC] Don't use reload command or SimpleNPC NPC's will duplicates!");
             $event->setCancelled();
         }
     }

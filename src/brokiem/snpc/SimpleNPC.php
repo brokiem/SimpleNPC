@@ -110,7 +110,7 @@ class SimpleNPC extends PluginBase {
         $this->settings["lookToPlayersEnabled"] = $this->getConfig()->get("enable-look-to-players", true);
         $this->settings["maxLookDistance"] = $this->getConfig()->get("max-look-distance", 8);
         $this->settings["enableCommandCooldown"] = $this->getConfig()->get("enable-command-cooldown", true);
-        $this->settings["commandExecuteColdown"] = (float)$this->getConfig()->get("command-execute-coldown", 1.0);
+        $this->settings["commandExecuteColdown"] = (float)$this->getConfig()->get("command-execute-cooldown", 1.0);
 
         $this->getLogger()->debug("InitConfig: Successfully!");
     }

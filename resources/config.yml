@@ -18,4 +18,4 @@ max-look-distance: 8
 enable-command-cooldown: true
 # Coldown executing command when hit the NPC
 # Default: 1.0 (float)
-commandExecuteColdown: 1.0
+command-execute-cooldown: 1.0
