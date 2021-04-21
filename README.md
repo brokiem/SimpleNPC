@@ -8,19 +8,19 @@
 [![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC) 
 
 ### Features
-- Migration from Slapper supported!
-- Right click to interact!
-- NPC can walk!
-- Set NPC skin with URL!
-- Register your own entity!
-- NPC with custom data saving!
-- NPC with Cape supported!
-- NPC with Custom Geometry!
-- Edit NPC with UI/Form!
-- NPC without nametag
-- Live updates without restart
-- Cooldown for commands
-- NPC can look at players
+- Migration from Slapper supported! ✔
+- Right click to interact! ✔
+- NPC can walk! ✔
+- Set NPC skin with URL! ✔
+- Register your own entity! ✔
+- NPC with custom data saving! ✔
+- NPC with Cape supported! ✔
+- NPC with Custom Geometry! ✔
+- Edit NPC with UI/Form! ✔
+- NPC without nametag ✔
+- Live updates without restart ✔
+- Cooldown for commands ✔
+- NPC can look at players ✔
 - Lightweight & Open Source ❤
 
 ### Commands
