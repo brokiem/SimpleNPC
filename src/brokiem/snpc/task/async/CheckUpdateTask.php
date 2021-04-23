@@ -25,7 +25,7 @@ class CheckUpdateTask extends AsyncTask {
         if($data !== false){
             $updates = json_decode($data, true);
 
-            if($updates["latest-version"] != null or $updates["update-date"] != "" or $updates["update-url"] !== ""){
+            if ($updates["latest-version"] != null || $updates["update-date"] != "" || $updates["update-url"] !== "") {
                 $this->setResult([$updates["latest-version"], $updates["update-date"], $updates["update-url"]]);
                 return;
             }

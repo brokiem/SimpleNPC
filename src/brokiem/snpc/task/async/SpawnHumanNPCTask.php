@@ -47,7 +47,7 @@ class SpawnHumanNPCTask extends AsyncTask {
             $uniqId = uniqid($this->nametag, true);
             $parse = parse_url($this->skinUrl, PHP_URL_PATH);
 
-            if($parse === null or $parse === false){
+            if ($parse === null || $parse === false) {
                 $this->setResult(null);
                 return;
             }
@@ -55,7 +55,7 @@ class SpawnHumanNPCTask extends AsyncTask {
             $extension = pathinfo($parse, PATHINFO_EXTENSION);
             $data = Internet::getURL($this->skinUrl);
 
-            if(($data === false) or $extension !== "png"){
+            if ($data === false || $extension !== "png") {
                 $this->setResult(null);
                 return;
             }

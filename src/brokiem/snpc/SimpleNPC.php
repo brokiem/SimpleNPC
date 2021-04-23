@@ -74,7 +74,7 @@ class SimpleNPC extends PluginBase {
         }
 
         $class = new ReflectionClass($entityClass);
-        if(is_a($entityClass, BaseNPC::class, true) or is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()){
+        if (is_a($entityClass, BaseNPC::class, true) || is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
             self::$entities[$entityClass] = array_merge($saveNames, [$name]);
             self::$npcType[] = $name;
 

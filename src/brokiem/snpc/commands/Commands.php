@@ -54,7 +54,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
         if(isset($args[0])){
             switch(strtolower($args[0])){
                 case "ui":
-                    if(!$sender->hasPermission("simplenpc.ui") or (!$sender instanceof Player)){
+                    if (!$sender->hasPermission("simplenpc.ui") or !$sender instanceof Player) {
                         return true;
                     }
 
@@ -224,20 +224,20 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     break;
                 case "delete":
                 case "remove":
-                    if(!$sender->hasPermission("simplenpc.remove")){
+                if (!$sender->hasPermission("simplenpc.remove")) {
+                    return true;
+                }
+                if (isset($args[1]) && is_numeric($args[1])) {
+                    $entity = $plugin->getServer()->findEntity((int)$args[1]);
+
+                    if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+                        if (NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
+                            $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+                        } else {
+                            $sender->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
+                        }
                         return true;
                     }
-                    if(isset($args[1]) and is_numeric($args[1])){
-                        $entity = $plugin->getServer()->findEntity((int)$args[1]);
-
-                        if($entity instanceof BaseNPC || $entity instanceof CustomHuman){
-                            if(NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity)){
-                                $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
-                            }else{
-                                $sender->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
-                            }
-                            return true;
-                        }
 
                         $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
                         return true;
@@ -258,10 +258,10 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         return true;
                     }
 
-                    if(!isset($args[1]) or !is_numeric($args[1])){
-                        $sender->sendMessage(TextFormat::RED . "Usage: /snpc edit <id>");
-                        return true;
-                    }
+                if (!isset($args[1]) || !is_numeric($args[1])) {
+                    $sender->sendMessage(TextFormat::RED . "Usage: /snpc edit <id>");
+                    return true;
+                }
 
                     $entity = $plugin->getServer()->findEntity((int)$args[1]);
 

@@ -27,7 +27,7 @@ class WalkingHuman extends CustomHuman {
             $this->teleport($this->getLevelNonNull()->getSpawnLocation());
         }
 
-        if($this->findNewPosition === 0 or $this->distance($this->randomPosition) <= 2){
+        if ($this->findNewPosition === 0 || $this->distance($this->randomPosition) <= 2) {
             $this->findNewPosition = mt_rand(150, 300);
             $this->generateRandomPosition();
         }
