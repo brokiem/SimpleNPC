@@ -64,7 +64,7 @@ class SimpleNPC extends PluginBase {
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
 
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void{
-            $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getVersion(), $this));
+            $this->checkUpdate();
         }), 864000); // 12 hours
     }
 
@@ -88,13 +88,11 @@ class SimpleNPC extends PluginBase {
         return false;
     }
 
-    public static function getInstance(): self
-    {
+    public static function getInstance(): self{
         return self::$i;
     }
 
-    public function initConfiguration(): void
-    {
+    public function initConfiguration(): void{
         if (!is_dir($this->getDataFolder() . "npcs")) {
             mkdir($this->getDataFolder() . "npcs");
         }
@@ -115,6 +113,10 @@ class SimpleNPC extends PluginBase {
         $this->settings["commandExecuteCooldown"] = (float)$this->getConfig()->get("command-execute-cooldown", 1.0);
 
         $this->getLogger()->debug("InitConfig: Successfully!");
+    }
+
+    public function checkUpdate(bool $value = false): void{
+        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this, $value));
     }
 
     // entity now save with chunk again

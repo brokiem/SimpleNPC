@@ -9,45 +9,78 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
 
-class CheckUpdateTask extends AsyncTask {
-    private const UPDATES_URL = "https://raw.githubusercontent.com/brokiem/SimpleNPC/master/updates.json";
+class CheckUpdateTask extends AsyncTask
+{
+
+    private const POGGIT_URL = "https://poggit.pmmp.io/releases.json?name=";
     /** @var string */
     private $version;
+    /** @var string */
+    private $name;
+    /** @var bool */
+    private $retry;
 
-    public function __construct(string $version, SimpleNPC $plugin){
-        $this->version = $version;
+    public function __construct(SimpleNPC $plugin, bool $retry){
+        $this->retry = $retry;
+        $this->name = $plugin->getDescription()->getName();
+        $this->version = $plugin->getDescription()->getVersion();
         $this->storeLocal([$plugin]);
     }
 
     public function onRun(): void{
-        $data = Internet::getURL(self::UPDATES_URL);
+        $poggitData = Internet::getURL(self::POGGIT_URL . $this->name);
 
-        if($data !== false){
-            $updates = json_decode($data, true);
-
-            if ($updates["latest-version"] != null || $updates["update-date"] != "" || $updates["update-url"] !== "") {
-                $this->setResult([$updates["latest-version"], $updates["update-date"], $updates["update-url"]]);
-                return;
-            }
-        }
-
-        $this->setResult(null);
-    }
-
-    public function onCompletion(Server $server): void{
-        if($this->getResult() === null){
-            $server->getLogger()->debug("[SimpleNPC] Async update check failed");
+        if (!$poggitData) {
+            $this->setResult(null);
             return;
         }
 
-        [$latestVersion, $updateDate, $updateUrl] = $this->getResult();
+        $poggit = json_decode($poggitData, true);
 
-        if($this->version !== $latestVersion){
-            /** @var SimpleNPC $plugin */
-            [$plugin] = $this->fetchLocal();
+        if (!is_array($poggit)) {
+            $this->setResult(null);
+            return;
+        }
 
-            $plugin->getLogger()->notice("SimpleNPC v$latestVersion has been released on $updateDate. Download the new update at $updateUrl");
-            $plugin->cachedUpdate = [$latestVersion, $updateDate, $updateUrl];
+        $version = "";
+        $date = "";
+        $updateUrl = "";
+
+        foreach ($poggit as $pog) {
+            if (version_compare($this->version, str_replace("-beta", "", $pog["version"]), ">=")) {
+                continue;
+            }
+
+            $version = $pog["version"]; $date = $pog["last_state_change_date"]; $updateUrl = $pog["html_url"];
+        }
+
+        $this->setResult([$version, $date, $updateUrl]);
+    }
+
+    public function onCompletion(Server $server): void{
+        /** @var SimpleNPC $plugin */
+        [$plugin] = $this->fetchLocal();
+
+        if ($this->getResult() === null) {
+            $server->getLogger()->debug("[SimpleNPC] Async update check failed!");
+
+            if (!$this->retry) {
+                $plugin->checkUpdate(true);
+                $this->retry = true;
+            }
+
+            return;
+        }
+
+        [$latestVersion, $updateDateUnix, $updateUrl] = $this->getResult();
+
+        if ($latestVersion !== "" || $updateDateUnix !== "" || $updateUrl !== "") {
+            $updateDate = date("j F Y", (int)$updateDateUnix);
+
+            if ($this->version !== $latestVersion) {
+                $plugin->getLogger()->notice("SimpleNPC v$latestVersion has been released on $updateDate. Download the new update at $updateUrl");
+                $plugin->cachedUpdate = [$latestVersion, $updateDate, $updateUrl];
+            }
         }
     }
 }
