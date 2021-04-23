@@ -42,9 +42,7 @@ class CheckUpdateTask extends AsyncTask
             return;
         }
 
-        $version = "";
-        $date = "";
-        $updateUrl = "";
+        $version = ""; $date = ""; $updateUrl = "";
 
         foreach ($poggit as $pog) {
             if (version_compare($this->version, str_replace("-beta", "", $pog["version"]), ">=")) {
@@ -74,7 +72,7 @@ class CheckUpdateTask extends AsyncTask
 
         [$latestVersion, $updateDateUnix, $updateUrl] = $this->getResult();
 
-        if ($latestVersion !== "" || $updateDateUnix !== "" || $updateUrl !== "") {
+        if ($latestVersion != "" || $updateDateUnix != null || $updateUrl !== "") {
             $updateDate = date("j F Y", (int)$updateDateUnix);
 
             if ($this->version !== $latestVersion) {
