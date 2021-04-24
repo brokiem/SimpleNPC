@@ -403,11 +403,11 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                 $pCape = $player->getServer()->getPlayerExact($cape);
 
                                 if($pCape instanceof Player){
-                                    $capeSkin = new Skin($entity->getSkin()->getSkinId(), $entity->getSkin()->getSkinData(), $player->getSkin()->getCapeData(), $entity->getSkin()->getGeometryName(), $entity->getSkin()->getGeometryData());
+                                    $capeSkin = new Skin($entity->getSkin()->getSkinId(), $entity->getSkin()->getSkinData(), $pCape->getSkin()->getCapeData(), $entity->getSkin()->getGeometryName(), $entity->getSkin()->getGeometryData());
                                     $entity->setSkin($capeSkin);
                                     $entity->sendSkin();
 
-                                    $npcConfig->set("capeData", base64_encode($player->getSkin()->getCapeData()));
+                                    $npcConfig->set("capeData", base64_encode($pCape->getSkin()->getCapeData()));
                                     $npcConfig->save();
                                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                                     return true;
