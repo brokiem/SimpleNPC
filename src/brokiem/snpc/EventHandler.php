@@ -185,7 +185,7 @@ class EventHandler implements Listener
                             $pk->pitch = $pitch;
                             $pk->headYaw = $yaw;
                             $pk->onGround = $entity->onGround;
-                            $player->sendDataPacket($pk, false, false);
+                            $player->sendDataPacket($pk);
                         }elseif($entity instanceof BaseNPC and $entity->namedtag->getShort("Walk") === 0){
                             $pk = new MoveActorAbsolutePacket();
                             $pk->entityRuntimeId = $entity->getId();
@@ -193,7 +193,7 @@ class EventHandler implements Listener
                             $pk->xRot = $pitch;
                             $pk->yRot = $yaw;
                             $pk->zRot = $yaw;
-                            $player->sendDataPacket($pk, false, false);
+                            $player->sendDataPacket($pk);
                         }
                     }
                 }

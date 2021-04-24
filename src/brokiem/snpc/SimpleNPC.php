@@ -104,7 +104,6 @@ class SimpleNPC extends PluginBase {
             rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.old.yml");
         }
 
-        $this->saveDefaultConfig();
         $this->reloadConfig();
 
         $this->settings["lookToPlayersEnabled"] = $this->getConfig()->get("enable-look-to-players", true);

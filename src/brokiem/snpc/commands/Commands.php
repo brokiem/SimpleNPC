@@ -284,7 +284,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                             $entity->setNameTag($npcConfig->get("nametag"));
                                             $entity->setNameTagAlwaysVisible();
                                             $entity->setNameTagVisible();
-                                            $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
+                                            $sender->sendMessage(TextFormat::GREEN . "Successfully showing NPC nametag (NPC ID: " . $entity->getId() . ")");
                                             break;
                                         case "hideNametag":
                                             $npcConfig->set("showNametag", false);
@@ -292,7 +292,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                             $entity->setNameTag("");
                                             $entity->setNameTagAlwaysVisible(false);
                                             $entity->setNameTagVisible(false);
-                                            $sender->sendMessage(TextFormat::GREEN . "Successfully removed NPC nametag (NPC ID: " . $entity->getId() . ")");
+                                            $sender->sendMessage(TextFormat::GREEN . "Successfully remove NPC nametag (NPC ID: " . $entity->getId() . ")");
                                             break;
                                     }
                                 }));
@@ -409,7 +409,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
 
                                     $npcConfig->set("capeData", base64_encode($pCape->getSkin()->getCapeData()));
                                     $npcConfig->save();
-                                    $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
+                                    $player->sendMessage(TextFormat::GREEN . "Successfully change npc cape (NPC ID: " . $entity->getId() . ")");
                                     return true;
                                 }
 
@@ -450,7 +450,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         $sender->sendForm($editUI);
                         return true;
                     }
-                    $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC Entity with ID: " . $args[1] . " not found!");
+                    $sender->sendMessage(TextFormat::YELLOW . "SimpleNPC NPC with ID: " . $args[1] . " not found!");
                     break;
                 case "migrate":
                     if(!$sender->hasPermission("simplenpc.migrate")){
