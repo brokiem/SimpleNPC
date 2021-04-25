@@ -20,7 +20,7 @@ class URLToCapeTask extends AsyncTask {
     /** @var string */
     private $player;
 
-    public function __construct(string $url, string $dataPath, CustomHuman $npc, string $player){
+    public function __construct(string $url, string $dataPath, CustomHuman $npc, string $player) {
         $this->dataPath = $dataPath;
         $this->url = $url;
         $this->player = $player;
@@ -28,11 +28,11 @@ class URLToCapeTask extends AsyncTask {
         $this->storeLocal([$npc]);
     }
 
-    public function onRun(): void{
+    public function onRun(): void {
         $uniqId = uniqid('cape', true);
         $parse = parse_url($this->url, PHP_URL_PATH);
 
-        if($parse === null || $parse === false){
+        if ($parse === null || $parse === false) {
             $this->setResult(null);
             return;
         }
@@ -40,7 +40,7 @@ class URLToCapeTask extends AsyncTask {
         $extension = pathinfo($parse, PATHINFO_EXTENSION);
         $data = Internet::getURL($this->url);
 
-        if(($data === false) || $extension !== "png"){
+        if (($data === false) || $extension !== "png") {
             $this->setResult(null);
             return;
         }
@@ -50,17 +50,17 @@ class URLToCapeTask extends AsyncTask {
 
         $img = @imagecreatefrompng($file);
 
-        if(!$img){
+        if (!$img) {
             $this->setResult(null);
-            if(is_file($file)){
+            if (is_file($file)) {
                 unlink($file);
             }
             return;
         }
 
         $rgba = "";
-        for($y = 0; $y < imagesy($img); $y++){
-            for($x = 0; $x < imagesx($img); $x++){
+        for ($y = 0; $y < imagesy($img); $y++) {
+            for ($x = 0; $x < imagesx($img); $x++) {
                 $argb = imagecolorat($img, $x, $y);
                 $rgba .= chr(($argb >> 16) & 0xff) . chr(($argb >> 8) & 0xff) . chr($argb & 0xff) . chr(((~($argb >> 24)) << 1) & 0xff);
             }
@@ -68,26 +68,26 @@ class URLToCapeTask extends AsyncTask {
         $this->setResult($rgba);
         imagedestroy($img);
 
-        if(is_file($file)){
+        if (is_file($file)) {
             unlink($file);
         }
     }
 
-    public function onCompletion(Server $server): void{
+    public function onCompletion(Server $server): void {
         /** @var CustomHuman $npc */
         [$npc] = $this->fetchLocal();
         $player = $server->getPlayerExact($this->player);
 
-        if($player === null){
+        if ($player === null) {
             return;
         }
 
-        if($this->getResult() === null){
+        if ($this->getResult() === null) {
             $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid link detected (the link doesn't contain images)");
             return;
         }
 
-        if(strlen($this->getResult()) !== 8192){
+        if (strlen($this->getResult()) !== 8192) {
             $player->sendMessage(TextFormat::RED . "Set Cape failed! Invalid cape detected [bytes=" . strlen($this->getResult()) . "] [supported=8192]");
             return;
         }

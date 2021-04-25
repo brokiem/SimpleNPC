@@ -26,19 +26,16 @@ use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionD
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class EventHandler implements Listener
-{
+class EventHandler implements Listener {
 
     /** @var SimpleNPC */
     private $plugin;
 
-    public function __construct(SimpleNPC $plugin)
-    {
+    public function __construct(SimpleNPC $plugin) {
         $this->plugin = $plugin;
     }
 
-    public function onCommand(CommandEvent $event): void
-    {
+    public function onCommand(CommandEvent $event): void {
         $command = strtolower($event->getCommand());
 
         // TODO: find another way to fix this
@@ -48,8 +45,7 @@ class EventHandler implements Listener
         }
     }
 
-    public function onJoin(PlayerJoinEvent $event): void
-    {
+    public function onJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();
 
         if ($player->hasPermission("simplenpc.notify") and !empty($this->plugin->cachedUpdate)) {
@@ -61,15 +57,15 @@ class EventHandler implements Listener
         }
     }
 
-    public function onDamage(EntityDamageEvent $event): void{
+    public function onDamage(EntityDamageEvent $event): void {
         $entity = $event->getEntity();
 
-        if($entity instanceof CustomHuman || $entity instanceof BaseNPC){
+        if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
             $event->setCancelled();
         }
 
-        if($event instanceof EntityDamageByEntityEvent){
-            if($entity instanceof CustomHuman || $entity instanceof BaseNPC){
+        if ($event instanceof EntityDamageByEntityEvent) {
+            if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
                 $event->setCancelled();
 
                 $damager = $event->getDamager();
@@ -81,23 +77,7 @@ class EventHandler implements Listener
         }
     }
 
-    public function onDataPacketRecieve(DataPacketReceiveEvent $event): void
-    {
-        $player = $event->getPlayer();
-        $packet = $event->getPacket();
-
-        if ($packet instanceof InventoryTransactionPacket && $packet->trData instanceof UseItemOnEntityTransactionData && $packet->trData->getActionType() === UseItemOnEntityTransactionData::ACTION_INTERACT) {
-            $entity = $this->plugin->getServer()->findEntity($packet->trData->getEntityRuntimeId());
-
-            if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                $this->interact($entity, $player);
-            }
-        }
-    }
-
-    // TODO: move this to npc manager
-    public function interact(Entity $entity, Player $player): void
-    {
+    public function interact(Entity $entity, Player $player): void {
         if (isset($this->plugin->idPlayers[$player->getName()])) {
             $player->sendMessage(TextFormat::GREEN . "NPC ID: " . $entity->getId());
             unset($this->plugin->idPlayers[$player->getName()]);
@@ -134,8 +114,22 @@ class EventHandler implements Listener
         }
     }
 
-    public function onMotion(EntityMotionEvent $event): void
-    {
+    // TODO: move this to npc manager
+
+    public function onDataPacketRecieve(DataPacketReceiveEvent $event): void {
+        $player = $event->getPlayer();
+        $packet = $event->getPacket();
+
+        if ($packet instanceof InventoryTransactionPacket && $packet->trData instanceof UseItemOnEntityTransactionData && $packet->trData->getActionType() === UseItemOnEntityTransactionData::ACTION_INTERACT) {
+            $entity = $this->plugin->getServer()->findEntity($packet->trData->getEntityRuntimeId());
+
+            if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+                $this->interact($entity, $player);
+            }
+        }
+    }
+
+    public function onMotion(EntityMotionEvent $event): void {
         $entity = $event->getEntity();
 
         if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
@@ -145,39 +139,39 @@ class EventHandler implements Listener
         }
     }
 
-    public function onQuit(PlayerQuitEvent $event): void{
+    public function onQuit(PlayerQuitEvent $event): void {
         $player = $event->getPlayer();
 
-        if(isset($this->plugin->lastHit[$player->getName()])){
+        if (isset($this->plugin->lastHit[$player->getName()])) {
             unset($this->plugin->lastHit[$player->getName()]);
         }
 
-        if(isset($this->plugin->removeNPC[$player->getName()])){
+        if (isset($this->plugin->removeNPC[$player->getName()])) {
             unset($this->plugin->removeNPC[$player->getName()]);
         }
 
-        if(isset($this->plugin->idPlayers[$player->getName()])){
+        if (isset($this->plugin->idPlayers[$player->getName()])) {
             unset($this->plugin->idPlayers[$player->getName()]);
         }
     }
 
-    public function onMove(PlayerMoveEvent $event): void{
+    public function onMove(PlayerMoveEvent $event): void {
         $player = $event->getPlayer();
 
-        if($this->plugin->settings["lookToPlayersEnabled"]){
-            if($event->getFrom()->distance($event->getTo()) === 0.0){
+        if ($this->plugin->settings["lookToPlayersEnabled"]) {
+            if ($event->getFrom()->distance($event->getTo()) === 0.0) {
                 return;
             }
 
-            foreach($player->getLevelNonNull()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"]), $player) as $entity){
-                if(($entity instanceof CustomHuman) or $entity instanceof BaseNPC){
+            foreach ($player->getLevelNonNull()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"]), $player) as $entity) {
+                if (($entity instanceof CustomHuman) or $entity instanceof BaseNPC) {
                     $angle = atan2($player->z - $entity->z, $player->x - $entity->x);
                     $yaw = (($angle * 180) / M_PI) - 90;
                     $angle = atan2((new Vector2($entity->x, $entity->z))->distance($player->x, $player->z), $player->y - $entity->y);
                     $pitch = (($angle * 180) / M_PI) - 90;
 
-                    if($entity->namedtag->hasTag("Walk")){
-                        if($entity instanceof CustomHuman and $entity->namedtag->getShort("Walk") === 0){
+                    if ($entity->namedtag->hasTag("Walk")) {
+                        if ($entity instanceof CustomHuman and $entity->namedtag->getShort("Walk") === 0) {
                             $pk = new MovePlayerPacket();
                             $pk->entityRuntimeId = $entity->getId();
                             $pk->position = $entity->add(0, $entity->getEyeHeight());
@@ -186,7 +180,7 @@ class EventHandler implements Listener
                             $pk->headYaw = $yaw;
                             $pk->onGround = $entity->onGround;
                             $player->sendDataPacket($pk);
-                        }elseif($entity instanceof BaseNPC and $entity->namedtag->getShort("Walk") === 0){
+                        } elseif ($entity instanceof BaseNPC and $entity->namedtag->getShort("Walk") === 0) {
                             $pk = new MoveActorAbsolutePacket();
                             $pk->entityRuntimeId = $entity->getId();
                             $pk->position = $entity->asVector3();

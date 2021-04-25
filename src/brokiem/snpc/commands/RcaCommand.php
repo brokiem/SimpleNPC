@@ -17,24 +17,24 @@ class RcaCommand extends Command implements PluginIdentifiableCommand {
     /** @var SimpleNPC */
     private $plugin;
 
-    public function __construct(string $name, SimpleNPC $owner){
+    public function __construct(string $name, SimpleNPC $owner) {
         $this->plugin = $owner;
         parent::__construct($name, "Execute command by player like sudo");
         $this->setPermission("simplenpc.rca");
     }
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args): bool{
-        if(!$this->testPermission($sender)){
+    public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
+        if (!$this->testPermission($sender)) {
             return true;
         }
 
-        if(count($args) < 2){
+        if (count($args) < 2) {
             $sender->sendMessage(TextFormat::YELLOW . "Please enter a player and a command.");
             return true;
         }
 
         $player = $this->getPlugin()->getServer()->getPlayerExact(array_shift($args));
-        if($player instanceof Player){
+        if ($player instanceof Player) {
             $this->getPlugin()->getServer()->getCommandMap()->dispatch($player, trim(implode(" ", $args)));
             return true;
         }
@@ -43,7 +43,7 @@ class RcaCommand extends Command implements PluginIdentifiableCommand {
         return true;
     }
 
-    public function getPlugin(): Plugin{
+    public function getPlugin(): Plugin {
         return $this->plugin;
     }
 }

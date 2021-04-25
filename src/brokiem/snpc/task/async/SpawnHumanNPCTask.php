@@ -32,7 +32,7 @@ class SpawnHumanNPCTask extends AsyncTask {
     /** @var string */
     private $dataPath;
 
-    public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null, CompoundTag $command = null, Skin $skin = null, Location $customPos = null){
+    public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null, CompoundTag $command = null, Skin $skin = null, Location $customPos = null) {
         $this->username = $username;
         $this->nametag = $nametag;
         $this->canWalk = $canWalk;
@@ -42,8 +42,8 @@ class SpawnHumanNPCTask extends AsyncTask {
         $this->storeLocal([$command, $skin, $customPos]);
     }
 
-    public function onRun(): void{
-        if($this->skinUrl !== null){
+    public function onRun(): void {
+        if ($this->skinUrl !== null) {
             $uniqId = uniqid($this->nametag, true);
             $parse = parse_url($this->skinUrl, PHP_URL_PATH);
 
@@ -65,17 +65,17 @@ class SpawnHumanNPCTask extends AsyncTask {
 
             $img = @imagecreatefrompng($file);
 
-            if(!$img){
+            if (!$img) {
                 $this->setResult(null);
-                if(is_file($file)){
+                if (is_file($file)) {
                     unlink($file);
                 }
                 return;
             }
 
             $bytes = '';
-            for($y = 0; $y < imagesy($img); $y++){
-                for($x = 0; $x < imagesx($img); $x++){
+            for ($y = 0; $y < imagesy($img); $y++) {
+                for ($x = 0; $x < imagesx($img); $x++) {
                     $rgba = @imagecolorat($img, $x, $y);
                     $a = ((~($rgba >> 24)) << 1) & 0xff;
                     $r = ($rgba >> 16) & 0xff;
@@ -88,7 +88,7 @@ class SpawnHumanNPCTask extends AsyncTask {
             imagedestroy($img);
             $this->setResult($bytes);
 
-            if(is_file($file)){
+            if (is_file($file)) {
                 unlink($file);
             }
 
@@ -98,11 +98,11 @@ class SpawnHumanNPCTask extends AsyncTask {
         $this->setResult(null);
     }
 
-    public function onCompletion(Server $server): void{
+    public function onCompletion(Server $server): void {
         $player = $server->getPlayerExact($this->username);
         [$commands, $skin, $customPos] = $this->fetchLocal();
 
-        if($player === null){
+        if ($player === null) {
             return;
         }
 
@@ -111,7 +111,7 @@ class SpawnHumanNPCTask extends AsyncTask {
         $skin = $skin instanceof Skin ? $skin->getSkinData() : $this->getResult();
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
 
-        if($customPos instanceof Location){
+        if ($customPos instanceof Location) {
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
@@ -124,14 +124,14 @@ class SpawnHumanNPCTask extends AsyncTask {
 
         $entity = $this->canWalk ? new WalkingHuman($player->getLevelNonNull(), $nbt) : new CustomHuman($player->getLevelNonNull(), $nbt);
 
-        if($this->nametag !== null){
+        if ($this->nametag !== null) {
             $entity->setNameTag(str_replace("{line}", "\n", $this->nametag));
             $entity->setNameTagAlwaysVisible();
         }
 
         $ev = new SNPCCreationEvent($entity);
         $ev->call();
-        if(!$ev->isCancelled()){
+        if (!$ev->isCancelled()) {
             $entity->spawnToAll();
             $player->sendMessage(TextFormat::GREEN . "NPC created successfully! ID: " . $entity->getId());
         }

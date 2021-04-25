@@ -5,9 +5,10 @@
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC/stargazers)
 [![Discord](https://img.shields.io/discord/830063409000087612?color=7389D8&label=discord)](https://discord.com/invite/jy6abSrjhQ)
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbrokiem%26type%3Dpatrons&style=flat)](https://patreon.com/brokiem)
-[![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC) 
+[![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
 
 ### Features
+
 - Migration from Slapper supported! ✔
 - Right click to interact! ✔
 - NPC can walk! ✔
@@ -24,6 +25,7 @@
 - Lightweight & Open Source ❤
 
 ### Commands
+
 <b>For more command info, please look directly at ```/snpc help```</b><br> or you can use <b>```/snpc ui```</b><br>
 
 | Command | Description | Permission | Default |
@@ -39,16 +41,20 @@
 | ```/snpc list``` | ```See the npc list``` | ```simplenpc.list``` | ```op``` |
 
 ### Issues
+
 Did you find a bug or error when using this plugin? feel free to open the
 issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
 
 ### Developers
+
 If you want to register your own entity, take a look at this [plugin](https://github.com/brokiem/CustomEntity/)<br>
 You can also customize NPCs geometry by customizing the NPC skins
 
 ### Donation
+
 Patreon - https://www.patreon.com/join/brokiem <br>
 Saweria - https://saweria.co/brokiem
 
 ### Images
+
 <img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/img.png" alt="">

@@ -9,8 +9,7 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
 
-class CheckUpdateTask extends AsyncTask
-{
+class CheckUpdateTask extends AsyncTask {
 
     private const POGGIT_URL = "https://poggit.pmmp.io/releases.json?name=";
     /** @var string */
@@ -20,14 +19,14 @@ class CheckUpdateTask extends AsyncTask
     /** @var bool */
     private $retry;
 
-    public function __construct(SimpleNPC $plugin, bool $retry){
+    public function __construct(SimpleNPC $plugin, bool $retry) {
         $this->retry = $retry;
         $this->name = $plugin->getDescription()->getName();
         $this->version = $plugin->getDescription()->getVersion();
         $this->storeLocal([$plugin]);
     }
 
-    public function onRun(): void{
+    public function onRun(): void {
         $poggitData = Internet::getURL(self::POGGIT_URL . $this->name);
 
         if (!$poggitData) {
@@ -55,7 +54,7 @@ class CheckUpdateTask extends AsyncTask
         $this->setResult([$version, $date, $updateUrl]);
     }
 
-    public function onCompletion(Server $server): void{
+    public function onCompletion(Server $server): void {
         /** @var SimpleNPC $plugin */
         [$plugin] = $this->fetchLocal();
 

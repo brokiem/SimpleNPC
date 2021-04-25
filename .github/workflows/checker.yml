@@ -1,6 +1,6 @@
 name: PHPStan Checker
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   phpstan:

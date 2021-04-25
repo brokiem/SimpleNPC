@@ -9,7 +9,7 @@ use pocketmine\entity\Human;
 class CustomHuman extends Human {
     protected $gravity = 0.0;
 
-    public function getIdentifier(): string{
+    public function getIdentifier(): string {
         return $this->namedtag->getString("Identifier");
     }
 }

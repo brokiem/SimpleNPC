@@ -13,17 +13,17 @@ class BaseNPC extends Entity {
 
     protected $gravity = 0.0;
 
-    public function getIdentifier(): string{
+    public function getIdentifier(): string {
         return $this->namedtag->getString("Identifier");
     }
 
-    protected function initEntity(): void{
+    protected function initEntity(): void {
         parent::initEntity();
         $this->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
         $this->setNameTagAlwaysVisible();
     }
 
-    protected function sendSpawnPacket(Player $player): void{
+    protected function sendSpawnPacket(Player $player): void {
         $pk = new AddActorPacket();
         $pk->entityRuntimeId = $this->getId();
         $pk->type = AddActorPacket::LEGACY_ID_MAP_BC[static::SNPC_ENTITY_ID];
