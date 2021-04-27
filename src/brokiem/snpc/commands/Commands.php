@@ -76,9 +76,8 @@ class Commands extends Command implements PluginIdentifiableCommand {
 
                                             $cusForm->addElement("nametag", new Input("NPC Nametag: [string]\n" . 'Note: Use (" ") if nametag has space'));
                                             $dropdown = new Dropdown("NPC Can Walk? [Yes/No]");
-                                            $dropdown->addOption(new Option("choose", "Choose"));
-                                            $dropdown->addOption(new Option("true", "Yes"));
                                             $dropdown->addOption(new Option("false", "No"));
+                                            $dropdown->addOption(new Option("true", "Yes"));
                                             $cusForm->addElement("walk", $dropdown);
                                             $cusForm->addElement("skin", new Input("NPC Skin URL: [null/string]"));
                                             $player->sendForm($cusForm);
@@ -144,10 +143,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                             $player->sendMessage(TextFormat::YELLOW . "Please enter a valid NPC type");
                             return;
                         }
-                        if ($walk === "choose" && strtolower($type) === "human") {
-                            $player->sendMessage(TextFormat::YELLOW . "Please select whether NPC can walk or not.");
-                            return;
-                        }
+
                         $plugin->getServer()->getCommandMap()->dispatch($player, "snpc add $type $nametag $walk $skin");
                     });
                     break;
@@ -272,7 +268,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
                         $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
-                        $buttons = ["Add Command" => ["text" => "Add Command", "icon" => null, "element" => ["id" => "addcmd", "element" => new Input("Enter the command here")], "additional" => []], "Remove Command" => ["text" => "Remove Command", "icon" => null, "element" => ["id" => "removecmd", "element" => new Input("Enter the command here")], "additional" => []], "Change Nametag" => ["text" => "Change Nametag", "icon" => null, "element" => ["id" => "changenametag", "element" => new Input("Enter the new nametag here")], "additional" => []], "Change Skin" => ["text" => "Change Skin\n(Only Human NPC)", "icon" => null, "element" => ["id" => "changeskin", "element" => new Input("Enter the skin URL or online player name")], "additional" => []], "Change Cape" => ["text" => "Change Cape\n(Only Human NPC)", "icon" => null, "element" => ["id" => "changecape", "element" => new Input("Enter the Cape URL or online player name")], "additional" => []], "Show Nametag" => ["text" => "Show Nametag", "icon" => null, "element" => [], "additional" => ["form" => "editUI", "button" => ["text" => "Show Nametag", "icon" => null, "function" => "showNametag", "force" => true]]], "Hide Nametag" => ["text" => "Hide Nametag", "icon" => null, "element" => [], "additional" => ["form" => "editUI", "button" => ["text" => "Hide Nametag", "icon" => null, "function" => "hideNametag", "force" => true]]], "Command List" => ["text" => "Command List", "icon" => null, "element" => [], "additional" => ["form" => "", "button" => ["text" => null, "icon" => null, "function" => "commandList", "force" => false]]], "Teleport" => ["text" => "Teleport", "icon" => null, "element" => [], "additional" => ["form" => "", "button" => ["text" => null, "icon" => null, "function" => "teleport", "force" => false]]]];
+                        $buttons = ["Add Command" => ["text" => "Add Command", "icon" => null, "element" => ["id" => "addcmd", "element" => new Input("Use {player} for player name, and don't use slash [/]\n\nEnter the command here. (Command executed by console)")], "additional" => []], "Remove Command" => ["text" => "Remove Command", "icon" => null, "element" => ["id" => "removecmd", "element" => new Input("Enter the command here")], "additional" => []], "Change Nametag" => ["text" => "Change Nametag", "icon" => null, "element" => ["id" => "changenametag", "element" => new Input("Enter the new nametag here")], "additional" => []], "Change Skin" => ["text" => "Change Skin\n(Only Human NPC)", "icon" => null, "element" => ["id" => "changeskin", "element" => new Input("Enter the skin URL or online player name")], "additional" => []], "Change Cape" => ["text" => "Change Cape\n(Only Human NPC)", "icon" => null, "element" => ["id" => "changecape", "element" => new Input("Enter the Cape URL or online player name")], "additional" => []], "Show Nametag" => ["text" => "Show Nametag", "icon" => null, "element" => [], "additional" => ["form" => "editUI", "button" => ["text" => "Show Nametag", "icon" => null, "function" => "showNametag", "force" => true]]], "Hide Nametag" => ["text" => "Hide Nametag", "icon" => null, "element" => [], "additional" => ["form" => "editUI", "button" => ["text" => "Hide Nametag", "icon" => null, "function" => "hideNametag", "force" => true]]], "Command List" => ["text" => "Command List", "icon" => null, "element" => [], "additional" => ["form" => "", "button" => ["text" => null, "icon" => null, "function" => "commandList", "force" => false]]], "Teleport" => ["text" => "Teleport", "icon" => null, "element" => [], "additional" => ["form" => "", "button" => ["text" => null, "icon" => null, "function" => "teleport", "force" => false]]]];
 
                         foreach ($buttons as $button) {
                             if (empty($button["element"]) && !empty($button["additional"]) && $button["additional"]["button"]["force"]) {

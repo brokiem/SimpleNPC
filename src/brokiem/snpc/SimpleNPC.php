@@ -11,6 +11,7 @@ use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\task\async\CheckUpdateTask;
+use EasyUI\Form;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\level\Location;
@@ -45,13 +46,19 @@ class SimpleNPC extends PluginBase {
     /** @var array */
     public $idPlayers = [];
     /** @var bool */
-    private $isDev = false;
+    private $isDev = true;
 
     public static function getInstance(): self {
         return self::$i;
     }
 
     public function onEnable(): void {
+        if (!class_exists(Form::class)) {
+            $this->getLogger()->alert("UI/Form dependency not found! Please install the UI/Form virion. Disabling plugin...");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+            return;
+        }
+
         self::$i = $this;
 
         if ($this->isDev) {
