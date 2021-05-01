@@ -30,14 +30,12 @@ class CheckUpdateTask extends AsyncTask {
         $poggitData = Internet::getURL(self::POGGIT_URL . $this->name);
 
         if (!$poggitData) {
-            $this->setResult(null);
             return;
         }
 
         $poggit = json_decode($poggitData, true);
 
         if (!is_array($poggit)) {
-            $this->setResult(null);
             return;
         }
 

@@ -54,7 +54,13 @@ class Commands extends Command implements PluginIdentifiableCommand {
         if (isset($args[0])) {
             switch (strtolower($args[0])) {
                 case "ui":
-                    if (!$sender->hasPermission("simplenpc.ui") or !$sender instanceof Player) {
+                    if (!$sender->hasPermission("simplenpc.ui")) {
+                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
+                        return true;
+                    }
+
+                    if (!$sender instanceof Player) {
+                        $sender->sendMessage("Only player can run this command");
                         return true;
                     }
 
@@ -62,9 +68,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     $simpleForm = new SimpleForm("Manage NPC");
                     $cusForm = new CustomForm("Manage NPC");
 
-                    $buttons = ["Reload Config" => ["text" => "Reload Config", "icon" => null, "command" => "snpc reload", "function" => null], "Spawn NPC" => ["text" => "Spawn NPC", "icon" => null, "command" => null, "function" => "spawnNPC"], "Edit NPC" => ["text" => "Edit NPC", "icon" => null, "command" => null, "function" => "editNPC"], "Get NPC ID" => ["text" => "Get NPC ID", "icon" => null, "command" => "snpc id", "function" => null], "Migrate NPC" => ["text" => "Migrate NPC", "icon" => null, "command" => "snpc migrate", "function" => null], "Remove NPC" => ["text" => "Remove NPC", "icon" => null, "command" => "snpc remove", "function" => null], "List NPC" => ["text" => "List NPC", "icon" => null, "command" => null, "function" => "npcList"],];
-
-                    foreach ($buttons as $button) {
+                    foreach ($plugin->getButtonManager()->getUIButtons() as $button) {
                         $form->addButton(new Button($button["text"], $button["icon"], function(Player $sender) use ($simpleForm, $cusForm, $button, $plugin) {
                             if ($button["function"] !== null) {
                                 switch ($button["function"]) {
@@ -268,9 +272,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
                         $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
-                        $buttons = ["Add Command" => ["text" => "Add Command", "icon" => null, "element" => ["id" => "addcmd", "element" => new Input("Use {player} for player name, and don't use slash [/]\n\nEnter the command here. (Command executed by console)")], "additional" => []], "Remove Command" => ["text" => "Remove Command", "icon" => null, "element" => ["id" => "removecmd", "element" => new Input("Enter the command here")], "additional" => []], "Change Nametag" => ["text" => "Change Nametag", "icon" => null, "element" => ["id" => "changenametag", "element" => new Input("Enter the new nametag here")], "additional" => []], "Change Skin" => ["text" => "Change Skin\n(Only Human NPC)", "icon" => null, "element" => ["id" => "changeskin", "element" => new Input("Enter the skin URL or online player name")], "additional" => []], "Change Cape" => ["text" => "Change Cape\n(Only Human NPC)", "icon" => null, "element" => ["id" => "changecape", "element" => new Input("Enter the Cape URL or online player name")], "additional" => []], "Show Nametag" => ["text" => "Show Nametag", "icon" => null, "element" => [], "additional" => ["form" => "editUI", "button" => ["text" => "Show Nametag", "icon" => null, "function" => "showNametag", "force" => true]]], "Hide Nametag" => ["text" => "Hide Nametag", "icon" => null, "element" => [], "additional" => ["form" => "editUI", "button" => ["text" => "Hide Nametag", "icon" => null, "function" => "hideNametag", "force" => true]]], "Command List" => ["text" => "Command List", "icon" => null, "element" => [], "additional" => ["form" => "", "button" => ["text" => null, "icon" => null, "function" => "commandList", "force" => false]]], "Teleport" => ["text" => "Teleport", "icon" => null, "element" => [], "additional" => ["form" => "", "button" => ["text" => null, "icon" => null, "function" => "teleport", "force" => false]]]];
-
-                        foreach ($buttons as $button) {
+                        foreach ($plugin->getButtonManager()->getEditButtons() as $button) {
                             if (empty($button["element"]) && !empty($button["additional"]) && $button["additional"]["button"]["force"]) {
                                 $editUI->addButton(new Button($button["additional"]["button"]["text"], $button["additional"]["button"]["icon"], function(Player $sender) use ($entity, $npcConfig, $button) {
                                     switch ($button["additional"]["button"]["function"]) {
@@ -350,6 +352,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                             $addcmd = $response->getInputSubmittedText("addcmd");
                             $rmcmd = $response->getInputSubmittedText("removecmd");
                             $chnmtd = $response->getInputSubmittedText("changenametag");
+                            $scale = $response->getInputSubmittedText("changescale");
                             $skin = $response->getInputSubmittedText("changeskin");
                             $cape = $response->getInputSubmittedText("changecape");
                             $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
@@ -437,6 +440,11 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                 $plugin->getServer()->getAsyncPool()->submitTask(new SpawnHumanNPCTask($entity->getNameTag(), $player->getName(), $plugin->getDataFolder(), !($entity->namedtag->getShort("Walk") === 0), $skin, $entity->namedtag->getCompoundTag("Commands"), null, $entity->getLocation()));
                                 NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
                                 $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
+                            } elseif ($scale !== "") {
+                                $npcConfig->set("scale", (float)$scale);
+                                $npcConfig->save();
+                                $entity->setScale((float)$scale);
+                                $player->sendMessage(TextFormat::GREEN . "Successfully change npc size to $scale (NPC ID: " . $entity->getId() . ")");
                             } else {
                                 $player->sendMessage(TextFormat::RED . "Please enter a valid value!");
                             }
@@ -543,7 +551,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     }
                     break;
                 case "help":
-                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload	\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
+                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
                     break;
                 default:
                     $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/snpc help' for help.");

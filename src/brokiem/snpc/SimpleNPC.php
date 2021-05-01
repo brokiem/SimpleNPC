@@ -9,6 +9,7 @@ use brokiem\snpc\commands\RcaCommand;
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
+use brokiem\snpc\manager\ButtonManager;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\task\async\CheckUpdateTask;
 use EasyUI\Form;
@@ -47,6 +48,8 @@ class SimpleNPC extends PluginBase {
     public $idPlayers = [];
     /** @var bool */
     private $isDev = true;
+    /** @var array */
+    private $manager = [];
 
     public static function getInstance(): self {
         return self::$i;
@@ -69,8 +72,8 @@ class SimpleNPC extends PluginBase {
         self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN);
         NPCManager::registerAllNPC();
 
+        $this->manager["buttons"] = new ButtonManager();
         $this->initConfiguration();
-        //$this->spawnAllNPCs();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [new Commands("snpc", $this), new RcaCommand("rca", $this)]);
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
 
@@ -193,6 +196,10 @@ class SimpleNPC extends PluginBase {
         }
 
         $this->getLogger()->debug("SpawnAllNPCs: Successfully!");
+    }
+
+    public function getButtonManager(): ButtonManager {
+        return $this->manager["buttons"];
     }
 
     /**
