@@ -59,16 +59,14 @@ class ButtonManager {
                     "id" => "addcmd",
                     "element" => new Input("Use {player} for player name, and don't use slash [/]\n\nEnter the command here. (Command executed by console)")
                 ], "additional" => []
-            ],
-            "Remove Command" => [
+            ], "Remove Command" => [
                 "text" => "Remove Command",
                 "icon" => null,
                 "element" => [
                     "id" => "removecmd",
                     "element" => new Input("Enter the command here")
                 ], "additional" => []
-            ],
-            "Change Nametag" => [
+            ], "Change Nametag" => [
                 "text" => "Change Nametag",
                 "icon" => null,
                 "element" => [
@@ -80,8 +78,7 @@ class ButtonManager {
                     "id" => "changeskin",
                     "element" => new Input("Enter the skin URL or online player name")
                 ], "additional" => []
-            ],
-            "Change Cape" => [
+            ], "Change Cape" => [
                 "text" => "Change Cape\n(Only Human NPC)",
                 "icon" => null,
                 "element" => [
@@ -123,8 +120,7 @@ class ButtonManager {
                         "force" => true
                     ]
                 ]
-            ],
-            "Command List" => [
+            ], "Command List" => [
                 "text" => "Command List",
                 "icon" => null,
                 "element" => [],
@@ -137,8 +133,7 @@ class ButtonManager {
                         "force" => false
                     ]
                 ]
-            ],
-            "Teleport" => [
+            ], "Teleport" => [
                 "text" => "Teleport",
                 "icon" => null,
                 "element" => [],

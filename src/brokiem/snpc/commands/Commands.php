@@ -87,7 +87,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                             $player->sendForm($cusForm);
                                         }));
 
-                                        foreach (NPCManager::$npcs as $saveNames) {
+                                        foreach (NPCManager::getNPCs() as $saveNames) {
                                             $simpleForm->addButton(new Button(ucfirst(str_replace("_snpc", " NPC", $saveNames[0])), null, function(Player $player) use ($saveNames, $cusForm) {
                                                 $dropdown = new Dropdown("Selected NPC:");
                                                 $dropdown->addOption(new Option(str_replace("_snpc", "", $saveNames[0]), ucfirst(str_replace("_snpc", " NPC", $saveNames[0]))));
