@@ -95,8 +95,19 @@ class NPCManager {
         }
 
         $entity->spawnToAll();
+        self::saveChunkNPC($entity);
         $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully! ID: " . $entity->getId());
         return true;
+    }
+
+    public static function saveChunkNPC(Entity $entity) {
+        $chunk = $entity->chunk;
+        if ($chunk !== null) {
+            if (($chunk->hasChanged() or count($chunk->getTiles()) > 0 or count($chunk->getSavableEntities()) > 0) and $chunk->isGenerated()) {
+                $entity->getLevelNonNull()->getProvider()->saveChunk($chunk);
+                $chunk->setChanged(false);
+            }
+        }
     }
 
     public static function saveNPC(string $type, array $saves): string {

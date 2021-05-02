@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace brokiem\snpc\task\async;
 
 use brokiem\snpc\entity\CustomHuman;
+use brokiem\snpc\manager\NPCManager;
 use pocketmine\entity\Skin;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -99,6 +100,7 @@ class URLToCapeTask extends AsyncTask {
 
         $npcConfig->set("capeData", base64_encode($this->getResult()));
         $npcConfig->save();
+        NPCManager::saveChunkNPC($npc);
         $player->sendMessage(TextFormat::GREEN . "Successfull set cape to npc (ID: " . $npc->getId() . ")");
     }
 }

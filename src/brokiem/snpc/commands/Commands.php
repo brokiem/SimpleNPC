@@ -282,6 +282,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                             $entity->setNameTag($npcConfig->get("nametag"));
                                             $entity->setNameTagAlwaysVisible();
                                             $entity->setNameTagVisible();
+                                            NPCManager::saveChunkNPC($entity);
                                             $sender->sendMessage(TextFormat::GREEN . "Successfully showing NPC nametag (NPC ID: " . $entity->getId() . ")");
                                             break;
                                         case "hideNametag":
@@ -290,6 +291,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                             $entity->setNameTag("");
                                             $entity->setNameTagAlwaysVisible(false);
                                             $entity->setNameTagVisible(false);
+                                            NPCManager::saveChunkNPC($entity);
                                             $sender->sendMessage(TextFormat::GREEN . "Successfully remove NPC nametag (NPC ID: " . $entity->getId() . ")");
                                             break;
                                     }
@@ -336,6 +338,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                                     }
                                                     $npcConfig->set("position", [$entity->getX(), $entity->getY(), $entity->getZ(), $entity->getYaw(), $entity->getPitch()]);
                                                     $npcConfig->save();
+                                                    NPCManager::saveChunkNPC($entity);
                                                     $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                                                 }));
 
@@ -371,6 +374,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                 unset($commands[array_search($rmcmd, $commands, true)]);
                                 $npcConfig->set("commands", $commands);
                                 $npcConfig->save();
+                                NPCManager::saveChunkNPC($entity);
                                 $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($addcmd !== "") {
                                 if (in_array($addcmd, $npcConfig->get("commands"), true)) {
@@ -384,6 +388,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
 
                                 $npcConfig->set("commands", array_merge([$addcmd], $npcConfig->getNested("commands")));
                                 $npcConfig->save();
+                                NPCManager::saveChunkNPC($entity);
                                 $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId() . ")");
                             } elseif ($chnmtd !== "") {
                                 $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
@@ -408,6 +413,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
 
                                     $npcConfig->set("capeData", base64_encode($pCape->getSkin()->getCapeData()));
                                     $npcConfig->save();
+                                    NPCManager::saveChunkNPC($entity);
                                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc cape (NPC ID: " . $entity->getId() . ")");
                                     return true;
                                 }
@@ -428,6 +434,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                     $npcConfig->set("skinId", $player->getSkin()->getSkinId());
                                     $npcConfig->set("skinData", base64_encode($player->getSkin()->getSkinData()));
                                     $npcConfig->save();
+                                    NPCManager::saveChunkNPC($entity);
                                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                                     return true;
                                 }
@@ -444,6 +451,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                 $npcConfig->set("scale", (float)$scale);
                                 $npcConfig->save();
                                 $entity->setScale((float)$scale);
+                                NPCManager::saveChunkNPC($entity);
                                 $player->sendMessage(TextFormat::GREEN . "Successfully change npc size to $scale (NPC ID: " . $entity->getId() . ")");
                             } else {
                                 $player->sendMessage(TextFormat::RED . "Please enter a valid value!");
