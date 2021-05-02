@@ -100,7 +100,7 @@ class NPCManager {
         return true;
     }
 
-    public static function saveChunkNPC(Entity $entity) {
+    public static function saveChunkNPC(Entity $entity): void {
         $chunk = $entity->chunk;
         if ($chunk !== null) {
             if (($chunk->hasChanged() or count($chunk->getTiles()) > 0 or count($chunk->getSavableEntities()) > 0) and $chunk->isGenerated()) {
