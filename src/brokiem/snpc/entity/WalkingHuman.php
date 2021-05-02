@@ -83,10 +83,6 @@ class WalkingHuman extends CustomHuman {
                 $y--;
             }
 
-            if ($y < 5) {
-                continue;
-            }
-
             $blockAboveEntity = $world->getBlockAt($x, $y + 1, $z);
             $blockBelowEntity = $world->getBlockAt($x + 1, $y - 1, $z);
             if (!$blockAboveEntity instanceof Air || $blockBelowEntity instanceof Liquid) {

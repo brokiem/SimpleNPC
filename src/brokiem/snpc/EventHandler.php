@@ -97,6 +97,7 @@ class EventHandler implements Listener {
         if ($this->plugin->settings["enableCommandCooldown"] ?? true) {
             if (!isset($this->plugin->lastHit[$player->getName()][$entity->getId()])) {
                 $this->plugin->lastHit[$player->getName()][$entity->getId()] = microtime(true);
+                goto execute;
             }
 
             $coldown = $this->plugin->settings["commandExecuteCooldown"] ?? 1.0;
@@ -107,6 +108,7 @@ class EventHandler implements Listener {
             $this->plugin->lastHit[$player->getName()][$entity->getId()] = microtime(true);
         }
 
+        execute:
         if (($commands = $entity->namedtag->getCompoundTag("Commands")) !== null) {
             foreach ($commands as $stringTag) {
                 $this->plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender(), str_replace("{player}", '"' . $player->getName() . '"', $stringTag->getValue()));
