@@ -34,7 +34,6 @@ class URLToCapeTask extends AsyncTask {
         $parse = parse_url($this->url, PHP_URL_PATH);
 
         if ($parse === null || $parse === false) {
-            $this->setResult(null);
             return;
         }
 
@@ -42,7 +41,6 @@ class URLToCapeTask extends AsyncTask {
         $data = Internet::getURL($this->url);
 
         if (($data === false) || $extension !== "png") {
-            $this->setResult(null);
             return;
         }
 
@@ -52,7 +50,6 @@ class URLToCapeTask extends AsyncTask {
         $img = @imagecreatefrompng($file);
 
         if (!$img) {
-            $this->setResult(null);
             if (is_file($file)) {
                 unlink($file);
             }
@@ -100,6 +97,7 @@ class URLToCapeTask extends AsyncTask {
 
         $npcConfig->set("capeData", base64_encode($this->getResult()));
         $npcConfig->save();
+
         NPCManager::saveChunkNPC($npc);
         $player->sendMessage(TextFormat::GREEN . "Successfull set cape to npc (ID: " . $npc->getId() . ")");
     }

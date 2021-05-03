@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace brokiem\snpc\manager;
+namespace brokiem\snpc\manager\form;
 
 use EasyUI\element\Input;
 

@@ -9,7 +9,7 @@ use brokiem\snpc\commands\RcaCommand;
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
-use brokiem\snpc\manager\ButtonManager;
+use brokiem\snpc\manager\form\ButtonManager;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\task\async\CheckUpdateTask;
 use EasyUI\Form;
@@ -73,6 +73,7 @@ class SimpleNPC extends PluginBase {
         NPCManager::registerAllNPC();
 
         $this->manager["buttons"] = new ButtonManager();
+
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [new Commands("snpc", $this), new RcaCommand("rca", $this)]);
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
@@ -128,8 +129,7 @@ class SimpleNPC extends PluginBase {
         $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this, $value));
     }
 
-    // entity now save with chunk again
-
+    // entity now save with chunk again (unused)
     private function spawnAllNPCs(): void {
         if (empty(glob($this->getDataFolder() . "npcs/*.json"))) {
             return;

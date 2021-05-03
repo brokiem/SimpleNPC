@@ -57,7 +57,7 @@ class CheckUpdateTask extends AsyncTask {
         [$plugin] = $this->fetchLocal();
 
         if ($this->getResult() === null) {
-            $server->getLogger()->debug("[SimpleNPC] Async update check failed!");
+            $plugin->getLogger()->debug("Async update check failed!");
 
             if (!$this->retry) {
                 $plugin->checkUpdate(true);

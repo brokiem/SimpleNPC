@@ -7,8 +7,6 @@ namespace brokiem\snpc;
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\NPCManager;
-use pocketmine\command\ConsoleCommandSender;
-use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityMotionEvent;
@@ -40,7 +38,7 @@ class EventHandler implements Listener {
 
         // TODO: find another way to fix this
         if ($command === "reload") {
-            $event->getSender()->sendMessage(TextFormat::RED . "[SimpleNPC] Don't use reload command or SimpleNPC NPC's will duplicates!");
+            $event->getSender()->sendMessage(TextFormat::RED . "[SimpleNPC] Don't use reload command or in some cases SimpleNPC NPC's will duplicates!");
             $event->setCancelled();
         }
     }
@@ -71,52 +69,11 @@ class EventHandler implements Listener {
                 $damager = $event->getDamager();
 
                 if ($damager instanceof Player) {
-                    $this->interact($entity, $damager);
+                    NPCManager::interactToNPC($entity, $damager);
                 }
             }
         }
     }
-
-    public function interact(Entity $entity, Player $player): void {
-        if (isset($this->plugin->idPlayers[$player->getName()])) {
-            $player->sendMessage(TextFormat::GREEN . "NPC ID: " . $entity->getId());
-            unset($this->plugin->idPlayers[$player->getName()]);
-            return;
-        }
-
-        if (isset($this->plugin->removeNPC[$player->getName()]) && !$entity->isFlaggedForDespawn()) {
-            if (NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
-                $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
-            } else {
-                $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
-            }
-            unset($this->plugin->removeNPC[$player->getName()]);
-            return;
-        }
-
-        if ($this->plugin->settings["enableCommandCooldown"] ?? true) {
-            if (!isset($this->plugin->lastHit[$player->getName()][$entity->getId()])) {
-                $this->plugin->lastHit[$player->getName()][$entity->getId()] = microtime(true);
-                goto execute;
-            }
-
-            $coldown = $this->plugin->settings["commandExecuteCooldown"] ?? 1.0;
-            if (($coldown + (float)$this->plugin->lastHit[$player->getName()][$entity->getId()]) > microtime(true)) {
-                return;
-            }
-
-            $this->plugin->lastHit[$player->getName()][$entity->getId()] = microtime(true);
-        }
-
-        execute:
-        if (($commands = $entity->namedtag->getCompoundTag("Commands")) !== null) {
-            foreach ($commands as $stringTag) {
-                $this->plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender(), str_replace("{player}", '"' . $player->getName() . '"', $stringTag->getValue()));
-            }
-        }
-    }
-
-    // TODO: move this to npc manager
 
     public function onDataPacketRecieve(DataPacketReceiveEvent $event): void {
         $player = $event->getPlayer();
@@ -126,7 +83,7 @@ class EventHandler implements Listener {
             $entity = $this->plugin->getServer()->findEntity($packet->trData->getEntityRuntimeId());
 
             if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                $this->interact($entity, $player);
+                NPCManager::interactToNPC($entity, $player);
             }
         }
     }
@@ -135,7 +92,7 @@ class EventHandler implements Listener {
         $entity = $event->getEntity();
 
         if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
-            if ($entity->namedtag->hasTag("Walk") && $entity->namedtag->getShort("Walk") === 0) {
+            if ($entity->namedtag->hasTag("Walk") and (bool)$entity->namedtag->getShort("Walk")) {
                 $event->setCancelled();
             }
         }
