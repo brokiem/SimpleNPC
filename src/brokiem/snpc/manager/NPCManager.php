@@ -30,12 +30,12 @@ use brokiem\snpc\event\SNPCCreationEvent;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\entity\Entity;
+use pocketmine\entity\EntityIds;
 use pocketmine\level\Level;
 use pocketmine\level\Location;
 use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
-use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Config;
@@ -69,6 +69,107 @@ class NPCManager {
         ZombieNPC::class => ["zombie_snpc", "simplenpc:zombie"]
     ];
 
+    public const LEGACY_ID_MAP_BC = [
+        EntityIds::NPC => "simplenpc:npc",
+        EntityIds::PLAYER => "simplenpc:player",
+        EntityIds::WITHER_SKELETON => "simplenpc:wither_skeleton",
+        EntityIds::HUSK => "simplenpc:husk",
+        EntityIds::STRAY => "simplenpc:stray",
+        EntityIds::WITCH => "simplenpc:witch",
+        EntityIds::ZOMBIE_VILLAGER => "simplenpc:zombie_villager",
+        EntityIds::BLAZE => "simplenpc:blaze",
+        EntityIds::MAGMA_CUBE => "simplenpc:magma_cube",
+        EntityIds::GHAST => "simplenpc:ghast",
+        EntityIds::CAVE_SPIDER => "simplenpc:cave_spider",
+        EntityIds::SILVERFISH => "simplenpc:silverfish",
+        EntityIds::ENDERMAN => "simplenpc:enderman",
+        EntityIds::SLIME => "simplenpc:slime",
+        EntityIds::ZOMBIE_PIGMAN => "simplenpc:zombie_pigman",
+        EntityIds::SPIDER => "simplenpc:spider",
+        EntityIds::SKELETON => "simplenpc:skeleton",
+        EntityIds::CREEPER => "simplenpc:creeper",
+        EntityIds::ZOMBIE => "simplenpc:zombie",
+        EntityIds::SKELETON_HORSE => "simplenpc:skeleton_horse",
+        EntityIds::MULE => "simplenpc:mule",
+        EntityIds::DONKEY => "simplenpc:donkey",
+        EntityIds::DOLPHIN => "simplenpc:dolphin",
+        EntityIds::TROPICALFISH => "simplenpc:tropicalfish",
+        EntityIds::WOLF => "simplenpc:wolf",
+        EntityIds::SQUID => "simplenpc:squid",
+        EntityIds::DROWNED => "simplenpc:drowned",
+        EntityIds::SHEEP => "simplenpc:sheep",
+        EntityIds::MOOSHROOM => "simplenpc:mooshroom",
+        EntityIds::PANDA => "simplenpc:panda",
+        EntityIds::SALMON => "simplenpc:salmon",
+        EntityIds::PIG => "simplenpc:pig",
+        EntityIds::VILLAGER => "simplenpc:villager",
+        EntityIds::COD => "simplenpc:cod",
+        EntityIds::PUFFERFISH => "simplenpc:pufferfish",
+        EntityIds::COW => "simplenpc:cow",
+        EntityIds::CHICKEN => "simplenpc:chicken",
+        EntityIds::BALLOON => "simplenpc:balloon",
+        EntityIds::LLAMA => "simplenpc:llama",
+        EntityIds::IRON_GOLEM => "simplenpc:iron_golem",
+        EntityIds::RABBIT => "simplenpc:rabbit",
+        EntityIds::SNOW_GOLEM => "simplenpc:snow_golem",
+        EntityIds::BAT => "simplenpc:bat",
+        EntityIds::OCELOT => "simplenpc:ocelot",
+        EntityIds::HORSE => "simplenpc:horse",
+        EntityIds::CAT => "simplenpc:cat",
+        EntityIds::POLAR_BEAR => "simplenpc:polar_bear",
+        EntityIds::ZOMBIE_HORSE => "simplenpc:zombie_horse",
+        EntityIds::TURTLE => "simplenpc:turtle",
+        EntityIds::PARROT => "simplenpc:parrot",
+        EntityIds::GUARDIAN => "simplenpc:guardian",
+        EntityIds::ELDER_GUARDIAN => "simplenpc:elder_guardian",
+        EntityIds::VINDICATOR => "simplenpc:vindicator",
+        EntityIds::WITHER => "simplenpc:wither",
+        EntityIds::ENDER_DRAGON => "simplenpc:ender_dragon",
+        EntityIds::SHULKER => "simplenpc:shulker",
+        EntityIds::ENDERMITE => "simplenpc:endermite",
+        EntityIds::MINECART => "simplenpc:minecart",
+        EntityIds::HOPPER_MINECART => "simplenpc:hopper_minecart",
+        EntityIds::TNT_MINECART => "simplenpc:tnt_minecart",
+        EntityIds::CHEST_MINECART => "simplenpc:chest_minecart",
+        EntityIds::COMMAND_BLOCK_MINECART => "simplenpc:command_block_minecart",
+        EntityIds::ARMOR_STAND => "simplenpc:armor_stand",
+        EntityIds::ITEM => "simplenpc:item",
+        EntityIds::TNT => "simplenpc:tnt",
+        EntityIds::FALLING_BLOCK => "simplenpc:falling_block",
+        EntityIds::XP_BOTTLE => "simplenpc:xp_bottle",
+        EntityIds::XP_ORB => "simplenpc:xp_orb",
+        EntityIds::EYE_OF_ENDER_SIGNAL => "simplenpc:eye_of_ender_signal",
+        EntityIds::ENDER_CRYSTAL => "simplenpc:ender_crystal",
+        EntityIds::SHULKER_BULLET => "simplenpc:shulker_bullet",
+        EntityIds::FISHING_HOOK => "simplenpc:fishing_hook",
+        EntityIds::DRAGON_FIREBALL => "simplenpc:dragon_fireball",
+        EntityIds::ARROW => "simplenpc:arrow",
+        EntityIds::SNOWBALL => "simplenpc:snowball",
+        EntityIds::EGG => "simplenpc:egg",
+        EntityIds::PAINTING => "simplenpc:painting",
+        EntityIds::THROWN_TRIDENT => "simplenpc:thrown_trident",
+        EntityIds::FIREBALL => "simplenpc:fireball",
+        EntityIds::SPLASH_POTION => "simplenpc:splash_potion",
+        EntityIds::ENDER_PEARL => "simplenpc:ender_pearl",
+        EntityIds::LEASH_KNOT => "simplenpc:leash_knot",
+        EntityIds::WITHER_SKULL => "simplenpc:wither_skull",
+        EntityIds::WITHER_SKULL_DANGEROUS => "simplenpc:wither_skull_dangerous",
+        EntityIds::BOAT => "simplenpc:boat",
+        EntityIds::LIGHTNING_BOLT => "simplenpc:lightning_bolt",
+        EntityIds::SMALL_FIREBALL => "simplenpc:small_fireball",
+        EntityIds::LLAMA_SPIT => "simplenpc:llama_spit",
+        EntityIds::AREA_EFFECT_CLOUD => "simplenpc:area_effect_cloud",
+        EntityIds::LINGERING_POTION => "simplenpc:lingering_potion",
+        EntityIds::FIREWORKS_ROCKET => "simplenpc:fireworks_rocket",
+        EntityIds::EVOCATION_FANG => "simplenpc:evocation_fang",
+        EntityIds::EVOCATION_ILLAGER => "simplenpc:evocation_illager",
+        EntityIds::VEX => "simplenpc:vex",
+        EntityIds::AGENT => "simplenpc:agent",
+        EntityIds::ICE_BOMB => "simplenpc:ice_bomb",
+        EntityIds::PHANTOM => "simplenpc:phantom",
+        EntityIds::TRIPOD_CAMERA => "simplenpc:tripod_camera"
+    ];
+
     public static function getNPCs(): array {
         return self::$npcs;
     }
@@ -79,7 +180,7 @@ class NPCManager {
         }
     }
 
-    public static function createNPC(string $type, Player $player, ?string $nametag = null, ?CompoundTag $commands = null, ?Location $customPos = null, ?string $skinData = null, bool $canWalk = false): bool {
+    public static function spawnNPC(string $type, Player $player, ?string $nametag = null, ?CompoundTag $commands = null, ?Location $customPos = null, ?string $skinData = null, bool $canWalk = false): bool {
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
 
         if ($customPos !== null) {
@@ -230,7 +331,7 @@ class NPCManager {
                     foreach ($level->getEntities() as $entity) {
                         if ($entity instanceof SlapperEntity) {
                             /** @phpstan-ignore-next-line */
-                            if (self::createNPC(AddActorPacket::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"))) {
+                            if (self::spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"))) {
                                 if (!$entity->isFlaggedForDespawn()) {
                                     $entity->flagForDespawn();
                                 }
@@ -238,7 +339,7 @@ class NPCManager {
                                 ++$error;
                             }
                         } elseif ($entity instanceof SlapperHuman) {
-                            self::createNPC(SimpleNPC::ENTITY_HUMAN, $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation(), $entity->getSkin()->getSkinData());
+                            self::spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation(), $entity->getSkin()->getSkinData());
 
                             if (!$entity->isFlaggedForDespawn()) {
                                 $entity->flagForDespawn();

@@ -104,6 +104,6 @@ class SkinURLToNPCTask extends AsyncTask {
         $position = $customPos instanceof Location ? $customPos : null;
         $skin = $skin instanceof Skin ? $skin->getSkinData() : $this->getResult();
 
-        NPCManager::createNPC(SimpleNPC::ENTITY_HUMAN, $player, $this->nametag, $commands, $position, $skin, $this->canWalk);
+        NPCManager::spawnNPC(SimpleNPC::ENTITY_HUMAN, $player, $this->nametag, $commands, $position, $skin, $this->canWalk);
     }
 }
