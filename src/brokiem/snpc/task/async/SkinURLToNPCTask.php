@@ -13,7 +13,7 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
 
-class URLToSkinTask extends AsyncTask {
+class SkinURLToNPCTask extends AsyncTask {
     /** @var string */
     private $skinUrl;
     /** @var null|string */

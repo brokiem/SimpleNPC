@@ -9,7 +9,7 @@ use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\form\FormManager;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
-use brokiem\snpc\task\async\URLToSkinTask;
+use brokiem\snpc\task\async\SkinURLToNPCTask;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
@@ -91,18 +91,18 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                         $sender->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
                                         return true;
                                     }
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new URLToSkinTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true", $args[4]));
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true", $args[4]));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                 } elseif (isset($args[3])) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new URLToSkinTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true"));
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true"));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                 } elseif (isset($args[2])) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new URLToSkinTask($args[2], $sender->getName(), $plugin->getDataFolder()));
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
-                                $plugin->getServer()->getAsyncPool()->submitTask(new URLToSkinTask(null, $sender->getName(), $plugin->getDataFolder()));
+                                $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
                             } else {
                                 if (isset($args[2])) {
                                     NPCManager::createNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);

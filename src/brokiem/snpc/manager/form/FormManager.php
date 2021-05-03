@@ -9,8 +9,8 @@ use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
+use brokiem\snpc\task\async\SkinURLToNPCTask;
 use brokiem\snpc\task\async\URLToCapeTask;
-use brokiem\snpc\task\async\URLToSkinTask;
 use EasyUI\element\Button;
 use EasyUI\element\Dropdown;
 use EasyUI\element\Input;
@@ -301,7 +301,7 @@ class FormManager {
                         return;
                     }
 
-                    $plugin->getServer()->getAsyncPool()->submitTask(new URLToSkinTask($entity->getNameTag(), $player->getName(), $plugin->getDataFolder(), !($entity->namedtag->getShort("Walk") === 0), $skin, $entity->namedtag->getCompoundTag("Commands"), null, $entity->getLocation()));
+                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($entity->getNameTag(), $player->getName(), $plugin->getDataFolder(), !($entity->namedtag->getShort("Walk") === 0), $skin, $entity->namedtag->getCompoundTag("Commands"), null, $entity->getLocation()));
                     NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                 } elseif ($scale !== "") {
