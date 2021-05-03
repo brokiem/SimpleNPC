@@ -94,15 +94,15 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                     $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true", $args[4]));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                 } elseif (isset($args[3])) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true"));
+                                    NPCManager::createNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, null, $args[3] === "true");
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                 } elseif (isset($args[2])) {
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($args[2], $sender->getName(), $plugin->getDataFolder()));
+                                    NPCManager::createNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2]);
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
-                                $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask(null, $sender->getName(), $plugin->getDataFolder()));
+                                NPCManager::createNPC(SimpleNPC::ENTITY_HUMAN, $sender, $sender->getName());
                             } else {
                                 if (isset($args[2])) {
                                     NPCManager::createNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);

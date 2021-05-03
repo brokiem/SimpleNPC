@@ -128,7 +128,7 @@ class SimpleNPC extends PluginBase {
         $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this, $value));
     }
 
-    // entity now save with chunk again
+    // entity now save with chunk again (unused)
     private function spawnAllNPCs(): void {
         if (empty(glob($this->getDataFolder() . "npcs/*.json"))) {
             return;

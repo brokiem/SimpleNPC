@@ -38,7 +38,7 @@ class EventHandler implements Listener {
 
         // TODO: find another way to fix this
         if ($command === "reload") {
-            $event->getSender()->sendMessage(TextFormat::RED . "[SimpleNPC] Don't use reload command or SimpleNPC NPC's will duplicates!");
+            $event->getSender()->sendMessage(TextFormat::RED . "[SimpleNPC] Don't use reload command or in some cases SimpleNPC NPC's will duplicates!");
             $event->setCancelled();
         }
     }
@@ -92,7 +92,7 @@ class EventHandler implements Listener {
         $entity = $event->getEntity();
 
         if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
-            if ($entity->namedtag->hasTag("Walk") && $entity->namedtag->getShort("Walk") === 0) {
+            if ($entity->namedtag->hasTag("Walk") and (bool)$entity->namedtag->getShort("Walk")) {
                 $event->setCancelled();
             }
         }
