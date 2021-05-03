@@ -19,6 +19,7 @@
 - NPC with Custom Geometry! ✔
 - Edit NPC with UI/Form! ✔
 - NPC without nametag ✔
+- Custom NPC Size/Scale ✔
 - Live updates without restart ✔
 - Cooldown for commands ✔
 - NPC can look at players ✔
