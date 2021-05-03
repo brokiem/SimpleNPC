@@ -171,7 +171,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         return true;
                     }
 
-                    NPCManager::migrateNPC($sender);
+                    NPCManager::migrateNPC($sender, $args);
                     break;
                 case "list":
                     if (!$sender->hasPermission("simplenpc.list")) {

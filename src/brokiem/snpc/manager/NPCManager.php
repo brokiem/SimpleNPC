@@ -192,7 +192,7 @@ class NPCManager {
         return false;
     }
 
-    public static function migrateNPC(Player $sender): bool {
+    public static function migrateNPC(Player $sender, array $args): bool {
         $plugin = SimpleNPC::getInstance();
 
         if ($plugin->getServer()->getPluginManager()->getPlugin("Slapper") !== null) {
