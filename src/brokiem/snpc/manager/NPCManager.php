@@ -1,4 +1,4 @@
-<?php /** @noinspection MkdirRaceConditionInspection */
+<?php
 
 declare(strict_types=1);
 
@@ -184,17 +184,21 @@ class NPCManager {
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
 
         if ($customPos !== null) {
-            Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
+            $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
-        if ($skinData !== null and $type === SimpleNPC::ENTITY_HUMAN) {
-            $nbt->setTag(new CompoundTag("Skin", [
-                "Name" => new StringTag("Name", $player->getSkin()->getSkinId()),
-                "Data" => new ByteArrayTag("Data", $skinData),
-                "CapeData" => new ByteArrayTag("CapeData", $player->getSkin()->getCapeData()),
-                "GeometryName" => new StringTag("GeometryName", $player->getSkin()->getGeometryName()),
-                "GeometryData" => new ByteArrayTag("GeometryData", $player->getSkin()->getGeometryData())
-            ]));
+        if ($type === SimpleNPC::ENTITY_HUMAN) {
+            if ($skinData !== null) {
+                $nbt->setTag(new CompoundTag("Skin", [
+                    "Name" => new StringTag("Name", $player->getSkin()->getSkinId()),
+                    "Data" => new ByteArrayTag("Data", $skinData),
+                    "CapeData" => new ByteArrayTag("CapeData", $player->getSkin()->getCapeData()),
+                    "GeometryName" => new StringTag("GeometryName", $player->getSkin()->getGeometryName()),
+                    "GeometryData" => new ByteArrayTag("GeometryData", $player->getSkin()->getGeometryData())
+                ]));
+            } else {
+                $nbt->setTag($player->namedtag->getTag("Skin"));
+            }
         }
 
         $nbt->setTag($commands ?? new CompoundTag("Commands", []));
@@ -219,7 +223,7 @@ class NPCManager {
         $entity = self::createEntity($type, $player->getLevelNonNull(), $nbt);
 
         if ($entity === null) {
-            $player->sendMessage("Entity is null or entity $type is invalid");
+            $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid");
             return false;
         }
 

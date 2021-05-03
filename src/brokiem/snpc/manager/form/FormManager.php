@@ -291,6 +291,7 @@ class FormManager {
                         $npcConfig->set("skinId", $player->getSkin()->getSkinId());
                         $npcConfig->set("skinData", base64_encode($player->getSkin()->getSkinData()));
                         $npcConfig->save();
+
                         NPCManager::saveChunkNPC($entity);
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                         return;
@@ -308,6 +309,7 @@ class FormManager {
                     $npcConfig->set("scale", (float)$scale);
                     $npcConfig->save();
                     $entity->setScale((float)$scale);
+
                     NPCManager::saveChunkNPC($entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc size to $scale (NPC ID: " . $entity->getId() . ")");
                 } else {
