@@ -41,7 +41,6 @@ class SkinURLToNPCTask extends AsyncTask {
             $parse = parse_url($this->skinUrl, PHP_URL_PATH);
 
             if ($parse === null || $parse === false) {
-                $this->setResult(null);
                 return;
             }
 
@@ -49,7 +48,6 @@ class SkinURLToNPCTask extends AsyncTask {
             $data = Internet::getURL($this->skinUrl);
 
             if ($data === false || $extension !== "png") {
-                $this->setResult(null);
                 return;
             }
 
@@ -59,7 +57,6 @@ class SkinURLToNPCTask extends AsyncTask {
             $img = @imagecreatefrompng($file);
 
             if (!$img) {
-                $this->setResult(null);
                 if (is_file($file)) {
                     unlink($file);
                 }
@@ -84,11 +81,7 @@ class SkinURLToNPCTask extends AsyncTask {
             if (is_file($file)) {
                 unlink($file);
             }
-
-            return;
         }
-
-        $this->setResult(null);
     }
 
     public function onCompletion(Server $server): void {
@@ -102,8 +95,8 @@ class SkinURLToNPCTask extends AsyncTask {
         $player->saveNBT();
 
         $position = $customPos instanceof Location ? $customPos : null;
-        $skin = $skin instanceof Skin ? $skin->getSkinData() : $this->getResult();
+        $skinData = $skin instanceof Skin ? $skin->getSkinData() : $this->getResult();
 
-        NPCManager::spawnNPC(SimpleNPC::ENTITY_HUMAN, $player, $this->nametag, $commands, $position, $skin, $this->canWalk);
+        NPCManager::spawnNPC(SimpleNPC::ENTITY_HUMAN, $player, $this->nametag, $commands, $position, $skinData, $this->canWalk);
     }
 }

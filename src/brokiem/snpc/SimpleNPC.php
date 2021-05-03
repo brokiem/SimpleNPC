@@ -73,6 +73,7 @@ class SimpleNPC extends PluginBase {
         NPCManager::registerAllNPC();
 
         $this->manager["buttons"] = new ButtonManager();
+
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [new Commands("snpc", $this), new RcaCommand("rca", $this)]);
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);

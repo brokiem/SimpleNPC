@@ -93,9 +93,11 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                     }
                                     $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true", $args[4]));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
+                                    return true;
                                 } elseif (isset($args[3])) {
                                     NPCManager::spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, $sender->getSkin()->getSkinData(), $args[3] === "true");
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
+                                    return true;
                                 } elseif (isset($args[2])) {
                                     NPCManager::spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");

@@ -321,13 +321,13 @@ class NPCManager {
                 $sender->sendMessage(TextFormat::DARK_GREEN . "Migrating NPC... Please wait...");
 
                 foreach ($plugin->getServer()->getLevels() as $level) {
-                    $entity = array_map(static function(Entity $entity) {
+                    $entities = array_map(static function(Entity $entity) {
                     }, array_filter($level->getEntities(), static function(Entity $entity): bool {
                         return $entity instanceof SlapperHuman or $entity instanceof SlapperEntity;
                     }));
 
-                    if (count($entity) === 0) {
-                        $sender->sendMessage(TextFormat::RED . "Migrating failed: No Slapper-NPC found!");
+                    if (count($entities) === 0) {
+                        $sender->sendMessage(TextFormat::RED . "Migrating failed: No Slapper NPC found!");
                         return true;
                     }
 
@@ -335,7 +335,7 @@ class NPCManager {
                     foreach ($level->getEntities() as $entity) {
                         if ($entity instanceof SlapperEntity) {
                             /** @phpstan-ignore-next-line */
-                            if (self::spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"))) {
+                            if (self::spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation())) {
                                 if (!$entity->isFlaggedForDespawn()) {
                                     $entity->flagForDespawn();
                                 }
