@@ -4,23 +4,16 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\task\async;
 
-use brokiem\snpc\entity\CustomHuman;
-use brokiem\snpc\entity\WalkingHuman;
-use brokiem\snpc\event\SNPCCreationEvent;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
-use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\level\Location;
-use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
-use pocketmine\utils\TextFormat;
 
-class SpawnHumanNPCTask extends AsyncTask {
+class URLToSkinTask extends AsyncTask {
     /** @var string */
     private $skinUrl;
     /** @var null|string */
@@ -108,33 +101,9 @@ class SpawnHumanNPCTask extends AsyncTask {
 
         $player->saveNBT();
 
+        $position = $customPos instanceof Location ? $customPos : null;
         $skin = $skin instanceof Skin ? $skin->getSkinData() : $this->getResult();
-        $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
 
-        if ($customPos instanceof Location) {
-            $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
-        }
-
-        $nbt->setTag($commands ?? new CompoundTag("Commands", []));
-        $nbt->setTag(new CompoundTag("Skin", ["Name" => new StringTag("Name", $player->getSkin()->getSkinId()), "Data" => new ByteArrayTag("Data", in_array(strlen($skin ?? ""), Skin::ACCEPTED_SKIN_SIZES, true) ? $skin : $player->getSkin()->getSkinData()), "CapeData" => new ByteArrayTag("CapeData", $player->getSkin()->getCapeData()), "GeometryName" => new StringTag("GeometryName", $player->getSkin()->getGeometryName()), "GeometryData" => new ByteArrayTag("GeometryData", $player->getSkin()->getGeometryData())]));
-        $nbt->setShort("Walk", $this->canWalk ? 1 : 0);
-        $position = $customPos ?? $player;
-        $saves = ["type" => $this->canWalk ? SimpleNPC::ENTITY_WALKING_HUMAN : SimpleNPC::ENTITY_HUMAN, "nametag" => $this->nametag, "world" => $position->getLevelNonNull()->getFolderName(), "showNametag" => $this->nametag !== null, "skinId" => $player->getSkin()->getSkinId(), "skinData" => in_array(strlen($skin ?? ""), Skin::ACCEPTED_SKIN_SIZES, true) ? base64_encode($skin) : base64_encode($player->getSkin()->getSkinData()), "capeData" => base64_encode($player->getSkin()->getCapeData()), "geometryName" => $player->getSkin()->getGeometryName(), "geometryData" => base64_encode($player->getSkin()->getGeometryData()), "walk" => $this->canWalk, "commands" => $commands ?? [], "position" => [$position->getX(), $position->getY(), $position->getZ(), $position->getYaw(), $position->getPitch()]];
-        $nbt->setString("Identifier", NPCManager::saveNPC($this->canWalk ? SimpleNPC::ENTITY_WALKING_HUMAN : SimpleNPC::ENTITY_HUMAN, $saves));
-
-        $entity = $this->canWalk ? new WalkingHuman($player->getLevelNonNull(), $nbt) : new CustomHuman($player->getLevelNonNull(), $nbt);
-
-        if ($this->nametag !== null) {
-            $entity->setNameTag(str_replace("{line}", "\n", $this->nametag));
-            $entity->setNameTagAlwaysVisible();
-        }
-
-        $ev = new SNPCCreationEvent($entity);
-        $ev->call();
-        if (!$ev->isCancelled()) {
-            $entity->spawnToAll();
-            NPCManager::saveChunkNPC($entity);
-            $player->sendMessage(TextFormat::GREEN . "NPC created successfully! ID: " . $entity->getId());
-        }
+        NPCManager::createNPC(SimpleNPC::ENTITY_HUMAN, $player, $this->nametag, $commands, $position, $skin, $this->canWalk);
     }
 }
