@@ -7,9 +7,9 @@ namespace brokiem\snpc\task\async;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\NPCManager;
 use pocketmine\entity\Skin;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use pocketmine\utils\Config;
 use pocketmine\utils\Internet;
 use pocketmine\utils\TextFormat;
 
@@ -90,13 +90,15 @@ class URLToCapeTask extends AsyncTask {
             return;
         }
 
-        $npcConfig = new Config($this->dataPath . "npcs/" . $npc->namedtag->getString("Identifier") . ".json", Config::JSON);
         $capeSkin = new Skin($npc->getSkin()->getSkinId(), $npc->getSkin()->getSkinData(), $this->getResult(), $npc->getSkin()->getGeometryName(), $npc->getSkin()->getGeometryData());
         $npc->setSkin($capeSkin);
         $npc->sendSkin();
 
-        $npcConfig->set("capeData", base64_encode($this->getResult()));
-        $npcConfig->save();
+        $skinTag = NPCManager::getInstance()->getSkinTag($npc);
+        if ($skinTag instanceof CompoundTag) {
+            $skinTag->setByteArray("CapeData", $this->getResult(), true);
+            NPCManager::getInstance()->saveSkinTag($npc, $skinTag);
+        }
 
         NPCManager::getInstance()->saveChunkNPC($npc);
         $player->sendMessage(TextFormat::GREEN . "Successfull set cape to npc (ID: " . $npc->getId() . ")");

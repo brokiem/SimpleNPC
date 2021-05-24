@@ -270,8 +270,15 @@ class FormManager {
                         $entity->setSkin($capeSkin);
                         $entity->sendSkin();
 
-                        $npcConfig->set("capeData", base64_encode($pCape->getSkin()->getCapeData()));
-                        $npcConfig->save();
+                        $skinTag = NPCManager::getInstance()->getSkinTag($entity);
+
+                        if ($skinTag instanceof CompoundTag) {
+                            $skinTag->setByteArray("Data", $pCape->getSkin()->getSkinData(), true);
+                            $skinTag->setByteArray("CapeData", $pCape->getSkin()->getCapeData(), true);
+
+                            NPCManager::getInstance()->saveSkinTag($entity, $skinTag);
+                        }
+
                         NPCManager::getInstance()->saveChunkNPC($entity);
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc cape (NPC ID: " . $entity->getId() . ")");
                         return;
@@ -290,8 +297,14 @@ class FormManager {
                         $entity->setSkin($pSkin->getSkin());
                         $entity->sendSkin();
 
-                        $npcConfig->set("skinId", $player->getSkin()->getSkinId());
-                        $npcConfig->set("skinData", base64_encode($player->getSkin()->getSkinData()));
+                        $skinTag = NPCManager::getInstance()->getSkinTag($entity);
+                        if ($skinTag instanceof CompoundTag) {
+                            $skinTag->setString("Name", $player->getSkin()->getSkinId(), true);
+                            $skinTag->setByteArray("Data", $player->getSkin()->getSkinData(), true);
+
+                            NPCManager::getInstance()->saveSkinTag($entity, $skinTag);
+                        }
+
                         $npcConfig->save();
 
                         NPCManager::getInstance()->saveChunkNPC($entity);
@@ -308,6 +321,11 @@ class FormManager {
                     NPCManager::getInstance()->removeNPC($entity->namedtag->getString("Identifier"), $entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                 } elseif ($scale !== "") {
+                    if ((float)$scale <= 0) {
+                        $player->sendMessage("Scale must be greater than 0");
+                        return;
+                    }
+
                     $npcConfig->set("scale", (float)$scale);
                     $npcConfig->save();
                     $entity->setScale((float)$scale);

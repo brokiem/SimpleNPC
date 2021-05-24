@@ -259,6 +259,11 @@ class NPCManager {
         file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($skinTag));
     }
 
+    public function getSkinTag(CustomHuman $human) {
+        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->getIdentifier() . ".dat";
+        return (new LittleEndianNBTStream())->readCompressed($file);
+    }
+
     public function saveChunkNPC(Entity $entity): void {
         $chunk = $entity->chunk;
         if ($chunk !== null) {
