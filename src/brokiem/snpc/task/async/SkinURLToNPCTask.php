@@ -14,7 +14,7 @@ use pocketmine\Server;
 use pocketmine\utils\Internet;
 
 class SkinURLToNPCTask extends AsyncTask {
-    /** @var string */
+    /** @var null|string */
     private $skinUrl;
     /** @var null|string */
     private $nametag;
@@ -37,7 +37,7 @@ class SkinURLToNPCTask extends AsyncTask {
 
     public function onRun(): void {
         if ($this->skinUrl !== null) {
-            $uniqId = uniqid($this->nametag, true);
+            $uniqId = uniqid($this->nametag ?? "", true);
             $parse = parse_url($this->skinUrl, PHP_URL_PATH);
 
             if ($parse === null || $parse === false) {

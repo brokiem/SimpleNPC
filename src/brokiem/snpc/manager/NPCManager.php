@@ -197,6 +197,7 @@ class NPCManager {
                     "GeometryData" => new ByteArrayTag("GeometryData", $player->getSkin()->getGeometryData())
                 ]));
             } else {
+                /** @phpstan-ignore-next-line */
                 $nbt->setTag($player->namedtag->getTag("Skin"));
             }
         }
