@@ -26,6 +26,7 @@ use brokiem\snpc\entity\npc\VillagerNPC;
 use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
+use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\event\SNPCCreationEvent;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\ConsoleCommandSender;
@@ -240,31 +241,37 @@ class NPCManager {
 
         (new SNPCCreationEvent($entity))->call();
 
-        if ($entity instanceof CustomHuman) {
-            $this->saveSkinTag($entity, $nbt);
-        }
-
+        $this->saveSkinTag($entity, $nbt);
         $this->saveChunkNPC($entity);
         return true;
     }
 
-    public function saveSkinTag(CustomHuman $human, CompoundTag $nbt): void {
+    public function saveSkinTag(Entity $entity, CompoundTag $nbt): void {
+        if (!$entity instanceof CustomHuman || !$entity instanceof WalkingHuman) {
+            return;
+        }
+
         $skinTag = $nbt->getCompoundTag("Skin");
 
         if ($skinTag === null) {
             return;
         }
 
-        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->getIdentifier() . ".dat";
+        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".dat";
         file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($skinTag));
     }
 
     /**
-     * @return \pocketmine\nbt\tag\NamedTag|\pocketmine\nbt\tag\NamedTag[]
+     * @return \pocketmine\nbt\tag\NamedTag|\pocketmine\nbt\tag\NamedTag[]|null
      */
     public function getSkinTag(CustomHuman $human) {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->getIdentifier() . ".dat";
-        return (new LittleEndianNBTStream())->readCompressed($file);
+
+        if (!file_exists($file)) {
+            return null;
+        }
+
+        return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
     }
 
     public function saveChunkNPC(Entity $entity): void {

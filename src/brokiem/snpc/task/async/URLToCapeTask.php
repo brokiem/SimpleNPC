@@ -90,7 +90,7 @@ class URLToCapeTask extends AsyncTask {
             return;
         }
 
-        $capeSkin = new Skin($npc->getSkin()->getSkinId(), $npc->getSkin()->getSkinData(), $this->getResult(), $npc->getSkin()->getGeometryName(), $npc->getSkin()->getGeometryData());
+        $capeSkin = new Skin($npc->getSkin()->getSkinId(), $npc->getSkin()->getSkinData(), (string)$this->getResult(), $npc->getSkin()->getGeometryName(), $npc->getSkin()->getGeometryData());
         $npc->setSkin($capeSkin);
         $npc->sendSkin();
 
