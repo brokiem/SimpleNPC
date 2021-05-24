@@ -40,11 +40,13 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Config;
+use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 use slapper\entities\SlapperEntity;
 use slapper\entities\SlapperHuman;
 
 class NPCManager {
+    use SingletonTrait;
 
     /** @var array */
     private static $npcs = [
@@ -171,17 +173,17 @@ class NPCManager {
         EntityIds::TRIPOD_CAMERA => "simplenpc:tripod_camera"
     ];
 
-    public static function getNPCs(): array {
+    public function getNPCs(): array {
         return self::$npcs;
     }
 
-    public static function registerAllNPC(): void {
+    public function registerAllNPC(): void {
         foreach (self::$npcs as $class => $saveNames) {
             SimpleNPC::registerEntity($class, array_shift($saveNames), true, $saveNames);
         }
     }
 
-    public static function spawnNPC(string $type, Player $player, ?string $nametag = null, ?CompoundTag $commands = null, ?Location $customPos = null, ?string $skinData = null, bool $canWalk = false): bool {
+    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?CompoundTag $commands = null, ?Location $customPos = null, ?string $skinData = null, bool $canWalk = false): bool {
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
 
         if ($customPos !== null) {
@@ -211,7 +213,7 @@ class NPCManager {
         $nbt->setShort("Walk", (int)$canWalk);
 
         $pos = $customPos ?? $player;
-        $nbt->setString("Identifier", self::saveNPC($type, [
+        $nbt->setString("Identifier", $this->saveNPC($type, [
             "type" => $type,
             "nametag" => $nametag,
             "world" => $player->getLevelNonNull()->getFolderName(),
@@ -221,7 +223,7 @@ class NPCManager {
             "position" => [$pos->getX(), $pos->getY(), $pos->getZ(), $pos->getYaw(), $pos->getPitch()]
         ]));
 
-        $entity = self::createEntity($type, $player->getLevelNonNull(), $nbt);
+        $entity = $this->createEntity($type, $player->getLevelNonNull(), $nbt);
 
         if ($entity === null) {
             $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid");
@@ -239,14 +241,14 @@ class NPCManager {
         (new SNPCCreationEvent($entity))->call();
 
         if ($entity instanceof CustomHuman) {
-            self::saveSkinTag($entity, $nbt);
+            $this->saveSkinTag($entity, $nbt);
         }
 
-        self::saveChunkNPC($entity);
+        $this->saveChunkNPC($entity);
         return true;
     }
 
-    public static function saveSkinTag(CustomHuman $human, CompoundTag $nbt): void {
+    public function saveSkinTag(CustomHuman $human, CompoundTag $nbt): void {
         $skinTag = $nbt->getCompoundTag("Skin");
 
         if ($skinTag === null) {
@@ -257,7 +259,7 @@ class NPCManager {
         file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($skinTag));
     }
 
-    public static function saveChunkNPC(Entity $entity): void {
+    public function saveChunkNPC(Entity $entity): void {
         $chunk = $entity->chunk;
         if ($chunk !== null) {
             if (($chunk->hasChanged() or count($chunk->getTiles()) > 0 or count($chunk->getSavableEntities()) > 0) and $chunk->isGenerated()) {
@@ -267,7 +269,7 @@ class NPCManager {
         }
     }
 
-    public static function saveNPC(string $type, array $saves): string {
+    public function saveNPC(string $type, array $saves): string {
         if (!is_dir(SimpleNPC::getInstance()->getDataFolder() . "npcs")) {
             mkdir(SimpleNPC::getInstance()->getDataFolder() . "npcs");
         }
@@ -286,7 +288,7 @@ class NPCManager {
         return $identifier;
     }
 
-    public static function createEntity(string $type, Level $world, CompoundTag $nbt): ?Entity {
+    public function createEntity(string $type, Level $world, CompoundTag $nbt): ?Entity {
         if (isset(SimpleNPC::$entities[$type])) {
             /** @var Entity $class */
             $class = SimpleNPC::$entities[$type];
@@ -297,7 +299,7 @@ class NPCManager {
         return null;
     }
 
-    public static function removeNPC(string $identifier, Entity $entity): bool {
+    public function removeNPC(string $identifier, Entity $entity): bool {
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
             if (!$entity->isFlaggedForDespawn()) {
                 $entity->flagForDespawn();
@@ -313,7 +315,7 @@ class NPCManager {
         return false;
     }
 
-    public static function migrateNPC(Player $sender, array $args): bool {
+    public function migrateNPC(Player $sender, array $args): bool {
         $plugin = SimpleNPC::getInstance();
 
         if ($plugin->getServer()->getPluginManager()->getPlugin("Slapper") !== null) {
@@ -351,7 +353,7 @@ class NPCManager {
                     foreach ($level->getEntities() as $entity) {
                         if ($entity instanceof SlapperEntity) {
                             /** @phpstan-ignore-next-line */
-                            if (self::spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation())) {
+                            if ($this->spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation())) {
                                 if (!$entity->isFlaggedForDespawn()) {
                                     $entity->flagForDespawn();
                                 }
@@ -359,7 +361,7 @@ class NPCManager {
                                 ++$error;
                             }
                         } elseif ($entity instanceof SlapperHuman) {
-                            self::spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation(), $entity->getSkin()->getSkinData());
+                            $this->spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation(), $entity->getSkin()->getSkinData());
 
                             if (!$entity->isFlaggedForDespawn()) {
                                 $entity->flagForDespawn();
@@ -389,7 +391,7 @@ class NPCManager {
         return false;
     }
 
-    public static function interactToNPC(Entity $entity, Player $player): void {
+    public function interactToNPC(Entity $entity, Player $player): void {
         $plugin = SimpleNPC::getInstance();
 
         if (isset($plugin->idPlayers[$player->getName()])) {
@@ -399,7 +401,7 @@ class NPCManager {
         }
 
         if (isset($plugin->removeNPC[$player->getName()]) && !$entity->isFlaggedForDespawn()) {
-            if (self::removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
+            if ($this->removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
                 $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
             } else {
                 $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
@@ -433,7 +435,7 @@ class NPCManager {
     /**
      * @return null|BaseNPC[]|CustomHuman[]
      */
-    public static function getAllNPCs(): ?array {
+    public function getAllNPCs(): ?array {
         $npcs = null;
         foreach (SimpleNPC::getInstance()->getServer()->getLevels() as $world) {
             $npcs = array_map(static function(Entity $entity): Entity {

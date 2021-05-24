@@ -98,7 +98,7 @@ class URLToCapeTask extends AsyncTask {
         $npcConfig->set("capeData", base64_encode($this->getResult()));
         $npcConfig->save();
 
-        NPCManager::saveChunkNPC($npc);
+        NPCManager::getInstance()->saveChunkNPC($npc);
         $player->sendMessage(TextFormat::GREEN . "Successfull set cape to npc (ID: " . $npc->getId() . ")");
     }
 }

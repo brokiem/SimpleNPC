@@ -23,18 +23,20 @@ use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
 use pocketmine\utils\Config;
+use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 
 class FormManager {
+    use SingletonTrait;
 
-    public static function sendUIForm(Player $sender): void {
+    public function sendUIForm(Player $sender): void {
         $form = new SimpleForm("Manage NPC");
         $simpleForm = new SimpleForm("Manage NPC");
         $cusForm = new CustomForm("Manage NPC");
 
         $plugin = SimpleNPC::getInstance();
 
-        foreach ($plugin->getButtonManager()->getUIButtons() as $button) {
+        foreach (ButtonManager::getInstance()->getUIButtons() as $button) {
             $form->addButton(new Button($button["text"], $button["icon"], function(Player $sender) use ($simpleForm, $cusForm, $button, $plugin) {
                 if ($button["function"] !== null) {
                     switch ($button["function"]) {
@@ -53,7 +55,7 @@ class FormManager {
                                 $player->sendForm($cusForm);
                             }));
 
-                            foreach (NPCManager::getNPCs() as $saveNames) {
+                            foreach (NPCManager::getInstance()->getNPCs() as $saveNames) {
                                 $simpleForm->addButton(new Button(ucfirst(str_replace("_snpc", " NPC", $saveNames[0])), null, function(Player $player) use ($saveNames, $cusForm) {
                                     $dropdown = new Dropdown("Selected NPC:");
                                     $dropdown->addOption(new Option(str_replace("_snpc", "", $saveNames[0]), ucfirst(str_replace("_snpc", " NPC", $saveNames[0]))));
@@ -118,7 +120,7 @@ class FormManager {
         });
     }
 
-    public static function sendEditForm(Player $sender, array $args, int $entityId): void {
+    public function sendEditForm(Player $sender, array $args, int $entityId): void {
         $plugin = SimpleNPC::getInstance();
         $entity = $plugin->getServer()->findEntity($entityId);
 
@@ -129,7 +131,7 @@ class FormManager {
             $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
             $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
-            foreach ($plugin->getButtonManager()->getEditButtons() as $button) {
+            foreach (ButtonManager::getInstance()->getEditButtons() as $button) {
                 if (empty($button["element"]) && !empty($button["additional"]) && $button["additional"]["button"]["force"]) {
                     $editUI->addButton(new Button($button["additional"]["button"]["text"], $button["additional"]["button"]["icon"], function(Player $sender) use ($entity, $npcConfig, $button) {
                         switch ($button["additional"]["button"]["function"]) {
@@ -139,7 +141,7 @@ class FormManager {
                                 $entity->setNameTag($npcConfig->get("nametag"));
                                 $entity->setNameTagAlwaysVisible();
                                 $entity->setNameTagVisible();
-                                NPCManager::saveChunkNPC($entity);
+                                NPCManager::getInstance()->saveChunkNPC($entity);
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully showing NPC nametag (NPC ID: " . $entity->getId() . ")");
                                 break;
                             case "hideNametag":
@@ -148,7 +150,7 @@ class FormManager {
                                 $entity->setNameTag("");
                                 $entity->setNameTagAlwaysVisible(false);
                                 $entity->setNameTagVisible(false);
-                                NPCManager::saveChunkNPC($entity);
+                                NPCManager::getInstance()->saveChunkNPC($entity);
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully remove NPC nametag (NPC ID: " . $entity->getId() . ")");
                                 break;
                         }
@@ -195,7 +197,7 @@ class FormManager {
                                         }
                                         $npcConfig->set("position", [$entity->getX(), $entity->getY(), $entity->getZ(), $entity->getYaw(), $entity->getPitch()]);
                                         $npcConfig->save();
-                                        NPCManager::saveChunkNPC($entity);
+                                        NPCManager::getInstance()->saveChunkNPC($entity);
                                         $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                                     }));
 
@@ -231,7 +233,7 @@ class FormManager {
                     unset($commands[array_search($rmcmd, $commands, true)]);
                     $npcConfig->set("commands", $commands);
                     $npcConfig->save();
-                    NPCManager::saveChunkNPC($entity);
+                    NPCManager::getInstance()->saveChunkNPC($entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId() . ")");
                 } elseif ($addcmd !== "") {
                     if (in_array($addcmd, $npcConfig->get("commands"), true)) {
@@ -245,7 +247,7 @@ class FormManager {
 
                     $npcConfig->set("commands", array_merge([$addcmd], $npcConfig->getNested("commands")));
                     $npcConfig->save();
-                    NPCManager::saveChunkNPC($entity);
+                    NPCManager::getInstance()->saveChunkNPC($entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId() . ")");
                 } elseif ($chnmtd !== "") {
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
@@ -270,7 +272,7 @@ class FormManager {
 
                         $npcConfig->set("capeData", base64_encode($pCape->getSkin()->getCapeData()));
                         $npcConfig->save();
-                        NPCManager::saveChunkNPC($entity);
+                        NPCManager::getInstance()->saveChunkNPC($entity);
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc cape (NPC ID: " . $entity->getId() . ")");
                         return;
                     }
@@ -292,7 +294,7 @@ class FormManager {
                         $npcConfig->set("skinData", base64_encode($player->getSkin()->getSkinData()));
                         $npcConfig->save();
 
-                        NPCManager::saveChunkNPC($entity);
+                        NPCManager::getInstance()->saveChunkNPC($entity);
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                         return;
                     }
@@ -303,14 +305,14 @@ class FormManager {
                     }
 
                     $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($entity->getNameTag(), $player->getName(), $plugin->getDataFolder(), !($entity->namedtag->getShort("Walk") === 0), $skin, $entity->namedtag->getCompoundTag("Commands"), null, $entity->getLocation()));
-                    NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity);
+                    NPCManager::getInstance()->removeNPC($entity->namedtag->getString("Identifier"), $entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                 } elseif ($scale !== "") {
                     $npcConfig->set("scale", (float)$scale);
                     $npcConfig->save();
                     $entity->setScale((float)$scale);
 
-                    NPCManager::saveChunkNPC($entity);
+                    NPCManager::getInstance()->saveChunkNPC($entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc size to $scale (NPC ID: " . $entity->getId() . ")");
                 } else {
                     $player->sendMessage(TextFormat::RED . "Please enter a valid value!");

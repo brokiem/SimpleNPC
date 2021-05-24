@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace brokiem\snpc\manager\form;
 
 use EasyUI\element\Input;
+use pocketmine\utils\SingletonTrait;
 
 class ButtonManager {
+    use SingletonTrait;
 
     public function getUIButtons(): array {
         return [

@@ -49,7 +49,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         return true;
                     }
 
-                    FormManager::sendUIForm($sender);
+                    FormManager::getInstance()->sendUIForm($sender);
                     break;
                 case "reload":
                     if (!$sender->hasPermission("simplenpc.reload")) {
@@ -95,23 +95,23 @@ class Commands extends Command implements PluginIdentifiableCommand {
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 } elseif (isset($args[3])) {
-                                    NPCManager::spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, $sender->getSkin()->getSkinData(), $args[3] === "true");
+                                    NPCManager::getInstance()->spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, $sender->getSkin()->getSkinData(), $args[3] === "true");
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 } elseif (isset($args[2])) {
-                                    NPCManager::spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
+                                    NPCManager::getInstance()->spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
-                                NPCManager::spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $sender->getName(), null, null, $sender->getSkin()->getSkinData());
+                                NPCManager::getInstance()->spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $sender->getName(), null, null, $sender->getSkin()->getSkinData());
                             } else {
                                 if (isset($args[2])) {
-                                    NPCManager::spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);
+                                    NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
-                                NPCManager::spawnNPC(strtolower($args[1]) . "_snpc", $sender);
+                                NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender);
                             }
                             $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                         } else {
@@ -130,7 +130,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         $entity = $plugin->getServer()->findEntity((int)$args[1]);
 
                         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                            if (NPCManager::removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
+                            if (NPCManager::getInstance()->removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
                                 $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
                             } else {
                                 $sender->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
@@ -162,7 +162,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         return true;
                     }
 
-                FormManager::sendEditForm($sender, $args, (int)$args[1]);
+                FormManager::getInstance()->sendEditForm($sender, $args, (int)$args[1]);
                     break;
                 case "migrate":
                     if (!$sender->hasPermission("simplenpc.migrate")) {
@@ -173,7 +173,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         return true;
                     }
 
-                    NPCManager::migrateNPC($sender, $args);
+                    NPCManager::getInstance()->migrateNPC($sender, $args);
                     break;
                 case "list":
                     if (!$sender->hasPermission("simplenpc.list")) {
