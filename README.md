@@ -41,6 +41,13 @@
 | ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```simplenpc.migrate``` | ```op``` |
 | ```/snpc list``` | ```See the npc list``` | ```simplenpc.list``` | ```op``` |
 
+### Todo
+
+- Add custom walking path
+- Can set armor, held item, etc
+- Look to players setting per npc
+- Scale/size setting
+
 ### Issues
 
 Did you find a bug or error when using this plugin? feel free to open the
