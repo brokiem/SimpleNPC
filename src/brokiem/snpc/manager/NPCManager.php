@@ -33,6 +33,7 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\EntityIds;
 use pocketmine\level\Level;
 use pocketmine\level\Location;
+use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
@@ -237,8 +238,23 @@ class NPCManager {
 
         (new SNPCCreationEvent($entity))->call();
 
+        if ($entity instanceof CustomHuman) {
+            self::saveSkinTag($entity, $nbt);
+        }
+
         self::saveChunkNPC($entity);
         return true;
+    }
+
+    public static function saveSkinTag(CustomHuman $human, CompoundTag $nbt): void {
+        $skinTag = $nbt->getCompoundTag("Skin");
+
+        if ($skinTag === null) {
+            return;
+        }
+
+        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->getIdentifier() . ".dat";
+        file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($skinTag));
     }
 
     public static function saveChunkNPC(Entity $entity): void {
