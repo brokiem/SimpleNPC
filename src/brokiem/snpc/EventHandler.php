@@ -92,7 +92,7 @@ class EventHandler implements Listener {
         $entity = $event->getEntity();
 
         if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
-            if ($entity->namedtag->hasTag("Walk") and (bool)$entity->namedtag->getShort("Walk")) {
+            if ($entity->namedtag->hasTag("Walk") and $entity->namedtag->getShort("Walk")) {
                 $event->setCancelled();
             }
         }
@@ -139,7 +139,7 @@ class EventHandler implements Listener {
                             $pk->headYaw = $yaw;
                             $pk->onGround = $entity->onGround;
                             $player->sendDataPacket($pk);
-                        } elseif ($entity instanceof BaseNPC and $entity->namedtag->getShort("Walk") === 0) {
+                        } elseif ($entity instanceof BaseNPC) {
                             $pk = new MoveActorAbsolutePacket();
                             $pk->entityRuntimeId = $entity->getId();
                             $pk->position = $entity->asVector3();

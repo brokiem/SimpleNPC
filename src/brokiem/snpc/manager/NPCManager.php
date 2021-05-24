@@ -201,6 +201,10 @@ class NPCManager {
             }
         }
 
+        if ($type === SimpleNPC::ENTITY_HUMAN and $canWalk) {
+            $type = SimpleNPC::ENTITY_WALKING_HUMAN;
+        }
+
         $nbt->setTag($commands ?? new CompoundTag("Commands", []));
         $nbt->setShort("Walk", (int)$canWalk);
 
@@ -210,11 +214,6 @@ class NPCManager {
             "nametag" => $nametag,
             "world" => $player->getLevelNonNull()->getFolderName(),
             "showNametag" => $nametag !== null,
-            "skinId" => $player->getSkin()->getSkinId(),
-            "skinData" => $skinData,
-            "capeData" => $player->getSkin()->getCapeData(),
-            "geometryName" => $player->getSkin()->getGeometryName(),
-            "geometryData" => $player->getSkin()->getGeometryData(),
             "walk" => $canWalk,
             "commands" => $commands === null ? [] : $commands->getValue(),
             "position" => [$pos->getX(), $pos->getY(), $pos->getZ(), $pos->getYaw(), $pos->getPitch()]
@@ -257,7 +256,7 @@ class NPCManager {
         }
 
         $identifier = uniqid("$type-", true);
-        $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . "$identifier.json";
+        $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
 
         $npcConfig = new Config($path, Config::JSON);
         $npcConfig->set("version", SimpleNPC::getInstance()->getDescription()->getVersion());
