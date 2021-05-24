@@ -259,6 +259,9 @@ class NPCManager {
         file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($skinTag));
     }
 
+    /**
+     * @return \pocketmine\nbt\tag\NamedTag|\pocketmine\nbt\tag\NamedTag[]
+     */
     public function getSkinTag(CustomHuman $human) {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->getIdentifier() . ".dat";
         return (new LittleEndianNBTStream())->readCompressed($file);
