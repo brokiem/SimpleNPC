@@ -46,7 +46,6 @@
 - Add custom walking path
 - Can set armor, held item, etc
 - Look to players setting per npc
-- Scale/size setting
 
 ### Issues
 
