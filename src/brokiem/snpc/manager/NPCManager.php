@@ -248,7 +248,7 @@ class NPCManager {
     }
 
     public function saveSkinTag(Entity $entity, CompoundTag $nbt): void {
-        $skinTag = $nbt->getTag("Skin");
+        $skinTag = $nbt->getCompoundTag("Skin");
 
         if ($skinTag === null) {
             $skinTag = $nbt;
@@ -265,6 +265,7 @@ class NPCManager {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
 
         if (file_exists($file)) {
+            /** @phpstan-ignore-next-line */
             return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
         }
 

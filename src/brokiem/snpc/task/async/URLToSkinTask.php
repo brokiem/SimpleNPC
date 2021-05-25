@@ -31,7 +31,7 @@ class URLToSkinTask extends AsyncTask {
 
     public function onRun(): void {
         if ($this->skinUrl !== null) {
-            $uniqId = uniqid($this->nametag ?? "", true);
+            $uniqId = uniqid("skin-change", true);
             $parse = parse_url($this->skinUrl, PHP_URL_PATH);
 
             if ($parse === null || $parse === false) {
