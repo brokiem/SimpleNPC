@@ -162,7 +162,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                         return true;
                     }
 
-                FormManager::getInstance()->sendEditForm($sender, $args, (int)$args[1]);
+                    FormManager::getInstance()->sendEditForm($sender, $args, (int)$args[1]);
                     break;
                 case "migrate":
                     if (!$sender->hasPermission("simplenpc.migrate")) {
