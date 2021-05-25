@@ -48,7 +48,7 @@ class SimpleNPC extends PluginBase {
 
     public function onEnable(): void {
         if (!class_exists(Form::class)) {
-            $this->getLogger()->alert("UI/Form dependency not found! Please install the UI/Form virion. Disabling plugin...");
+            $this->getLogger()->alert("UI/Form dependency not found! Please download this plugin from poggit or install the UI/Form virion. Disabling plugin...");
             $this->getServer()->getPluginManager()->disablePlugin($this);
             return;
         }
