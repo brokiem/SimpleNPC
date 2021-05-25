@@ -13,7 +13,7 @@ enable-look-to-players: true
 # Default: 8
 max-look-distance: 8
 
-# Enable command cooldown
+# Enable command cooldown to prevent executing command too fast when hitting npc
 # Default: true
 enable-command-cooldown: true
 # Coldown executing command when hit the NPC
