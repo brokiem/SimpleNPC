@@ -48,8 +48,7 @@ use slapper\entities\SlapperHuman;
 class NPCManager {
     use SingletonTrait;
 
-    /** @var array */
-    private static $npcs = [
+    private static array $npcs = [
         BatNPC::class => ["bat_snpc", "simplenpc:bat"],
         BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
         ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],

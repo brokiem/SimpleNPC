@@ -10,17 +10,13 @@ use pocketmine\block\Liquid;
 use pocketmine\math\Vector3;
 
 class WalkingHuman extends CustomHuman {
-    /** @var Vector3 */
-    public $randomPosition;
+
+    public Vector3 $randomPosition;
     protected $gravity = 0.08;
-    /** @var float */
     protected $jumpVelocity = 0.45;
-    /** @var int */
-    private $findNewPosition = 0;
-    /** @var float */
-    private $speed = 0.35;
-    /** @var int */
-    private $jumpTick = 30;
+    private int $findNewPosition = 0;
+    private float $speed = 0.35;
+    private int $jumpTick = 30;
 
     public function onUpdate(int $currentTick): bool {
         if ($this->y <= 1) {

@@ -14,8 +14,7 @@ use pocketmine\utils\TextFormat;
 
 class RcaCommand extends Command implements PluginIdentifiableCommand {
 
-    /** @var SimpleNPC */
-    private $plugin;
+    private SimpleNPC $plugin;
 
     public function __construct(string $name, SimpleNPC $owner) {
         $this->plugin = $owner;

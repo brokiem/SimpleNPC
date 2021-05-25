@@ -21,26 +21,16 @@ class SimpleNPC extends PluginBase {
 
     public const ENTITY_HUMAN = "human_snpc";
     public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
-    /** @var array */
-    public static $npcType = [];
-    /** @var array */
-    public static $entities = [];
-    /** @var self */
-    private static $i;
-    /** @var array */
-    public $migrateNPC = [];
-    /** @var array */
-    public $removeNPC = [];
-    /** @var array */
-    public $settings = [];
-    /** @var array */
-    public $lastHit = [];
-    /** @var array */
-    public $cachedUpdate = [];
-    /** @var array */
-    public $idPlayers = [];
-    /** @var bool */
-    private $isDev = true;
+    public static array $npcType = [];
+    public static array $entities = [];
+    private static SimpleNPC $i;
+    public array $migrateNPC = [];
+    public array $removeNPC = [];
+    public array $settings = [];
+    public array $lastHit = [];
+    public array $cachedUpdate = [];
+    public array $idPlayers = [];
+    private bool $isDev = true;
 
     public static function getInstance(): self {
         return self::$i;
