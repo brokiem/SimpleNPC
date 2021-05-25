@@ -130,7 +130,7 @@ class EventHandler implements Listener {
                     $pitch = (($angle * 180) / M_PI) - 90;
 
                     if ($entity->namedtag->hasTag("Walk")) {
-                        if ($entity instanceof CustomHuman and $entity->namedtag->getShort("Walk") === 0) {
+                        if ($entity instanceof CustomHuman and $entity->namedtag->getShort("Walk", 0) === 0 and $entity->namedtag->getShort("Rotate", 1) === 1) {
                             $pk = new MovePlayerPacket();
                             $pk->entityRuntimeId = $entity->getId();
                             $pk->position = $entity->add(0, $entity->getEyeHeight());
@@ -139,7 +139,7 @@ class EventHandler implements Listener {
                             $pk->headYaw = $yaw;
                             $pk->onGround = $entity->onGround;
                             $player->sendDataPacket($pk);
-                        } elseif ($entity instanceof BaseNPC) {
+                        } elseif ($entity instanceof BaseNPC and $entity->namedtag->getShort("Rotate", 1) === 1) {
                             $pk = new MoveActorAbsolutePacket();
                             $pk->entityRuntimeId = $entity->getId();
                             $pk->position = $entity->asVector3();

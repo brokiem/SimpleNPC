@@ -217,6 +217,7 @@ class NPCManager {
             "type" => $type,
             "nametag" => $nametag,
             "world" => $player->getLevelNonNull()->getFolderName(),
+            "enableRotate" => true,
             "showNametag" => $nametag !== null,
             "walk" => $canWalk,
             "commands" => $commands === null ? [] : $commands->getValue(),

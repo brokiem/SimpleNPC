@@ -95,6 +95,32 @@ class ButtonManager {
                     "element" => new Input("Enter the new scale number (min=0.01")
                 ],
                 "additional" => []
+            ], "Disable Rotate" => [
+                "text" => "Disable Rotate\n(Look to player)",
+                "icon" => null,
+                "element" => [],
+                "additional" => [
+                    "form" => "editUI",
+                    "button" => [
+                        "text" => "Disable Rotate\n(Look to player)",
+                        "icon" => null,
+                        "function" => "disableRotate",
+                        "force" => true
+                    ]
+                ]
+            ], "Enable Rotate" => [
+                "text" => "Enable Rotate\n(Look to player)",
+                "icon" => null,
+                "element" => [],
+                "additional" => [
+                    "form" => "editUI",
+                    "button" => [
+                        "text" => "Enable Rotate\n(Look to player)",
+                        "icon" => null,
+                        "function" => "enableRotate",
+                        "force" => true
+                    ]
+                ]
             ], "Show Nametag" => [
                 "text" => "Show Nametag",
                 "icon" => null,

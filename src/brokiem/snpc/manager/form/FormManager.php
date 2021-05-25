@@ -47,10 +47,11 @@ class FormManager {
                                 $cusForm->addElement("type", $dropdown);
 
                                 $cusForm->addElement("nametag", new Input("NPC Nametag: [string]\n" . 'Note: Use (" ") if nametag has space'));
-                                $dropdown = new Dropdown("NPC Can Walk? [Yes/No]");
-                                $dropdown->addOption(new Option("false", "No"));
-                                $dropdown->addOption(new Option("true", "Yes"));
-                                $cusForm->addElement("walk", $dropdown);
+                                $dropdown1 = new Dropdown("NPC Can Walk? [Yes/No]");
+                                $dropdown1->addOption(new Option("false", "No"));
+                                $dropdown1->addOption(new Option("true", "Yes"));
+                                $cusForm->addElement("walk", $dropdown1);
+
                                 $cusForm->addElement("skin", new Input("NPC Skin URL: [null/string]"));
                                 $player->sendForm($cusForm);
                             }));
@@ -152,6 +153,24 @@ class FormManager {
                                 $entity->setNameTagVisible(false);
                                 NPCManager::getInstance()->saveChunkNPC($entity);
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully remove NPC nametag (NPC ID: " . $entity->getId() . ")");
+                                break;
+                            case "disableRotate":
+                                $npcConfig->set("enableRotate", false);
+                                $npcConfig->save();
+
+                                $entity->namedtag->setShort("Rotate", 0, true);
+                                NPCManager::getInstance()->saveChunkNPC($entity);
+
+                                $sender->sendMessage(TextFormat::GREEN . "Successfully disable npc rotate (NPC ID: " . $entity->getId() . ")");
+                                break;
+                            case "enableRotate":
+                                $npcConfig->set("enableRotate", true);
+                                $npcConfig->save();
+
+                                $entity->namedtag->setShort("Rotate", 1, true);
+                                NPCManager::getInstance()->saveChunkNPC($entity);
+
+                                $sender->sendMessage(TextFormat::GREEN . "Successfully enable npc rotate (NPC ID: " . $entity->getId() . ")");
                                 break;
                         }
                     }));
