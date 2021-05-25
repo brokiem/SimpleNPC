@@ -143,8 +143,7 @@ class ButtonManager {
                     "button" => [
                         "text" => "Hide Nametag",
                         "icon" => null,
-                        "function" =>
-                            "hideNametag",
+                        "function" => "hideNametag",
                         "force" => true
                     ]
                 ]

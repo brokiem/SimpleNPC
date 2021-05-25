@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\entity;
 
+use brokiem\snpc\manager\NPCManager;
 use pocketmine\entity\Entity;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
@@ -26,7 +27,7 @@ class BaseNPC extends Entity {
     protected function sendSpawnPacket(Player $player): void {
         $pk = new AddActorPacket();
         $pk->entityRuntimeId = $this->getId();
-        $pk->type = AddActorPacket::LEGACY_ID_MAP_BC[static::SNPC_ENTITY_ID];
+        $pk->type = NPCManager::LEGACY_ID_MAP_BC[static::SNPC_ENTITY_ID];
         $pk->position = $this->asVector3();
         $pk->motion = $this->getMotion();
         $pk->yaw = $pk->headYaw = $this->yaw;
