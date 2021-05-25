@@ -26,7 +26,6 @@ use brokiem\snpc\entity\npc\VillagerNPC;
 use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
-use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\event\SNPCCreationEvent;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\ConsoleCommandSender;
@@ -241,23 +240,21 @@ class NPCManager {
 
         (new SNPCCreationEvent($entity))->call();
 
-        $this->saveSkinTag($entity, $nbt);
+        if ($type === SimpleNPC::ENTITY_HUMAN || $type === SimpleNPC::ENTITY_WALKING_HUMAN) {
+            $this->saveSkinTag($entity, $nbt);
+        }
         $this->saveChunkNPC($entity);
         return true;
     }
 
     public function saveSkinTag(Entity $entity, CompoundTag $nbt): void {
-        if (!$entity instanceof CustomHuman || !$entity instanceof WalkingHuman) {
-            return;
-        }
-
-        $skinTag = $nbt->getCompoundTag("Skin");
+        $skinTag = $nbt->getTag("Skin");
 
         if ($skinTag === null) {
-            return;
+            $skinTag = $nbt;
         }
 
-        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".dat";
+        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".dat";
         file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($skinTag));
     }
 
@@ -265,14 +262,13 @@ class NPCManager {
      * @return \pocketmine\nbt\tag\NamedTag|\pocketmine\nbt\tag\NamedTag[]|null
      */
     public function getSkinTag(CustomHuman $human) {
-        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->getIdentifier() . ".dat";
+        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
 
-        $contents = file_get_contents($file);
-        if (!file_exists($file) or !$contents) {
-            return null;
+        if (file_exists($file)) {
+            return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
         }
 
-        return (new LittleEndianNBTStream())->readCompressed($contents);
+        return null;
     }
 
     public function saveChunkNPC(Entity $entity): void {
@@ -321,11 +317,18 @@ class NPCManager {
                 $entity->flagForDespawn();
             }
 
-            if (is_file($path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json")) {
-                unlink($path);
-                SimpleNPC::getInstance()->getLogger()->debug("Removed NPC File: $path");
-                return true;
+            $jsonPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
+            $datPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.dat";
+
+            if (is_file($jsonPath)) {
+                unlink($jsonPath);
             }
+
+            if (is_file($datPath)) {
+                unlink($datPath);
+            }
+
+            return true;
         }
 
         return false;
