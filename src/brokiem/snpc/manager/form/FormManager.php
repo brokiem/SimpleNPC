@@ -271,7 +271,7 @@ class FormManager {
                 } elseif ($chnmtd !== "") {
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
 
-                    $entity->setNameTag($chnmtd);
+                    $entity->setNameTag(str_replace("{line}", "\n", $chnmtd));
                     $entity->setNameTagAlwaysVisible();
 
                     $npcConfig->set("nametag", $chnmtd);

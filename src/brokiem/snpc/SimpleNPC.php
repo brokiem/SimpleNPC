@@ -15,9 +15,11 @@ use EasyUI\Form;
 use pocketmine\entity\Entity;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
+use pocketmine\utils\SingletonTrait;
 use ReflectionClass;
 
 class SimpleNPC extends PluginBase {
+    use SingletonTrait;
 
     public const ENTITY_HUMAN = "human_snpc";
     public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
@@ -25,8 +27,6 @@ class SimpleNPC extends PluginBase {
     public static $npcType = [];
     /** @var array */
     public static $entities = [];
-    /** @var self */
-    private static $i;
     /** @var array */
     public $migrateNPC = [];
     /** @var array */
@@ -42,10 +42,6 @@ class SimpleNPC extends PluginBase {
     /** @var bool */
     private $isDev = false;
 
-    public static function getInstance(): self {
-        return self::$i;
-    }
-
     public function onEnable(): void {
         if (!class_exists(Form::class)) {
             $this->getLogger()->alert("UI/Form dependency not found! Please download this plugin from poggit or install the UI/Form virion. Disabling plugin...");
@@ -53,12 +49,11 @@ class SimpleNPC extends PluginBase {
             return;
         }
 
-        self::$i = $this;
-
         if ($this->isDev) {
             $this->getLogger()->warning("You are using the Development version of SimpleNPC. The plugin will experience errors, crashes, or bugs. Only use this version if you are testing. Don't use the Dev version in production!");
         }
 
+        self::setInstance($this);
         self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN);
         self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN);
         NPCManager::getInstance()->registerAllNPC();

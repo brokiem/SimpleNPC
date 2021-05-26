@@ -265,7 +265,7 @@ class NPCManager {
     public function getSkinTag(CustomHuman $human) {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
 
-        if (file_exists($file)) {
+        if (is_file($file)) {
             /** @phpstan-ignore-next-line */
             return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
         }
