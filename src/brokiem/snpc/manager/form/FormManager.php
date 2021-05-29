@@ -139,7 +139,7 @@ class FormManager {
                             case "showNametag":
                                 $npcConfig->set("showNametag", true);
                                 $npcConfig->save();
-                                $entity->setNameTag($npcConfig->get("nametag"));
+                                $entity->setNameTag(str_replace("{line}", "\n", $npcConfig->get("nametag")));
                                 $entity->setNameTagAlwaysVisible();
                                 $entity->setNameTagVisible();
                                 NPCManager::getInstance()->saveChunkNPC($entity);
@@ -271,7 +271,7 @@ class FormManager {
                 } elseif ($chnmtd !== "") {
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
 
-                    $entity->setNameTag($chnmtd);
+                    $entity->setNameTag(str_replace("{line}", "\n", $chnmtd));
                     $entity->setNameTagAlwaysVisible();
 
                     $npcConfig->set("nametag", $chnmtd);

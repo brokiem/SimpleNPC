@@ -218,6 +218,7 @@ class NPCManager {
             "world" => $player->getLevelNonNull()->getFolderName(),
             "enableRotate" => true,
             "showNametag" => $nametag !== null,
+            "scale" => 1.0,
             "walk" => $canWalk,
             "commands" => $commands === null ? [] : $commands->getValue(),
             "position" => [$pos->getX(), $pos->getY(), $pos->getZ(), $pos->getYaw(), $pos->getPitch()]
@@ -264,7 +265,7 @@ class NPCManager {
     public function getSkinTag(CustomHuman $human) {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
 
-        if (file_exists($file)) {
+        if (is_file($file)) {
             /** @phpstan-ignore-next-line */
             return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
         }
