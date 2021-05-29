@@ -139,7 +139,7 @@ class FormManager {
                             case "showNametag":
                                 $npcConfig->set("showNametag", true);
                                 $npcConfig->save();
-                                $entity->setNameTag($npcConfig->get("nametag"));
+                                $entity->setNameTag(str_replace("{line}", "\n", $npcConfig->get("nametag")));
                                 $entity->setNameTagAlwaysVisible();
                                 $entity->setNameTagVisible();
                                 NPCManager::getInstance()->saveChunkNPC($entity);
