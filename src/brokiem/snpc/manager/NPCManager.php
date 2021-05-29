@@ -279,7 +279,7 @@ class NPCManager {
         if ($chunk !== null) {
             if (($chunk->hasChanged() or count($chunk->getSavableEntities()) > 0) and $chunk->isGenerated()) {
                 $entity->getLevelNonNull()->getProvider()->saveChunk($chunk);
-                $chunk->setChanged();
+                $chunk->setChanged(false);
             }
         }
     }
