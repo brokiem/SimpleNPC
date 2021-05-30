@@ -109,7 +109,7 @@ class SimpleNPC extends PluginBase {
         $this->getLogger()->debug("InitConfig: Successfully!");
     }
 
-    public function checkUpdate(bool $value = false): void {
-        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this, $value));
+    public function checkUpdate(bool $isRetry = false): void {
+        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this, $isRetry));
     }
 }
