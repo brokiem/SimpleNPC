@@ -129,6 +129,27 @@ class FormManager {
         $simpleForm = new SimpleForm("Manage NPC");
 
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+            if (is_file($file = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json")) {
+                if (empty(json_decode(file_get_contents($file), true))) {
+                    if (!$entity->isFlaggedForDespawn()) {
+                        $entity->flagForDespawn();
+                    }
+
+                    if (is_file($dat = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".dat")) {
+                        unlink($dat);
+                    }
+                    unlink($file);
+                    $sender->sendMessage(TextFormat::RED . "NPC Config file is empty! Please re-create the NPC.");
+                    return;
+                }
+            } else {
+                if (!$entity->isFlaggedForDespawn()) {
+                    $entity->flagForDespawn();
+                }
+                $sender->sendMessage(TextFormat::RED . "NPC Config file not found! Please re-create the NPC.");
+                return;
+            }
+
             $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
             $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
