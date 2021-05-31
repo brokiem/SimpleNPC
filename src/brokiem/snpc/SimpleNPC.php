@@ -40,7 +40,7 @@ class SimpleNPC extends PluginBase {
     /** @var array */
     public $idPlayers = [];
     /** @var bool */
-    private $isDev = false;
+    private $isDev = true;
 
     public function onEnable(): void {
         if (!class_exists(Form::class)) {
