@@ -20,6 +20,7 @@ use EasyUI\variant\CustomForm;
 use EasyUI\variant\SimpleForm;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
+use pocketmine\item\ItemIds;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
 use pocketmine\utils\Config;
@@ -193,6 +194,26 @@ class FormManager {
                                 NPCManager::getInstance()->saveChunkNPC($entity);
 
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully enable npc rotate (NPC ID: " . $entity->getId() . ")");
+                                break;
+                            case "setArmor":
+                                if ($entity instanceof CustomHuman) {
+                                    NPCManager::getInstance()->applyArmorFrom($sender, $entity);
+                                    $sender->sendMessage(TextFormat::GREEN . "Successfully send armor to npc ID: " . $entity->getId());
+                                } else {
+                                    $sender->sendMessage(TextFormat::RED . "Only human npc can wear armor");
+                                }
+                                break;
+                            case "setHeld":
+                                if ($entity instanceof CustomHuman) {
+                                    if ($sender->getInventory()->getItemInHand()->getId() === ItemIds::AIR) {
+                                        $sender->sendMessage(TextFormat::RED . "Please hold the item in your hand");
+                                    } else {
+                                        NPCManager::getInstance()->sendHeldItemFrom($sender, $entity);
+                                        $sender->sendMessage(TextFormat::GREEN . "Successfully send held item '" . $sender->getInventory()->getItemInHand()->getVanillaName() . "' to npc ID: " . $entity->getId());
+                                    }
+                                } else {
+                                    $sender->sendMessage(TextFormat::RED . "Only human npc can hold item");
+                                }
                                 break;
                         }
                     }));

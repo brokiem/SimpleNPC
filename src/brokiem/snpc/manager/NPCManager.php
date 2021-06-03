@@ -341,6 +341,17 @@ class NPCManager {
         return false;
     }
 
+    public function applyArmorFrom(Player $player, CustomHuman $npc): void {
+        $npc->getArmorInventory()->setContents($player->getArmorInventory()->getContents());
+        $this->saveChunkNPC($npc);
+    }
+
+    public function sendHeldItemFrom(Player $player, CustomHuman $npc): void {
+        $npc->getInventory()->setItemInHand($player->getInventory()->getItemInHand());
+        $npc->getInventory()->sendHeldItem($npc->getViewers());
+        $this->saveChunkNPC($npc);
+    }
+
     public function migrateNPC(Player $sender, array $args): bool {
         $plugin = SimpleNPC::getInstance();
 

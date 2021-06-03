@@ -44,7 +44,6 @@
 ### Todo
 
 - Add custom walking path
-- Can set armor, held item, etc
 
 ### Issues
 
