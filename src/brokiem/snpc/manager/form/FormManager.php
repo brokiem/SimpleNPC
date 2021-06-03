@@ -130,6 +130,7 @@ class FormManager {
 
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
             if (is_file($file = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json")) {
+                /** @phpstan-ignore-next-line */
                 if (empty(json_decode(file_get_contents($file), true))) {
                     if (!$entity->isFlaggedForDespawn()) {
                         $entity->flagForDespawn();
@@ -160,7 +161,7 @@ class FormManager {
                             case "showNametag":
                                 $npcConfig->set("showNametag", true);
                                 $npcConfig->save();
-                                $entity->setNameTag(str_replace("{line}", "\n", $npcConfig->get("nametag")));
+                                $entity->setNameTag(str_replace("{line}", "\n", $npcConfig->get("nametag", $sender->getName())));
                                 $entity->setNameTagAlwaysVisible();
                                 $entity->setNameTagVisible();
                                 NPCManager::getInstance()->saveChunkNPC($entity);

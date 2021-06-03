@@ -356,7 +356,7 @@ class NPCManager {
                 }), 10 * 20);
 
                 $sender->sendMessage(TextFormat::RED . " \nAre you sure want to migrate your NPC from Slapper to SimpleNPC? \nThis will replace the slapper NPCs with the new Simple NPCs\n\nIf yes, run /migrate confirm, if no, run /migrate cancel\n\n ");
-                $sender->sendMessage(TextFormat::RED . "NOTE: Make sure all the worlds with the Slapper NPC have been loaded!");
+                $sender->sendMessage(TextFormat::RED . "NOTE: Make sure all the worlds and chunks with the Slapper NPC have been loaded!");
                 return true;
             }
 
