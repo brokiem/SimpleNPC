@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace brokiem\snpc\entity;
 
 use brokiem\snpc\manager\NPCManager;
-use brokiem\snpc\SimpleNPC;
 use pocketmine\entity\Human;
 
 class CustomHuman extends Human {
@@ -19,8 +18,8 @@ class CustomHuman extends Human {
         parent::initEntity();
 
         $this->setNameTagAlwaysVisible();
-        $scale = NPCManager::getInstance()->getConfigNPC(SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $this->namedtag->getString("Identifier") . ".json")->get("scale", 1.0);
-        if ($this->getScale() != $scale) {
+        $scale = NPCManager::getInstance()->getConfigNPC($this->getIdentifier())->get("scale", 1.0);
+        if ($this->getScale() !== (float)$scale) {
             $this->setScale($scale);
         }
     }

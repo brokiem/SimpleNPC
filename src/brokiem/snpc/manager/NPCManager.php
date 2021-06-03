@@ -274,8 +274,8 @@ class NPCManager {
         return null;
     }
 
-    public function getConfigNPC(string $file, int $type = Config::DETECT, array $default = [], $correct = null): Config {
-        return new Config($file, $type, $default, $correct);
+    public function getConfigNPC(string $identifier): Config {
+        return new Config(SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $identifier . ".json", Config::JSON);
     }
 
     public function saveChunkNPC(Entity $entity): void {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace brokiem\snpc\entity;
 
 use brokiem\snpc\manager\NPCManager;
-use brokiem\snpc\SimpleNPC;
 use pocketmine\entity\Entity;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
@@ -24,8 +23,8 @@ class BaseNPC extends Entity {
         $this->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
         $this->setNameTagAlwaysVisible();
 
-        $scale = NPCManager::getInstance()->getConfigNPC(SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $this->namedtag->getString("Identifier") . ".json")->get("scale", 1.0);
-        if ($this->getScale() != $scale) {
+        $scale = NPCManager::getInstance()->getConfigNPC($this->getIdentifier())->get("scale", 1.0);
+        if ($this->getScale() !== (float)$scale) {
             $this->setScale($scale);
         }
     }
