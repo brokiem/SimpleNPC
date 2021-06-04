@@ -6,11 +6,18 @@ namespace brokiem\snpc\event;
 
 use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityEvent;
+use pocketmine\Player;
 
 class SNPCCreationEvent extends EntityEvent {
-    public function __construct(Entity $entity) {
+    /** @var Player */
+    private $creator;
+
+    public function __construct(Entity $entity, Player $creator) {
         $this->entity = $entity;
+        $this->creator = $creator;
     }
 
-    //TODO
+    public function getCreator(): Player {
+        return $this->creator;
+    }
 }

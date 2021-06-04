@@ -27,6 +27,7 @@ use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
 use brokiem\snpc\event\SNPCCreationEvent;
+use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\entity\Entity;
@@ -240,7 +241,7 @@ class NPCManager {
         $entity->spawnToAll();
         $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully! ID: " . $entity->getId());
 
-        (new SNPCCreationEvent($entity))->call();
+        (new SNPCCreationEvent($entity, $player))->call();
 
         if ($type === SimpleNPC::ENTITY_HUMAN || $type === SimpleNPC::ENTITY_WALKING_HUMAN) {
             $this->saveSkinTag($entity, $nbt);
@@ -320,6 +321,8 @@ class NPCManager {
 
     public function removeNPC(string $identifier, Entity $entity): bool {
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+            (new SNPCDeletionEvent($entity))->call();
+
             if (!$entity->isFlaggedForDespawn()) {
                 $entity->flagForDespawn();
             }
