@@ -53,6 +53,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     break;
                 case "reload":
                     if (!$sender->hasPermission("simplenpc.reload")) {
+                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
 
@@ -61,6 +62,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     break;
                 case "id":
                     if (!$sender->hasPermission("simplenpc.id")) {
+                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
 
@@ -80,6 +82,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     }
 
                     if (!$sender->hasPermission("simplenpc.spawn")) {
+                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
 
@@ -124,8 +127,10 @@ class Commands extends Command implements PluginIdentifiableCommand {
                 case "delete":
                 case "remove":
                     if (!$sender->hasPermission("simplenpc.remove")) {
+                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
+
                     if (isset($args[1]) && is_numeric($args[1])) {
                         $entity = $plugin->getServer()->findEntity((int)$args[1]);
 
@@ -154,6 +159,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                 case "edit":
                 case "manage":
                     if (!$sender->hasPermission("simplenpc.edit") or !$sender instanceof Player) {
+                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
 
@@ -166,6 +172,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     break;
                 case "migrate":
                     if (!$sender instanceof Player || !$sender->hasPermission("simplenpc.migrate")) {
+                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
 
@@ -173,6 +180,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     break;
                 case "list":
                     if (!$sender->hasPermission("simplenpc.list")) {
+                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
 
