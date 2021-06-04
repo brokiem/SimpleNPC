@@ -12,5 +12,5 @@ class OcelotNPC extends BaseNPC {
     public const SNPC_ENTITY_ID = Entity::OCELOT;
 
     public $height = 0.7;
-    public $width = 1;
+    public $width = 0.7;
 }

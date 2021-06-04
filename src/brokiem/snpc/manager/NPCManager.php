@@ -37,6 +37,7 @@ use pocketmine\level\Location;
 use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\NamedTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\scheduler\ClosureTask;
@@ -262,7 +263,7 @@ class NPCManager {
     }
 
     /**
-     * @return \pocketmine\nbt\tag\NamedTag|\pocketmine\nbt\tag\NamedTag[]|null
+     * @return NamedTag|NamedTag[]|null
      */
     public function getSkinTag(CustomHuman $human) {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
@@ -281,11 +282,9 @@ class NPCManager {
 
     public function saveChunkNPC(Entity $entity): void {
         $chunk = $entity->chunk;
-        if ($chunk !== null) {
-            if (($chunk->hasChanged() or count($chunk->getSavableEntities()) > 0) and $chunk->isGenerated()) {
-                $entity->getLevelNonNull()->getProvider()->saveChunk($chunk);
-                $chunk->setChanged(false);
-            }
+        if (($chunk !== null) && ($chunk->hasChanged() or count($chunk->getSavableEntities()) > 0) and $chunk->isGenerated()) {
+            $entity->getLevelNonNull()->getProvider()->saveChunk($chunk);
+            $chunk->setChanged(false);
         }
     }
 

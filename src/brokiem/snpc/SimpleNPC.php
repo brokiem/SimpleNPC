@@ -53,6 +53,11 @@ class SimpleNPC extends PluginBase {
             $this->getLogger()->warning("You are using the Development version of SimpleNPC. The plugin will experience errors, crashes, or bugs. Only use this version if you are testing. Don't use the Dev version in production!");
         }
 
+        if (PHP_VERSION_ID < 70400) {
+            $this->getLogger()->notice("You are using outdated PHP bin (" . PHP_VERSION . ")");
+            $this->getLogger()->notice("SimpleNPC will not support this PHP version (" . PHP_VERSION . ") soon!");
+        }
+
         self::setInstance($this);
         self::registerEntity(CustomHuman::class, self::ENTITY_HUMAN);
         self::registerEntity(WalkingHuman::class, self::ENTITY_WALKING_HUMAN);

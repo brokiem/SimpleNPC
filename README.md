@@ -62,4 +62,4 @@ Saweria - https://saweria.co/brokiem
 
 ## 🖼 Images
 
-<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/img.png" alt="">
+<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/simplenpc.png" alt="">
