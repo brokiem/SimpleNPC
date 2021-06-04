@@ -118,7 +118,7 @@ class EventHandler implements Listener {
         $player = $event->getPlayer();
 
         if ($this->plugin->settings["lookToPlayersEnabled"]) {
-            if ($event->getFrom()->distance($event->getTo()) < 0.5) {
+            if ($event->getFrom()->distance($event->getTo()) < 0.1) {
                 return;
             }
 
