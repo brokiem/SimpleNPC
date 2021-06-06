@@ -36,6 +36,13 @@ class SimpleNPC extends PluginBase {
     private bool $isDev = true;
 
     public function onEnable(): void {
+        if (PHP_VERSION_ID < 70400) {
+            $this->getLogger()->error("You are using outdated PHP bin (" . PHP_VERSION . ")");
+            $this->getLogger()->info("Please use PHP v7.4 or later to run this plugin!");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+            return;
+        }
+
         if (!class_exists(Form::class)) {
             $this->getLogger()->alert("UI/Form dependency not found! Please download this plugin from poggit or install the UI/Form virion. Disabling plugin...");
             $this->getServer()->getPluginManager()->disablePlugin($this);
@@ -44,11 +51,6 @@ class SimpleNPC extends PluginBase {
 
         if ($this->isDev) {
             $this->getLogger()->warning("You are using the Development version of SimpleNPC. The plugin will experience errors, crashes, or bugs. Only use this version if you are testing. Don't use the Dev version in production!");
-        }
-
-        if (PHP_VERSION_ID < 70400) {
-            $this->getLogger()->notice("You are using outdated PHP bin (" . PHP_VERSION . ")");
-            $this->getLogger()->notice("SimpleNPC will not support this PHP version (" . PHP_VERSION . ") soon!");
         }
 
         self::setInstance($this);
