@@ -37,7 +37,8 @@ class ButtonManager {
             ], "Migrate NPC" => [
                 "text" => "Migrate NPC",
                 "icon" => null,
-                "command" => "snpc migrate", "function" => null
+                "command" => "snpc migrate",
+                "function" => null
             ], "Remove NPC" => [
                 "text" => "Remove NPC",
                 "icon" => null,
@@ -59,7 +60,7 @@ class ButtonManager {
                 "icon" => null,
                 "element" => [
                     "id" => "addcmd",
-                    "element" => new Input("Use {player} for player name, and don't use slash [/]\n\nEnter the command here. (Command executed by console)")
+                    "element" => new Input("Use {player} for player name, and don't use slash [/]\nYou can also use rca command\n\nEnter the command here. (Command executed by console)")
                 ], "additional" => []
             ], "Remove Command" => [
                 "text" => "Remove Command",
@@ -95,6 +96,32 @@ class ButtonManager {
                     "element" => new Input("Enter the new scale number (min=0.01")
                 ],
                 "additional" => []
+            ], "Set Armor" => [
+                "text" => "Set Armor\n(You have to wear the armor)",
+                "icon" => null,
+                "element" => [],
+                "additional" => [
+                    "form" => "editUI",
+                    "button" => [
+                        "text" => "Set Armor\n(You have to wear the armor)",
+                        "icon" => null,
+                        "function" => "setArmor",
+                        "force" => true
+                    ]
+                ]
+            ], "Set Held Item" => [
+                "text" => "Set Held Item\n(You have to hold the item)",
+                "icon" => null,
+                "element" => [],
+                "additional" => [
+                    "form" => "editUI",
+                    "button" => [
+                        "text" => "Set Held Item\n(You have to hold the item)",
+                        "icon" => null,
+                        "function" => "setHeld",
+                        "force" => true
+                    ]
+                ]
             ], "Disable Rotate" => [
                 "text" => "Disable Rotate\n(Look to player)",
                 "icon" => null,

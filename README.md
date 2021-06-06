@@ -7,7 +7,7 @@
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbrokiem%26type%3Dpatrons&style=flat)](https://patreon.com/brokiem)
 [![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
 
-### Features
+## ✨ Features
 
 - Migration from Slapper supported! ✔
 - Right click to interact! ✔
@@ -25,7 +25,7 @@
 - NPC can look at players ✔
 - Lightweight & Open Source ❤
 
-### Commands
+## 💬 Commands
 
 <b>For more command info, please look directly at ```/snpc help```</b><br> or you can use <b>```/snpc ui```</b><br>
 
@@ -41,26 +41,25 @@
 | ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```simplenpc.migrate``` | ```op``` |
 | ```/snpc list``` | ```See the npc list``` | ```simplenpc.list``` | ```op``` |
 
-### Todo
+## 📝 Todo List
 
 - Add custom walking path
-- Can set armor, held item, etc
 
-### Issues
+## 🔴 Issues
 
 Did you find a bug or error when using this plugin? feel free to open the
 issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
 
-### Developers
+## 🖥 Developers
 
 If you want to register your own entity, take a look at this [plugin](https://github.com/brokiem/CustomEntity/)<br>
 You can also customize NPCs geometry by customizing the NPC skins
 
-### Donation
+## 👑 Donation
 
 Patreon - https://www.patreon.com/join/brokiem <br>
 Saweria - https://saweria.co/brokiem
 
-### Images
+## 🖼 Images
 
-<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/img.png" alt="">
+<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/simplenpc.png" alt="">

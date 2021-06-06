@@ -20,6 +20,7 @@ use EasyUI\variant\CustomForm;
 use EasyUI\variant\SimpleForm;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
+use pocketmine\item\ItemIds;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
 use pocketmine\utils\Config;
@@ -129,6 +130,28 @@ class FormManager {
         $simpleForm = new SimpleForm("Manage NPC");
 
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+            if (is_file($file = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json")) {
+                /** @phpstan-ignore-next-line */
+                if (empty(json_decode(file_get_contents($file), true))) {
+                    if (!$entity->isFlaggedForDespawn()) {
+                        $entity->flagForDespawn();
+                    }
+
+                    if (is_file($dat = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".dat")) {
+                        unlink($dat);
+                    }
+                    unlink($file);
+                    $sender->sendMessage(TextFormat::RED . "NPC Config file is empty! Please re-create the NPC.");
+                    return;
+                }
+            } else {
+                if (!$entity->isFlaggedForDespawn()) {
+                    $entity->flagForDespawn();
+                }
+                $sender->sendMessage(TextFormat::RED . "NPC Config file not found! Please re-create the NPC.");
+                return;
+            }
+
             $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
             $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
 
@@ -139,7 +162,7 @@ class FormManager {
                             case "showNametag":
                                 $npcConfig->set("showNametag", true);
                                 $npcConfig->save();
-                                $entity->setNameTag(str_replace("{line}", "\n", $npcConfig->get("nametag")));
+                                $entity->setNameTag(str_replace("{line}", "\n", $npcConfig->get("nametag", $sender->getName())));
                                 $entity->setNameTagAlwaysVisible();
                                 $entity->setNameTagVisible();
                                 NPCManager::getInstance()->saveChunkNPC($entity);
@@ -171,6 +194,26 @@ class FormManager {
                                 NPCManager::getInstance()->saveChunkNPC($entity);
 
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully enable npc rotate (NPC ID: " . $entity->getId() . ")");
+                                break;
+                            case "setArmor":
+                                if ($entity instanceof CustomHuman) {
+                                    NPCManager::getInstance()->applyArmorFrom($sender, $entity);
+                                    $sender->sendMessage(TextFormat::GREEN . "Successfully send armor to npc ID: " . $entity->getId());
+                                } else {
+                                    $sender->sendMessage(TextFormat::RED . "Only human npc can wear armor");
+                                }
+                                break;
+                            case "setHeld":
+                                if ($entity instanceof CustomHuman) {
+                                    if ($sender->getInventory()->getItemInHand()->getId() === ItemIds::AIR) {
+                                        $sender->sendMessage(TextFormat::RED . "Please hold the item in your hand");
+                                    } else {
+                                        NPCManager::getInstance()->sendHeldItemFrom($sender, $entity);
+                                        $sender->sendMessage(TextFormat::GREEN . "Successfully send held item '" . $sender->getInventory()->getItemInHand()->getVanillaName() . "' to npc ID: " . $entity->getId());
+                                    }
+                                } else {
+                                    $sender->sendMessage(TextFormat::RED . "Only human npc can hold item");
+                                }
                                 break;
                         }
                     }));

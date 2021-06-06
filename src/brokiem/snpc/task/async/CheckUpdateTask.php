@@ -6,6 +6,7 @@ namespace brokiem\snpc\task\async;
 
 use brokiem\snpc\SimpleNPC;
 use pocketmine\scheduler\AsyncTask;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
 
@@ -57,8 +58,9 @@ class CheckUpdateTask extends AsyncTask {
             $plugin->getLogger()->debug("Async update check failed!");
 
             if (!$this->retry) {
-                $plugin->checkUpdate(true);
-                $this->retry = true;
+                $plugin->getScheduler()->scheduleDelayedTask(new ClosureTask(function() use ($plugin): void {
+                    $plugin->checkUpdate(true);
+                }), 30);
             }
 
             return;

@@ -27,6 +27,7 @@ use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
 use brokiem\snpc\event\SNPCCreationEvent;
+use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\entity\Entity;
@@ -36,6 +37,7 @@ use pocketmine\level\Location;
 use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\NamedTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\scheduler\ClosureTask;
@@ -239,7 +241,7 @@ class NPCManager {
         $entity->spawnToAll();
         $player->sendMessage(TextFormat::GREEN . "NPC " . ucfirst($type) . " created successfully! ID: " . $entity->getId());
 
-        (new SNPCCreationEvent($entity))->call();
+        (new SNPCCreationEvent($entity, $player))->call();
 
         if ($type === SimpleNPC::ENTITY_HUMAN || $type === SimpleNPC::ENTITY_WALKING_HUMAN) {
             $this->saveSkinTag($entity, $nbt);
@@ -260,7 +262,7 @@ class NPCManager {
     }
 
     /**
-     * @return \pocketmine\nbt\tag\NamedTag|\pocketmine\nbt\tag\NamedTag[]|null
+     * @return NamedTag|NamedTag[]|null
      */
     public function getSkinTag(CustomHuman $human) {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
@@ -273,13 +275,15 @@ class NPCManager {
         return null;
     }
 
+    public function getConfigNPC(string $identifier): Config {
+        return new Config(SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $identifier . ".json", Config::JSON);
+    }
+
     public function saveChunkNPC(Entity $entity): void {
         $chunk = $entity->chunk;
-        if ($chunk !== null) {
-            if (($chunk->hasChanged() or count($chunk->getTiles()) > 0 or count($chunk->getSavableEntities()) > 0) and $chunk->isGenerated()) {
-                $entity->getLevelNonNull()->getProvider()->saveChunk($chunk);
-                $chunk->setChanged(false);
-            }
+        if (($chunk !== null) && ($chunk->hasChanged() or count($chunk->getSavableEntities()) > 0) and $chunk->isGenerated()) {
+            $entity->getLevelNonNull()->getProvider()->saveChunk($chunk);
+            $chunk->setChanged(false);
         }
     }
 
@@ -315,6 +319,8 @@ class NPCManager {
 
     public function removeNPC(string $identifier, Entity $entity): bool {
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
+            (new SNPCDeletionEvent($entity))->call();
+
             if (!$entity->isFlaggedForDespawn()) {
                 $entity->flagForDespawn();
             }
@@ -336,6 +342,17 @@ class NPCManager {
         return false;
     }
 
+    public function applyArmorFrom(Player $player, CustomHuman $npc): void {
+        $npc->getArmorInventory()->setContents($player->getArmorInventory()->getContents());
+        $this->saveChunkNPC($npc);
+    }
+
+    public function sendHeldItemFrom(Player $player, CustomHuman $npc): void {
+        $npc->getInventory()->setItemInHand($player->getInventory()->getItemInHand());
+        $npc->getInventory()->sendHeldItem($npc->getViewers());
+        $this->saveChunkNPC($npc);
+    }
+
     public function migrateNPC(Player $sender, array $args): bool {
         $plugin = SimpleNPC::getInstance();
 
@@ -351,7 +368,7 @@ class NPCManager {
                 }), 10 * 20);
 
                 $sender->sendMessage(TextFormat::RED . " \nAre you sure want to migrate your NPC from Slapper to SimpleNPC? \nThis will replace the slapper NPCs with the new Simple NPCs\n\nIf yes, run /migrate confirm, if no, run /migrate cancel\n\n ");
-                $sender->sendMessage(TextFormat::RED . "NOTE: Make sure all the worlds with the Slapper NPC have been loaded!");
+                $sender->sendMessage(TextFormat::RED . "NOTE: Make sure all the worlds and chunks with the Slapper NPC have been loaded!");
                 return true;
             }
 
