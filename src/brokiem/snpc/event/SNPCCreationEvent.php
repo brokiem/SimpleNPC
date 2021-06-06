@@ -9,8 +9,7 @@ use pocketmine\event\entity\EntityEvent;
 use pocketmine\Player;
 
 class SNPCCreationEvent extends EntityEvent {
-    /** @var Player */
-    private $creator;
+    private Player $creator;
 
     public function __construct(Entity $entity, Player $creator) {
         $this->entity = $entity;
