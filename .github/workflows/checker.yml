@@ -17,7 +17,7 @@ jobs:
       - name: Getting libEasyUI.phar
         uses: wei/wget@v1
         with:
-          args: -O vendor/libEasyUI.phar https://poggit.pmmp.io/r/120837/libEasyUI_dev-5.phar
+          args: -O vendor/libEasyUI.phar https://poggit.pmmp.io/r/127939/libEasyUI_dev-7.phar
       - name: Getting Slapper.phar
         uses: wei/wget@v1
         with:
