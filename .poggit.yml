@@ -6,7 +6,7 @@ projects:
     path: ""
     icon: "/assets/image.png"
     libs:
-      - src: brokiem/EasyUI/libEasyUI
+      - src: brokiem-pm-pl/EasyUI/libEasyUI
         version: 1.0.0
     lint:
       phpstan: false
