@@ -6,12 +6,15 @@ namespace brokiem\snpc\manager;
 
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
+use brokiem\snpc\entity\npc\AxolotlNPC;
 use brokiem\snpc\entity\npc\BatNPC;
 use brokiem\snpc\entity\npc\BlazeNPC;
 use brokiem\snpc\entity\npc\ChickenNPC;
 use brokiem\snpc\entity\npc\CowNPC;
 use brokiem\snpc\entity\npc\CreeperNPC;
 use brokiem\snpc\entity\npc\EndermanNPC;
+use brokiem\snpc\entity\npc\GlowsquidNPC;
+use brokiem\snpc\entity\npc\GoatNPC;
 use brokiem\snpc\entity\npc\HorseNPC;
 use brokiem\snpc\entity\npc\OcelotNPC;
 use brokiem\snpc\entity\npc\PigNPC;
@@ -50,7 +53,11 @@ use slapper\entities\SlapperHuman;
 class NPCManager {
     use SingletonTrait;
 
-    private static array $npcs = [
+    /** @var array */
+    private static $npcs = [
+        GoatNPC::class => ["goat_snpc", "simplenpc:goat"],
+        AxolotlNPC::class => ["axolotl_snpc", "simplenpc:axolotl"],
+        GlowsquidNPC::class => ["glowsquid_snpc", "simplenpc:glowsquid"],
         BatNPC::class => ["bat_snpc", "simplenpc:bat"],
         BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
         ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],
@@ -317,9 +324,9 @@ class NPCManager {
         return null;
     }
 
-    public function removeNPC(string $identifier, Entity $entity, Player $deletor = null): bool {
+    public function removeNPC(string $identifier, Entity $entity): bool {
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-            (new SNPCDeletionEvent($entity, $deletor))->call();
+            (new SNPCDeletionEvent($entity))->call();
 
             if (!$entity->isFlaggedForDespawn()) {
                 $entity->flagForDespawn();
@@ -439,7 +446,7 @@ class NPCManager {
         }
 
         if (isset($plugin->removeNPC[$player->getName()]) && !$entity->isFlaggedForDespawn()) {
-            if ($this->removeNPC($entity->namedtag->getString("Identifier"), $entity, $player)) {
+            if ($this->removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
                 $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
             } else {
                 $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
