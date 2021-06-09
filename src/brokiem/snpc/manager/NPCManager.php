@@ -56,8 +56,8 @@ class NPCManager {
     /** @var array */
     private static $npcs = [
         GoatNPC::class => ["goat_snpc", "simplenpc:goat"],
-        AxolotlNPC::class => ["axolotl_snpc", "simplenpc:goat"],
-        GlowsquidNPC::class => ["glowsquid_snpc", "simplenpc:goat"],
+        AxolotlNPC::class => ["axolotl_snpc", "simplenpc:axolotl"],
+        GlowsquidNPC::class => ["glowsquid_snpc", "simplenpc:glowsquid"],
         BatNPC::class => ["bat_snpc", "simplenpc:bat"],
         BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
         ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],
