@@ -23,26 +23,26 @@ class SimpleNPC extends PluginBase {
 
     public const ENTITY_HUMAN = "human_snpc";
     public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
-    /** @var array */
-    public static $npcType = [];
-    /** @var array */
-    public static $entities = [];
-    /** @var array */
-    public $migrateNPC = [];
-    /** @var array */
-    public $removeNPC = [];
-    /** @var array */
-    public $settings = [];
-    /** @var array */
-    public $lastHit = [];
-    /** @var array */
-    public $cachedUpdate = [];
-    /** @var array */
-    public $idPlayers = [];
-    /** @var bool */
-    private $isDev = true;
+  
+    public static array $npcType = [];
+    public static array $entities = [];
+    private static SimpleNPC $i;
+    public array $migrateNPC = [];
+    public array $removeNPC = [];
+    public array $settings = [];
+    public array $lastHit = [];
+    public array $cachedUpdate = [];
+    public array $idPlayers = [];
+    private bool $isDev = true;
 
     public function onEnable(): void {
+        if (PHP_VERSION_ID < 70400) {
+            $this->getLogger()->error("You are using outdated PHP bin (" . PHP_VERSION . ")");
+            $this->getLogger()->info("Please use PHP v7.4 or later to run this plugin!");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+            return;
+        }
+
         if (!class_exists(Form::class)) {
             $this->getLogger()->alert("UI/Form dependency not found! Please download this plugin from poggit or install the UI/Form virion. Disabling plugin...");
             $this->getServer()->getPluginManager()->disablePlugin($this);
@@ -51,11 +51,6 @@ class SimpleNPC extends PluginBase {
 
         if ($this->isDev) {
             $this->getLogger()->warning("You are using the Development version of SimpleNPC. The plugin will experience errors, crashes, or bugs. Only use this version if you are testing. Don't use the Dev version in production!");
-        }
-
-        if (PHP_VERSION_ID < 70400) {
-            $this->getLogger()->notice("You are using outdated PHP bin (" . PHP_VERSION . ")");
-            $this->getLogger()->notice("SimpleNPC will not support this PHP version (" . PHP_VERSION . ") soon!");
         }
 
         self::setInstance($this);

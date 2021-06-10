@@ -26,8 +26,7 @@ use pocketmine\utils\TextFormat;
 
 class EventHandler implements Listener {
 
-    /** @var SimpleNPC */
-    private $plugin;
+    private SimpleNPC $plugin;
 
     public function __construct(SimpleNPC $plugin) {
         $this->plugin = $plugin;

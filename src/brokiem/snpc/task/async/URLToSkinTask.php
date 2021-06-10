@@ -14,12 +14,9 @@ use pocketmine\utils\Internet;
 
 class URLToSkinTask extends AsyncTask {
 
-    /** @var string */
-    private $username;
-    /** @var string */
-    private $dataPath;
-    /** @var string */
-    private $skinUrl;
+    private string $username;
+    private string $dataPath;
+    private string $skinUrl;
 
     public function __construct(string $username, string $dataPath, string $skinURL, CustomHuman $human) {
         $this->username = $username;

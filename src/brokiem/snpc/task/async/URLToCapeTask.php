@@ -14,12 +14,10 @@ use pocketmine\utils\Internet;
 use pocketmine\utils\TextFormat;
 
 class URLToCapeTask extends AsyncTask {
-    /** @var string */
-    private $url;
-    /** @var string */
-    private $dataPath;
-    /** @var string */
-    private $player;
+
+    private string $url;
+    private string $dataPath;
+    private string $player;
 
     public function __construct(string $url, string $dataPath, CustomHuman $npc, string $player) {
         $this->dataPath = $dataPath;

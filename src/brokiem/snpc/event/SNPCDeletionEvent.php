@@ -9,8 +9,7 @@ use pocketmine\event\entity\EntityEvent;
 use pocketmine\Player;
 
 class SNPCDeletionEvent extends EntityEvent {
-    /** @var ?Player */
-    private $deletetor;
+    private ?Player $deletetor;
 
     public function __construct(Entity $entity, Player $deletor = null) {
         $this->entity = $entity;

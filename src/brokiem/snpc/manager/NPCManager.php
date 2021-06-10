@@ -53,11 +53,7 @@ use slapper\entities\SlapperHuman;
 class NPCManager {
     use SingletonTrait;
 
-    /** @var array */
-    private static $npcs = [
-        GoatNPC::class => ["goat_snpc", "simplenpc:goat"],
-        AxolotlNPC::class => ["axolotl_snpc", "simplenpc:axolotl"],
-        GlowsquidNPC::class => ["glowsquid_snpc", "simplenpc:glowsquid"],
+    private static array $npcs = [
         BatNPC::class => ["bat_snpc", "simplenpc:bat"],
         BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
         ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],
@@ -324,9 +320,9 @@ class NPCManager {
         return null;
     }
 
-    public function removeNPC(string $identifier, Entity $entity): bool {
+    public function removeNPC(string $identifier, Entity $entity, Player $deletor = null): bool {
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-            (new SNPCDeletionEvent($entity))->call();
+            (new SNPCDeletionEvent($entity, $deletor))->call();
 
             if (!$entity->isFlaggedForDespawn()) {
                 $entity->flagForDespawn();
@@ -446,7 +442,7 @@ class NPCManager {
         }
 
         if (isset($plugin->removeNPC[$player->getName()]) && !$entity->isFlaggedForDespawn()) {
-            if ($this->removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
+            if ($this->removeNPC($entity->namedtag->getString("Identifier"), $entity, $player)) {
                 $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
             } else {
                 $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");

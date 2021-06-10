@@ -14,16 +14,11 @@ use pocketmine\Server;
 use pocketmine\utils\Internet;
 
 class SkinURLToNPCTask extends AsyncTask {
-    /** @var null|string */
-    private $skinUrl;
-    /** @var null|string */
-    private $nametag;
-    /** @var bool */
-    private $canWalk;
-    /** @var string */
-    private $username;
-    /** @var string */
-    private $dataPath;
+    private ?string $skinUrl;
+    private ?string $nametag;
+    private bool $canWalk;
+    private string $username;
+    private string $dataPath;
 
     public function __construct(?string $nametag, string $username, string $dataPath, bool $canWalk = false, ?string $skinUrl = null, CompoundTag $command = null, Skin $skin = null, Location $customPos = null) {
         $this->username = $username;
