@@ -238,7 +238,7 @@ class NPCManager {
         }
 
         if (isset($plugin->removeNPC[$player->getName()]) && !$entity->isFlaggedForDespawn()) {
-            if ($this->removeNPC($entity->namedtag->getString("Identifier"), $entity, $player)) {
+            if ($this->removeNPC($entity->getIdentifier(), $entity, $player)) {
                 $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
             } else {
                 $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
