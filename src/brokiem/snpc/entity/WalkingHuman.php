@@ -8,6 +8,7 @@ use pocketmine\block\Air;
 use pocketmine\block\Flowable;
 use pocketmine\block\Liquid;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\tag\CompoundTag;
 
 final class WalkingHuman extends CustomHuman {
 
@@ -17,6 +18,11 @@ final class WalkingHuman extends CustomHuman {
     private int $findNewPosition = 0;
     private float $speed = 0.35;
     private int $jumpTick = 30;
+
+    protected function initEntity(CompoundTag $nbt): void {
+        $this->canWalk = true;
+        parent::initEntity($nbt);
+    }
 
     public function onUpdate(int $currentTick): bool {
         if ($this->getLocation()->y <= 1) {

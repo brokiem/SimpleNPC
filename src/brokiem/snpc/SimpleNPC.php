@@ -28,7 +28,7 @@ class SimpleNPC extends PluginBase {
     public const ENTITY_HUMAN = "human_snpc";
     public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
   
-    public static array $npcType = [];
+    private static array $registeredNPC = [];
     public static array $entities = [];
     private static SimpleNPC $i;
     public array $migrateNPC = [];
@@ -69,12 +69,12 @@ class SimpleNPC extends PluginBase {
             throw new \RuntimeException("Class $entityClass not found.");
         }
 
-        $class = new \ReflectionClass($entityClass);
-        if (is_a($entityClass, BaseNPC::class, true) || is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
-            self::$entities[$entityClass] = array_merge($saveNames, [$name]);
-            self::$npcType[] = $name;
+        $refClass = new \ReflectionClass($entityClass);
+        if (is_a($entityClass, BaseNPC::class, true) || is_a($entityClass, CustomHuman::class, true) and !$refClass->isAbstract()) {
+            self::$entities[$entityClass] = array_merge([$name], $saveNames);
+            self::$registeredNPC[$name] = array_merge([$entityClass], $saveNames);
 
-            foreach (array_merge($saveNames, [$name]) as $saveName) {
+            foreach (array_merge([$name], $saveNames) as $saveName) {
                 self::$entities[$saveName] = $entityClass;
             }
 
@@ -88,6 +88,10 @@ class SimpleNPC extends PluginBase {
                 }, [$entityClass]);
             }
         }
+    }
+
+    public function getRegisteredNPC(): array {
+        return self::$registeredNPC;
     }
 
     public function initConfiguration(): void {

@@ -74,7 +74,7 @@ class NPCManager {
         ZombieNPC::class => ["zombie_snpc", "simplenpc:zombie"]
     ];
 
-    public function getNPCs(): array {
+    public function getDefaultNPCs(): array {
         return self::$npcs;
     }
 
@@ -84,15 +84,11 @@ class NPCManager {
         }
     }
 
-    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?array $commands = [], ?Location $customPos = null, ?string $skinData = null, bool $canWalk = false): bool {
+    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?array $commands = [], ?Location $customPos = null, ?string $skinData = null): bool {
         $nbt = EntityDataHelper::createBaseNBT($player->getLocation(), null, $player->getLocation()->getYaw(), $player->getLocation()->getPitch());
 
         if ($customPos !== null) {
             $nbt = EntityDataHelper::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
-        }
-
-        if ($type === SimpleNPC::ENTITY_HUMAN and $canWalk) {
-            $type = SimpleNPC::ENTITY_WALKING_HUMAN;
         }
 
         $pos = $customPos ?? $player->getLocation();
@@ -104,7 +100,6 @@ class NPCManager {
             "enableRotate" => true,
             "showNametag" => $nametag !== null,
             "scale" => 1.0,
-            "walk" => $canWalk,
             "commands" => $commands ?? [],
             "position" => [$pos->getX(), $pos->getY(), $pos->getZ(), $pos->getYaw(), $pos->getPitch()]
         ]));

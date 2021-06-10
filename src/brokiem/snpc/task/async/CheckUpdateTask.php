@@ -26,7 +26,6 @@ class CheckUpdateTask extends AsyncTask {
     public function onRun(): void {
         $poggitData = Internet::getURL(self::POGGIT_URL . $this->name);
 
-        var_dump($poggitData);
         if ($poggitData === null) {
             return;
         }

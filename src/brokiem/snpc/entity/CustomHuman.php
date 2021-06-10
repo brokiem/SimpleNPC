@@ -14,7 +14,7 @@ class CustomHuman extends Human {
     protected $gravity = 0.0;
 
     private string $identifier;
-    protected bool $canWalk;
+    protected bool $canWalk = false;
     protected bool $lookToPlayers;
 
     protected CompoundTag $skinTag;
@@ -38,7 +38,6 @@ class CustomHuman extends Human {
         $this->commandManager = new CommandManager($this);
         $this->skinTag = $skinTag;
 
-        $this->canWalk = $this->getConfig()->get("walk", false);
         $this->lookToPlayers = $this->getConfig()->get("enableRotate", true);
 
         $this->setNameTagAlwaysVisible();
