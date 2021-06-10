@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace brokiem\snpc\entity\npc;
 
 use brokiem\snpc\entity\BaseNPC;
-use pocketmine\entity\Entity;
+use pocketmine\entity\EntitySizeInfo;
+use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
 class CreeperNPC extends BaseNPC {
 
-    public const SNPC_ENTITY_ID = Entity::CREEPER;
-
     public $height = 1.7;
     public $width = 1;
+
+    protected function getInitialSizeInfo(): EntitySizeInfo {
+        return new EntitySizeInfo($this->height, $this->width);
+    }
+
+    public static function getNetworkTypeId(): string {
+        return EntityIds::CREEPER;
+    }
 }

@@ -7,7 +7,6 @@ namespace brokiem\snpc\task\async;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\NPCManager;
 use pocketmine\entity\Skin;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
@@ -24,7 +23,7 @@ class URLToCapeTask extends AsyncTask {
         $this->url = $url;
         $this->player = $player;
 
-        $this->storeLocal([$npc]);
+        $this->storeLocal("snpc_urltocape", [$npc]);
     }
 
     public function onRun(): void {
@@ -38,11 +37,11 @@ class URLToCapeTask extends AsyncTask {
         $extension = pathinfo($parse, PATHINFO_EXTENSION);
         $data = Internet::getURL($this->url);
 
-        if (($data === false) || $extension !== "png") {
+        if ($data === null || $extension !== "png") {
             return;
         }
 
-        file_put_contents($this->dataPath . $uniqId . ".$extension", $data);
+        file_put_contents($this->dataPath . $uniqId . ".$extension", $data->getBody());
         $file = $this->dataPath . $uniqId . ".$extension";
 
         $img = @imagecreatefrompng($file);
@@ -69,10 +68,10 @@ class URLToCapeTask extends AsyncTask {
         }
     }
 
-    public function onCompletion(Server $server): void {
+    public function onCompletion(): void {
         /** @var CustomHuman $npc */
-        [$npc] = $this->fetchLocal();
-        $player = $server->getPlayerExact($this->player);
+        [$npc] = $this->fetchLocal("snpc_urltocape");
+        $player = Server::getInstance()->getPlayerExact($this->player);
 
         if ($player === null) {
             return;
@@ -92,13 +91,9 @@ class URLToCapeTask extends AsyncTask {
         $npc->setSkin($capeSkin);
         $npc->sendSkin();
 
-        $skinTag = NPCManager::getInstance()->getSkinTag($npc);
-        if ($skinTag instanceof CompoundTag) {
-            $skinTag->setByteArray("CapeData", $this->getResult(), true);
-            NPCManager::getInstance()->saveSkinTag($npc, $skinTag);
-        }
+        $npc->getSkinTag()->setByteArray("CapeData", $this->getResult());
+        NPCManager::getInstance()->saveSkinTag($npc);
 
-        NPCManager::getInstance()->saveChunkNPC($npc);
         $player->sendMessage(TextFormat::GREEN . "Successfull set cape to npc (ID: " . $npc->getId() . ")");
     }
 }

@@ -7,7 +7,6 @@ namespace brokiem\snpc\task\async;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\NPCManager;
 use pocketmine\entity\Skin;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
@@ -23,7 +22,7 @@ class URLToSkinTask extends AsyncTask {
         $this->dataPath = $dataPath;
         $this->skinUrl = $skinURL;
 
-        $this->storeLocal($human);
+        $this->storeLocal("snpc_urltoskin", $human);
     }
 
     public function onRun(): void {
@@ -38,11 +37,11 @@ class URLToSkinTask extends AsyncTask {
             $extension = pathinfo($parse, PATHINFO_EXTENSION);
             $data = Internet::getURL($this->skinUrl);
 
-            if ($data === false || $extension !== "png") {
+            if ($data === null || $extension !== "png") {
                 return;
             }
 
-            file_put_contents($this->dataPath . $uniqId . ".$extension", $data);
+            file_put_contents($this->dataPath . $uniqId . ".$extension", $data->getBody());
             $file = $this->dataPath . $uniqId . ".$extension";
 
             $img = @imagecreatefrompng($file);
@@ -75,10 +74,10 @@ class URLToSkinTask extends AsyncTask {
         }
     }
 
-    public function onCompletion(Server $server): void {
-        $player = $server->getPlayerExact($this->username);
+    public function onCompletion(): void {
+        $player = Server::getInstance()->getPlayerExact($this->username);
         /** @var CustomHuman $human */
-        $human = $this->fetchLocal();
+        $human = $this->fetchLocal("snpc_urltoskin");
 
         if ($player === null) {
             return;
@@ -92,13 +91,7 @@ class URLToSkinTask extends AsyncTask {
         $human->setSkin(new Skin($human->getSkin()->getSkinId(), $skinData, $human->getSkin()->getCapeData(), $human->getSkin()->getGeometryName(), $human->getSkin()->getGeometryData()));
         $human->sendSkin();
 
-        $skinTag = NPCManager::getInstance()->getSkinTag($human);
-        if ($skinTag instanceof CompoundTag) {
-            $skinTag->setByteArray("Data", $skinData, true);
-
-            NPCManager::getInstance()->saveSkinTag($human, $skinTag);
-        }
-
-        NPCManager::getInstance()->saveChunkNPC($human);
+        $human->getSkinTag()->setByteArray("Data", $skinData);
+        NPCManager::getInstance()->saveSkinTag($human);
     }
 }

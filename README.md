@@ -9,7 +9,6 @@
 
 ## ✨ Features
 
-- Migration from Slapper supported! ✔
 - Right click to interact! ✔
 - NPC can walk! ✔
 - Set NPC skin with URL! ✔
@@ -38,7 +37,6 @@
 | ```/snpc id``` | ```Get the npc id``` | ```simplenpc.id``` | ```op``` |
 | ```/snpc reload``` | ```Reload plugin config``` | ```simplenpc.reload``` | ```op``` |
 | ```/snpc remove``` | ```Remove the npc``` | ```simplenpc.remove``` | ```op``` |
-| ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```simplenpc.migrate``` | ```op``` |
 | ```/snpc list``` | ```See the npc list``` | ```simplenpc.list``` | ```op``` |
 
 ## 📝 Todo List

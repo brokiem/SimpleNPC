@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection RandomApiMigrationInspection */
 
 declare(strict_types=1);
 
@@ -9,7 +9,7 @@ use pocketmine\block\Flowable;
 use pocketmine\block\Liquid;
 use pocketmine\math\Vector3;
 
-class WalkingHuman extends CustomHuman {
+final class WalkingHuman extends CustomHuman {
 
     public Vector3 $randomPosition;
     protected $gravity = 0.08;
@@ -19,11 +19,11 @@ class WalkingHuman extends CustomHuman {
     private int $jumpTick = 30;
 
     public function onUpdate(int $currentTick): bool {
-        if ($this->y <= 1) {
-            $this->teleport($this->getLevelNonNull()->getSpawnLocation());
+        if ($this->getLocation()->y <= 1) {
+            $this->teleport($this->getWorld()->getSpawnLocation());
         }
 
-        if ($this->findNewPosition === 0 || $this->distance($this->randomPosition) <= 2) {
+        if ($this->findNewPosition === 0 || $this->getLocation()->distance($this->randomPosition) <= 2) {
             $this->findNewPosition = mt_rand(150, 300);
             $this->generateRandomPosition();
         }
@@ -41,8 +41,8 @@ class WalkingHuman extends CustomHuman {
         }
 
         $position = $this->randomPosition;
-        $x = $position->x - $this->getX();
-        $z = $position->z - $this->getZ();
+        $x = $position->x - $this->getLocation()->getX();
+        $z = $position->z - $this->getLocation()->getZ();
 
         if ($x * $x + $z * $z < 4 + $this->getScale()) {
             $this->motion->x = 0;
@@ -52,8 +52,8 @@ class WalkingHuman extends CustomHuman {
             $this->motion->z = $this->getSpeed() * 0.15 * ($z / (abs($x) + abs($z)));
         }
 
-        $this->yaw = rad2deg(atan2(-$x, $z));
-        $this->pitch = 0.0;
+        $this->getLocation()->yaw = rad2deg(atan2(-$x, $z));
+        $this->getLocation()->pitch = 0.0;
 
         $this->move($this->motion->x, $this->motion->y, $this->motion->z);
         $this->updateMovement();
@@ -62,13 +62,13 @@ class WalkingHuman extends CustomHuman {
     }
 
     public function generateRandomPosition(): void {
-        $minX = $this->getFloorX() - 8;
+        $minX = $this->getLocation()->getFloorX() - 8;
         $maxX = $minX + 16;
-        $minY = $this->getFloorY() - 8;
+        $minY = $this->getLocation()->getFloorY() - 8;
         $maxY = $minY + 16;
-        $minZ = $this->getFloorZ() - 8;
+        $minZ = $this->getLocation()->getFloorZ() - 8;
         $maxZ = $minZ + 16;
-        $world = $this->getLevelNonNull();
+        $world = $this->getWorld();
 
         $x = mt_rand($minX, $maxX);
         $y = mt_rand($minY, $maxY);
@@ -94,8 +94,8 @@ class WalkingHuman extends CustomHuman {
     public function shouldJump(): bool {
         if ($this->jumpTick === 0) {
             $this->jumpTick = 30;
-            $pos = $this->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
-            return $this->getLevelNonNull()->getBlock($pos)->getId() !== 0 and !$this->getLevelNonNull()->getBlock($pos) instanceof Flowable;
+            $pos = $this->getLocation()->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
+            return $this->getWorld()->getBlock($pos)->getId() !== 0 and !$this->getWorld()->getBlock($pos) instanceof Flowable;
         }
 
         return false;

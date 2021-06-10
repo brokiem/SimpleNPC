@@ -12,13 +12,15 @@ use brokiem\snpc\SimpleNPC;
 use brokiem\snpc\task\async\SkinURLToNPCTask;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\entity\Entity;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginOwned;
+use pocketmine\plugin\PluginOwnedTrait;
 use pocketmine\utils\TextFormat;
 
-class Commands extends Command implements PluginIdentifiableCommand {
+class Commands extends Command implements PluginOwned {
+    use PluginOwnedTrait;
 
     private SimpleNPC $plugin;
 
@@ -131,10 +133,10 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     }
 
                     if (isset($args[1]) && is_numeric($args[1])) {
-                        $entity = $plugin->getServer()->findEntity((int)$args[1]);
+                        $entity = $plugin->getServer()->getWorldManager()->findEntity((int)$args[1]);
 
                         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                            if (NPCManager::getInstance()->removeNPC($entity->namedtag->getString("Identifier"), $entity)) {
+                            if (NPCManager::getInstance()->removeNPC($entity->getIdentifier(), $entity)) {
                                 $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
                             } else {
                                 $sender->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
@@ -169,23 +171,15 @@ class Commands extends Command implements PluginIdentifiableCommand {
 
                     FormManager::getInstance()->sendEditForm($sender, $args, (int)$args[1]);
                     break;
-                case "migrate":
-                    if (!$sender instanceof Player || !$sender->hasPermission("simplenpc.migrate")) {
-                        $sender->sendMessage(TextFormat::RED . "You don't have permission");
-                        return true;
-                    }
-
-                    NPCManager::getInstance()->migrateNPC($sender, $args);
-                    break;
                 case "list":
                     if (!$sender->hasPermission("simplenpc.list")) {
                         $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
 
-                    foreach ($plugin->getServer()->getLevels() as $world) {
+                    foreach ($plugin->getServer()->getWorldManager()->getWorlds() as $world) {
                         $entityNames = array_map(static function(Entity $entity): string {
-                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevelNonNull()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                            return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getWorld()->getFolderName() . ": " . $entity->getLocation()->getFloorX() . "/" . $entity->getLocation()->getFloorY() . "/" . $entity->getLocation()->getFloorZ();
                         }, array_filter($world->getEntities(), static function(Entity $entity): bool {
                             return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                         }));
@@ -194,7 +188,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     }
                     break;
                 case "help":
-                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
+                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
                     break;
                 default:
                     $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/snpc help' for help.");

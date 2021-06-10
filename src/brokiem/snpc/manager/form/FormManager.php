@@ -21,8 +21,7 @@ use EasyUI\variant\SimpleForm;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\item\ItemIds;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
@@ -77,9 +76,9 @@ class FormManager {
                         case "npcList":
                             if ($sender->hasPermission("simplenpc.list")) {
                                 $list = "";
-                                foreach ($plugin->getServer()->getLevels() as $world) {
+                                foreach ($plugin->getServer()->getWorldManager()->getWorlds() as $world) {
                                     $entityNames = array_map(static function(Entity $entity): string {
-                                        return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getLevelNonNull()->getFolderName() . ": " . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ();
+                                        return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getWorld()->getFolderName() . ": " . $entity->getLocation()->getFloorX() . "/" . $entity->getLocation()->getFloorY() . "/" . $entity->getLocation()->getFloorZ();
                                     }, array_filter($world->getEntities(), static function(Entity $entity): bool {
                                         return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                                     }));
@@ -109,11 +108,12 @@ class FormManager {
             $skin = $response->getInputSubmittedText("skin") === "null" ? "" : $response->getInputSubmittedText("skin");
             $npcEditId = $response->getInputSubmittedText("snpcid_edit");
 
-            if ($npcEditId !== "") {
+            if ($npcEditId != "") {
                 $plugin->getServer()->getCommandMap()->dispatch($player, "snpc edit $npcEditId");
                 return;
             }
-            if ($type === "") {
+
+            if ($type == "") {
                 $player->sendMessage(TextFormat::YELLOW . "Please enter a valid NPC type");
                 return;
             }
@@ -124,20 +124,20 @@ class FormManager {
 
     public function sendEditForm(Player $sender, array $args, int $entityId): void {
         $plugin = SimpleNPC::getInstance();
-        $entity = $plugin->getServer()->findEntity($entityId);
+        $entity = $plugin->getServer()->getWorldManager()->findEntity($entityId);
 
         $customForm = new CustomForm("Manage NPC");
         $simpleForm = new SimpleForm("Manage NPC");
 
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-            if (is_file($file = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json")) {
+            if (is_file($file = $plugin->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".json")) {
                 /** @phpstan-ignore-next-line */
                 if (empty(json_decode(file_get_contents($file), true))) {
                     if (!$entity->isFlaggedForDespawn()) {
                         $entity->flagForDespawn();
                     }
 
-                    if (is_file($dat = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".dat")) {
+                    if (is_file($dat = $plugin->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".dat")) {
                         unlink($dat);
                     }
                     unlink($file);
@@ -152,8 +152,8 @@ class FormManager {
                 return;
             }
 
-            $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
-            $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getFloorX() . "/" . $entity->getFloorY() . "/" . $entity->getFloorZ());
+            $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".json", Config::JSON);
+            $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getLocation()->getFloorX() . "/" . $entity->getLocation()->getFloorY() . "/" . $entity->getLocation()->getFloorZ());
 
             foreach (ButtonManager::getInstance()->getEditButtons() as $button) {
                 if (empty($button["element"]) && !empty($button["additional"]) && $button["additional"]["button"]["force"]) {
@@ -165,7 +165,6 @@ class FormManager {
                                 $entity->setNameTag(str_replace("{line}", "\n", $npcConfig->get("nametag", $sender->getName())));
                                 $entity->setNameTagAlwaysVisible();
                                 $entity->setNameTagVisible();
-                                NPCManager::getInstance()->saveChunkNPC($entity);
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully showing NPC nametag (NPC ID: " . $entity->getId() . ")");
                                 break;
                             case "hideNametag":
@@ -174,15 +173,13 @@ class FormManager {
                                 $entity->setNameTag("");
                                 $entity->setNameTagAlwaysVisible(false);
                                 $entity->setNameTagVisible(false);
-                                NPCManager::getInstance()->saveChunkNPC($entity);
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully remove NPC nametag (NPC ID: " . $entity->getId() . ")");
                                 break;
                             case "disableRotate":
                                 $npcConfig->set("enableRotate", false);
                                 $npcConfig->save();
 
-                                $entity->namedtag->setShort("Rotate", 0, true);
-                                NPCManager::getInstance()->saveChunkNPC($entity);
+                                $entity->setCanLookToPlayers(false);
 
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully disable npc rotate (NPC ID: " . $entity->getId() . ")");
                                 break;
@@ -190,8 +187,7 @@ class FormManager {
                                 $npcConfig->set("enableRotate", true);
                                 $npcConfig->save();
 
-                                $entity->namedtag->setShort("Rotate", 1, true);
-                                NPCManager::getInstance()->saveChunkNPC($entity);
+                                $entity->setCanLookToPlayers(true);
 
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully enable npc rotate (NPC ID: " . $entity->getId() . ")");
                                 break;
@@ -255,11 +251,10 @@ class FormManager {
                                     $simpleForm->addButton(new Button("NPC to You", null, function(Player $sender) use ($npcConfig, $entity): void {
                                         $entity->teleport($sender->getLocation());
                                         if ($entity instanceof WalkingHuman) {
-                                            $entity->randomPosition = $entity->asVector3();
+                                            $entity->randomPosition = $entity->getLocation()->asVector3();
                                         }
                                         $npcConfig->set("position", [$entity->getX(), $entity->getY(), $entity->getZ(), $entity->getYaw(), $entity->getPitch()]);
                                         $npcConfig->save();
-                                        NPCManager::getInstance()->saveChunkNPC($entity);
                                         $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                                     }));
 
@@ -279,39 +274,31 @@ class FormManager {
                 $scale = $response->getInputSubmittedText("changescale");
                 $skin = $response->getInputSubmittedText("changeskin");
                 $cape = $response->getInputSubmittedText("changecape");
-                $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json", Config::JSON);
+                $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".json", Config::JSON);
 
-                if ($rmcmd !== "") {
+                if ($rmcmd != "") {
                     if (!in_array($rmcmd, $npcConfig->get("commands"), true)) {
                         $player->sendMessage(TextFormat::RED . "Command '$rmcmd' not found in command list.");
                         return;
                     }
 
-                    $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
-                    $commands->removeTag($rmcmd);
-                    $entity->namedtag->setTag($commands);
+                    $entity->getCommandManager()->remove($rmcmd);
 
-                    $commands = $npcConfig->get("commands");
-                    unset($commands[array_search($rmcmd, $commands, true)]);
-                    $npcConfig->set("commands", $commands);
+                    $npcConfig->set("commands", $entity->getCommandManager()->getAll());
                     $npcConfig->save();
-                    NPCManager::getInstance()->saveChunkNPC($entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId() . ")");
-                } elseif ($addcmd !== "") {
+                } elseif ($addcmd != "") {
                     if (in_array($addcmd, $npcConfig->get("commands"), true)) {
                         $player->sendMessage(TextFormat::RED . "Command '$addcmd' has already been added.");
                         return;
                     }
 
-                    $commands = $entity->namedtag->getCompoundTag("Commands") ?? new CompoundTag("Commands");
-                    $commands->setString($addcmd, $addcmd);
-                    $entity->namedtag->setTag($commands);
+                    $entity->getCommandManager()->add($addcmd);
 
-                    $npcConfig->set("commands", array_merge([$addcmd], $npcConfig->getNested("commands")));
+                    $npcConfig->set("commands", $entity->getCommandManager()->getAll());
                     $npcConfig->save();
-                    NPCManager::getInstance()->saveChunkNPC($entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId() . ")");
-                } elseif ($chnmtd !== "") {
+                } elseif ($chnmtd != "") {
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
 
                     $entity->setNameTag(str_replace("{line}", "\n", $chnmtd));
@@ -319,7 +306,7 @@ class FormManager {
 
                     $npcConfig->set("nametag", $chnmtd);
                     $npcConfig->save();
-                } elseif ($cape !== "") {
+                } elseif ($cape != "") {
                     if (!$entity instanceof CustomHuman) {
                         $player->sendMessage(TextFormat::RED . "Only human NPC can change cape!");
                         return;
@@ -332,22 +319,17 @@ class FormManager {
                         $entity->setSkin($capeSkin);
                         $entity->sendSkin();
 
-                        $skinTag = NPCManager::getInstance()->getSkinTag($entity);
+                        $entity->getSkinTag()->setByteArray("Data", $pCape->getSkin()->getSkinData());
+                        $entity->getSkinTag()->setByteArray("CapeData", $pCape->getSkin()->getCapeData());
 
-                        if ($skinTag instanceof CompoundTag) {
-                            $skinTag->setByteArray("Data", $pCape->getSkin()->getSkinData(), true);
-                            $skinTag->setByteArray("CapeData", $pCape->getSkin()->getCapeData(), true);
+                        NPCManager::getInstance()->saveSkinTag($entity);
 
-                            NPCManager::getInstance()->saveSkinTag($entity, $skinTag);
-                        }
-
-                        NPCManager::getInstance()->saveChunkNPC($entity);
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc cape (NPC ID: " . $entity->getId() . ")");
                         return;
                     }
 
                     $plugin->getServer()->getAsyncPool()->submitTask(new URLToCapeTask($cape, $plugin->getDataFolder(), $entity, $player->getName()));
-                } elseif ($skin !== "") {
+                } elseif ($skin != "") {
                     if (!$entity instanceof CustomHuman) {
                         $player->sendMessage(TextFormat::RED . "Only human NPC can change skin!");
                         return;
@@ -359,15 +341,10 @@ class FormManager {
                         $entity->setSkin($pSkin->getSkin());
                         $entity->sendSkin();
 
-                        $skinTag = NPCManager::getInstance()->getSkinTag($entity);
-                        if ($skinTag instanceof CompoundTag) {
-                            $skinTag->setString("Name", $player->getSkin()->getSkinId(), true);
-                            $skinTag->setByteArray("Data", $player->getSkin()->getSkinData(), true);
+                        $entity->getSkinTag()->setString("Name", $player->getSkin()->getSkinId());
+                        $entity->getSkinTag()->setByteArray("Data", $player->getSkin()->getSkinData());
 
-                            NPCManager::getInstance()->saveSkinTag($entity, $skinTag);
-                        }
-
-                        NPCManager::getInstance()->saveChunkNPC($entity);
+                        NPCManager::getInstance()->saveSkinTag($entity);
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                         return;
                     }
@@ -379,7 +356,7 @@ class FormManager {
 
                     $plugin->getServer()->getAsyncPool()->submitTask(new URLToSkinTask($player->getName(), $plugin->getDataFolder(), $skin, $entity));
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
-                } elseif ($scale !== "") {
+                } elseif ($scale != "") {
                     if ((float)$scale <= 0) {
                         $player->sendMessage("Scale must be greater than 0");
                         return;
@@ -389,7 +366,6 @@ class FormManager {
                     $npcConfig->save();
                     $entity->setScale((float)$scale);
 
-                    NPCManager::getInstance()->saveChunkNPC($entity);
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc size to $scale (NPC ID: " . $entity->getId() . ")");
                 } else {
                     $player->sendMessage(TextFormat::RED . "Please enter a valid value!");

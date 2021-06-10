@@ -7,12 +7,14 @@ namespace brokiem\snpc\commands;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
+use pocketmine\plugin\PluginOwned;
+use pocketmine\plugin\PluginOwnedTrait;
 use pocketmine\utils\TextFormat;
 
-class RcaCommand extends Command implements PluginIdentifiableCommand {
+class RcaCommand extends Command implements PluginOwned {
+    use PluginOwnedTrait;
 
     private SimpleNPC $plugin;
 

@@ -6,8 +6,8 @@ namespace brokiem\snpc\task\async;
 
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
+use pocketmine\entity\Location;
 use pocketmine\entity\Skin;
-use pocketmine\level\Location;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -27,7 +27,7 @@ class SkinURLToNPCTask extends AsyncTask {
         $this->skinUrl = $skinUrl;
         $this->dataPath = $dataPath;
 
-        $this->storeLocal([$command, $skin, $customPos]);
+        $this->storeLocal("snpc_skinurltonpc", [$command, $skin, $customPos]);
     }
 
     public function onRun(): void {
@@ -42,11 +42,11 @@ class SkinURLToNPCTask extends AsyncTask {
             $extension = pathinfo($parse, PATHINFO_EXTENSION);
             $data = Internet::getURL($this->skinUrl);
 
-            if ($data === false || $extension !== "png") {
+            if ($data === null || $extension !== "png") {
                 return;
             }
 
-            file_put_contents($this->dataPath . $uniqId . ".$extension", $data);
+            file_put_contents($this->dataPath . $uniqId . ".$extension", $data->getBody());
             $file = $this->dataPath . $uniqId . ".$extension";
 
             $img = @imagecreatefrompng($file);
@@ -79,9 +79,9 @@ class SkinURLToNPCTask extends AsyncTask {
         }
     }
 
-    public function onCompletion(Server $server): void {
-        $player = $server->getPlayerExact($this->username);
-        [$commands, $skin, $customPos] = $this->fetchLocal();
+    public function onCompletion(): void {
+        $player = Server::getInstance()->getPlayerExact($this->username);
+        [$commands, $skin, $customPos] = $this->fetchLocal("snpc_skinurltonpc");
 
         if ($player === null) {
             return;
