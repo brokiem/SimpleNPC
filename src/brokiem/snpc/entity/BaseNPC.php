@@ -32,7 +32,7 @@ class BaseNPC extends Entity {
     protected function sendSpawnPacket(Player $player): void {
         $pk = new AddActorPacket();
         $pk->entityRuntimeId = $this->getId();
-        $pk->type = AddActorPacket::LEGACY_ID_MAP_BC[static::SNPC_ENTITY_ID];
+        $pk->type = is_string(static::SNPC_ENTITY_ID) ? static::SNPC_ENTITY_ID : AddActorPacket::LEGACY_ID_MAP_BC[static::SNPC_ENTITY_ID];
         $pk->position = $this->asVector3();
         $pk->motion = $this->getMotion();
         $pk->yaw = $pk->headYaw = $this->yaw;

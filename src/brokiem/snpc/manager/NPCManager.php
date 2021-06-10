@@ -6,12 +6,15 @@ namespace brokiem\snpc\manager;
 
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
+use brokiem\snpc\entity\npc\AxolotlNPC;
 use brokiem\snpc\entity\npc\BatNPC;
 use brokiem\snpc\entity\npc\BlazeNPC;
 use brokiem\snpc\entity\npc\ChickenNPC;
 use brokiem\snpc\entity\npc\CowNPC;
 use brokiem\snpc\entity\npc\CreeperNPC;
 use brokiem\snpc\entity\npc\EndermanNPC;
+use brokiem\snpc\entity\npc\GlowsquidNPC;
+use brokiem\snpc\entity\npc\GoatNPC;
 use brokiem\snpc\entity\npc\HorseNPC;
 use brokiem\snpc\entity\npc\OcelotNPC;
 use brokiem\snpc\entity\npc\PigNPC;
