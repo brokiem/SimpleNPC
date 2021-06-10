@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace brokiem\snpc\task\async;
 
 use brokiem\snpc\manager\NPCManager;
-use brokiem\snpc\SimpleNPC;
 use pocketmine\entity\Location;
 use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
@@ -18,8 +17,10 @@ class SkinURLToNPCTask extends AsyncTask {
     private ?string $nametag;
     private string $username;
     private string $dataPath;
+    private string $type;
 
-    public function __construct(?string $nametag, string $username, string $dataPath, ?string $skinUrl = null, CompoundTag $command = null, Skin $skin = null, Location $customPos = null) {
+    public function __construct(string $type, ?string $nametag, string $username, string $dataPath, ?string $skinUrl = null, CompoundTag $command = null, Skin $skin = null, Location $customPos = null) {
+        $this->type = $type;
         $this->username = $username;
         $this->nametag = $nametag;
         $this->skinUrl = $skinUrl;
@@ -90,6 +91,6 @@ class SkinURLToNPCTask extends AsyncTask {
         $position = $customPos instanceof Location ? $customPos : null;
         $skinData = $skin instanceof Skin ? $skin->getSkinData() : $this->getResult();
 
-        NPCManager::getInstance()->spawnNPC(SimpleNPC::ENTITY_HUMAN, $player, $this->nametag, $commands, $position, $skinData);
+        NPCManager::getInstance()->spawnNPC($this->type, $player, $this->nametag, $commands, $position, $skinData);
     }
 }
