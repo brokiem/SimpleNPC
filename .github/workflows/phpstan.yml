@@ -1,4 +1,4 @@
-name: PHPStan Checker
+name: PHPStan Analysis
 
 on: [ push, pull_request ]
 
@@ -20,6 +20,6 @@ jobs:
         with:
           args: -O vendor/libEasyUI.phar https://poggit.pmmp.io/r/128037/libEasyUI_dev-10.phar
       - name: Run PHPStan
-        uses: paroxity/pmmp-phpstan-action@3.19.0
+        uses: paroxity/pmmp-phpstan-action@master
         with:
           phpstan-config: phpstan.neon.dist

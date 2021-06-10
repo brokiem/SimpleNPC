@@ -6,19 +6,13 @@ namespace brokiem\snpc\entity;
 
 use brokiem\snpc\manager\command\CommandManager;
 use brokiem\snpc\SimpleNPC;
-use pocketmine\entity\Attribute;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntitySizeInfo;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\protocol\AddActorPacket;
-use pocketmine\network\mcpe\protocol\types\entity\Attribute as NetworkAttribute;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
-use pocketmine\player\Player;
 use pocketmine\utils\Config;
 
 abstract class BaseNPC extends Entity {
-    public const SNPC_ENTITY_ID = 0;
-
     protected $gravity = 0.0;
 
     private string $identifier;
@@ -52,23 +46,6 @@ abstract class BaseNPC extends Entity {
         $nbt = parent::saveNBT();
         $nbt->setString("Identifier", $this->identifier);
         return $nbt;
-    }
-
-    protected function sendSpawnPacket(Player $player): void {
-        $pk = new AddActorPacket();
-        $pk->entityRuntimeId = $this->getId();
-        $pk->type = static::getNetworkTypeId();
-        $pk->position = $this->location->asVector3();
-        $pk->motion = $this->getMotion();
-        $pk->yaw = $this->location->yaw;
-        $pk->headYaw = $this->location->yaw;
-        $pk->pitch = $this->location->pitch;
-        $pk->attributes = array_map(static function(Attribute $attr): NetworkAttribute {
-            return new NetworkAttribute($attr->getId(), $attr->getMinValue(), $attr->getMaxValue(), $attr->getValue(), $attr->getDefaultValue());
-        }, $this->attributeMap->getAll());
-        $pk->metadata = $this->getAllNetworkData($player->getNetworkSession()->getProtocolId());
-
-        $player->getNetworkSession()->sendDataPacket($pk);
     }
 
     public function getConfig(): Config {

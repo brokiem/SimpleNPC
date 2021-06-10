@@ -5,7 +5,7 @@
 [![Star](https://img.shields.io/github/stars/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC/stargazers)
 [![Discord](https://img.shields.io/discord/830063409000087612?color=7389D8&label=discord)](https://discord.com/invite/jy6abSrjhQ)
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbrokiem%26type%3Dpatrons&style=flat)](https://patreon.com/brokiem)
-[![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
+[![Poggit](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
 
 ## ✨ Features
 
@@ -50,7 +50,8 @@ issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
 
 ## 🖥 Developers
 
-If you want to register your own entity, take a look at this [plugin](https://github.com/brokiem/CustomEntity/)<br>
+If you want to register your own entity, take a look at
+this [plugin](https://github.com/brokiem-pm-pl/CustomEntity/tree/pm4)<br>
 You can also customize NPCs geometry by customizing the NPC skins
 
 ## 👑 Donation
