@@ -1,4 +1,4 @@
-<h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/image.png" height="64" width="64" align="left" alt=""></h1><br>
+<h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/icon.png" height="64" width="64" align="left" alt=""></h1><br>
 
 <b>An Ultimate NPC plugin made by brokiem for PocketMine-MP.</b><br>
 [![License](https://img.shields.io/github/license/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC)
@@ -62,3 +62,4 @@ Saweria - https://saweria.co/brokiem
 ## 🖼 Images
 
 <img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/simplenpc.png" alt="">
+<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/1.17-npc.png" alt="">
