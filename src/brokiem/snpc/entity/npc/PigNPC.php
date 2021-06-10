@@ -10,8 +10,8 @@ use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
 class PigNPC extends BaseNPC {
 
-    public $height = 0.9;
-    public $width = 1;
+    public float $height = 0.9;
+    public float $width = 1;
 
     protected function getInitialSizeInfo(): EntitySizeInfo {
         return new EntitySizeInfo($this->height, $this->width);

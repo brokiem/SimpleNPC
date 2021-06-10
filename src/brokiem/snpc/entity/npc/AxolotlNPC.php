@@ -9,8 +9,8 @@ use pocketmine\entity\EntitySizeInfo;
 
 class AxolotlNPC extends BaseNPC {
 
-    public $height = 0.4;
-    public $width = 0.3;
+    public float $height = 0.4;
+    public float $width = 0.3;
 
     protected function getInitialSizeInfo(): EntitySizeInfo {
         return new EntitySizeInfo($this->height, $this->width);

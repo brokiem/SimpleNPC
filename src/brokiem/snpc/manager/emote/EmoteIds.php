@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\manager\emote;
 
-class EmoteIds {
+final class EmoteIds {
     public const WAVE = "4c8ae710-df2e-47cd-814d-cc7bf21a3d67";
     public const SIMPLE_CLAP = "9a469a61-c83b-4ba9-b507-bdbe64430582";
     public const OVER_THERE = "ce5c0300-7f03-455d-aaf1-352e4927b54d";

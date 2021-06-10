@@ -91,21 +91,13 @@ class NPCManager {
             $nbt = EntityDataHelper::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
-        $nbt->setTag("Skin", CompoundTag::create()
-            ->setString("Name", $player->getSkin()->getSkinId())
-            ->setByteArray("Data", $skinData ?? $player->getSkin()->getSkinData())
-            ->setByteArray("CapeData", $player->getSkin()->getCapeData())
-            ->setString("GeometryName", $player->getSkin()->getGeometryName())
-            ->setByteArray("GeometryData", $player->getSkin()->getGeometryData())
-        );
-
         if ($type === SimpleNPC::ENTITY_HUMAN and $canWalk) {
             $type = SimpleNPC::ENTITY_WALKING_HUMAN;
         }
 
         $pos = $customPos ?? $player->getLocation();
         $nbt->setString("Identifier", $this->saveNPCData($type, [
-            "version", SimpleNPC::getInstance()->getDescription()->getVersion(),
+            "version" => SimpleNPC::getInstance()->getDescription()->getVersion(),
             "type" => $type,
             "nametag" => $nametag,
             "world" => $player->getWorld()->getFolderName(),
@@ -116,6 +108,15 @@ class NPCManager {
             "commands" => $commands ?? [],
             "position" => [$pos->getX(), $pos->getY(), $pos->getZ(), $pos->getYaw(), $pos->getPitch()]
         ]));
+        if (isset(SimpleNPC::$entities[$type]) && is_a(SimpleNPC::$entities[$type], CustomHuman::class, true)) {
+            $nbt->setTag("Skin", CompoundTag::create()
+                ->setString("Name", $player->getSkin()->getSkinId())
+                ->setByteArray("Data", $skinData ?? $player->getSkin()->getSkinData())
+                ->setByteArray("CapeData", $player->getSkin()->getCapeData())
+                ->setString("GeometryName", $player->getSkin()->getGeometryName())
+                ->setByteArray("GeometryData", $player->getSkin()->getGeometryData())
+            );
+        }
 
         $entity = $this->createEntity($type, $pos, $nbt);
 
@@ -145,7 +146,7 @@ class NPCManager {
         file_put_contents($file, zlib_encode((new LittleEndianNbtSerializer())->write(new TreeRoot($entity->getSkinTag())), ZLIB_ENCODING_GZIP));
     }
 
-    public function getSkinTag(CustomHuman $human): ?CompoundTag {
+    public function getSavedSkinTag(CustomHuman $human): ?CompoundTag {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->getIdentifier() . ".dat";
 
         if (is_file($file)) {
@@ -184,8 +185,7 @@ class NPCManager {
             }
 
             if (is_a($class, CustomHuman::class, true)) {
-                $skin = Human::parseSkinNBT($nbt);
-                return new $class($location, $skin, $nbt);
+                return new $class($location, Human::parseSkinNBT($nbt), $nbt);
             }
         }
 

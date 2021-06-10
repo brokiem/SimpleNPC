@@ -10,8 +10,8 @@ use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
 class WolfNPC extends BaseNPC {
 
-    public $height = 0.85;
-    public $width = 0.8;
+    public float $height = 0.85;
+    public float $width = 0.8;
 
     protected function getInitialSizeInfo(): EntitySizeInfo {
         return new EntitySizeInfo($this->height, $this->width);

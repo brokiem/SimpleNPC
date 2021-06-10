@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection TypeUnsafeComparisonInspection */
 
 declare(strict_types=1);
 
@@ -176,25 +176,17 @@ class FormManager {
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully remove NPC nametag (NPC ID: " . $entity->getId() . ")");
                                 break;
                             case "disableRotate":
-                                $npcConfig->set("enableRotate", false);
-                                $npcConfig->save();
-
                                 $entity->setCanLookToPlayers(false);
-
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully disable npc rotate (NPC ID: " . $entity->getId() . ")");
                                 break;
                             case "enableRotate":
-                                $npcConfig->set("enableRotate", true);
-                                $npcConfig->save();
-
                                 $entity->setCanLookToPlayers(true);
-
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully enable npc rotate (NPC ID: " . $entity->getId() . ")");
                                 break;
                             case "setArmor":
                                 if ($entity instanceof CustomHuman) {
                                     NPCManager::getInstance()->applyArmorFrom($sender, $entity);
-                                    $sender->sendMessage(TextFormat::GREEN . "Successfully send armor to npc ID: " . $entity->getId());
+                                    $sender->sendMessage(TextFormat::GREEN . "Successfully set your armor to NPC ID: " . $entity->getId());
                                 } else {
                                     $sender->sendMessage(TextFormat::RED . "Only human npc can wear armor");
                                 }
@@ -205,7 +197,7 @@ class FormManager {
                                         $sender->sendMessage(TextFormat::RED . "Please hold the item in your hand");
                                     } else {
                                         NPCManager::getInstance()->sendHeldItemFrom($sender, $entity);
-                                        $sender->sendMessage(TextFormat::GREEN . "Successfully send held item '" . $sender->getInventory()->getItemInHand()->getVanillaName() . "' to npc ID: " . $entity->getId());
+                                        $sender->sendMessage(TextFormat::GREEN . "Successfully set held item '" . $sender->getInventory()->getItemInHand()->getVanillaName() . "' to npc ID: " . $entity->getId());
                                     }
                                 } else {
                                     $sender->sendMessage(TextFormat::RED . "Only human npc can hold item");

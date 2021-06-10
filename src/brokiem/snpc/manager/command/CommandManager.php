@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\manager\command;
 
-use brokiem\snpc\SimpleNPC;
-use pocketmine\utils\Config;
+use brokiem\snpc\entity\BaseNPC;
+use brokiem\snpc\entity\CustomHuman;
 
 final class CommandManager {
 
-    private string $identifier;
     private array $commands;
 
-    public function __construct(string $identifier) {
-        $this->identifier = $identifier;
-        $this->commands = $this->getConfig()->get("commands", []);
-    }
-
-    public function getConfig(): Config {
-        return new Config(SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.json", Config::JSON);
+    /** @param BaseNPC|CustomHuman $npc */
+    public function __construct($npc) {
+        $this->commands = $npc->getConfig()->get("commands", []);
     }
 
     public function add($command): bool {

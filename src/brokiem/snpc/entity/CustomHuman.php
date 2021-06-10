@@ -35,7 +35,7 @@ class CustomHuman extends Human {
         }
 
         $this->identifier = $identifier;
-        $this->commandManager = new CommandManager($identifier);
+        $this->commandManager = new CommandManager($this);
         $this->skinTag = $skinTag;
 
         $this->canWalk = $this->getConfig()->get("walk", false);
@@ -64,6 +64,9 @@ class CustomHuman extends Human {
     }
 
     public function setCanLookToPlayers(bool $value): void {
+        $this->getConfig()->set("enableRotate", $value);
+        $this->getConfig()->save();
+
         $this->lookToPlayers = $value;
     }
 

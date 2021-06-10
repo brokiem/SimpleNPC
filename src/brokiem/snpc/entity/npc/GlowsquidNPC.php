@@ -9,8 +9,8 @@ use pocketmine\entity\EntitySizeInfo;
 
 class GlowsquidNPC extends BaseNPC {
 
-    public $height = 0.6;
-    public $width = 0.8;
+    public float $height = 0.6;
+    public float $width = 0.8;
 
     protected function getInitialSizeInfo(): EntitySizeInfo {
         return new EntitySizeInfo($this->height, $this->width);

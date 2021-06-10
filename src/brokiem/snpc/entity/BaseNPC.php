@@ -36,7 +36,7 @@ abstract class BaseNPC extends Entity {
         $identifier = $nbt->getString("Identifier");
 
         $this->identifier = $identifier;
-        $this->commandManager = new CommandManager($identifier);
+        $this->commandManager = new CommandManager($this);
         $this->lookToPlayers = $this->getConfig()->get("enableRotate", true);
 
         $this->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::SILENT, true);
@@ -76,6 +76,9 @@ abstract class BaseNPC extends Entity {
     }
 
     public function setCanLookToPlayers(bool $value): void {
+        $this->getConfig()->set("enableRotate", $value);
+        $this->getConfig()->save();
+
         $this->lookToPlayers = $value;
     }
 

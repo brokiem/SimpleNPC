@@ -93,7 +93,7 @@ final class WalkingHuman extends CustomHuman {
 
     public function shouldJump(): bool {
         if ($this->jumpTick === 0) {
-            $this->jumpTick = 30;
+            $this->jumpTick = 20;
             $pos = $this->getLocation()->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
             return $this->getWorld()->getBlock($pos)->getId() !== 0 and !$this->getWorld()->getBlock($pos) instanceof Flowable;
         }

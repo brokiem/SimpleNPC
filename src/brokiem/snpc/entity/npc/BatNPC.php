@@ -10,8 +10,8 @@ use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
 class BatNPC extends BaseNPC {
 
-    public $height = 0.9;
-    public $width = 0.5;
+    public float $height = 0.9;
+    public float $width = 0.5;
 
     protected function getInitialSizeInfo(): EntitySizeInfo {
         return new EntitySizeInfo($this->height, $this->width);
