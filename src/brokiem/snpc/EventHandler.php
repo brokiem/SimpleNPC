@@ -9,7 +9,6 @@ use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\NPCManager;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
@@ -71,16 +70,6 @@ class EventHandler implements Listener {
 
             if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
                 NPCManager::getInstance()->interactToNPC($entity, $player);
-            }
-        }
-    }
-
-    public function onMotion(EntityMotionEvent $event): void {
-        $entity = $event->getEntity();
-
-        if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
-            if ($entity->canWalk()) {
-                $event->cancel();
             }
         }
     }
