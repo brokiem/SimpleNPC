@@ -1,7 +1,7 @@
 parameters:
   paths:
     - /source/src
-  level: 9
+  level: 7
   bootstrapFiles:
     - phar:///pocketmine/PocketMine-MP.phar/vendor/autoload.php
   scanDirectories:
