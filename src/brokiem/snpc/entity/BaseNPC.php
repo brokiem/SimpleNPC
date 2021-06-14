@@ -9,7 +9,7 @@ use pocketmine\entity\Entity;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\Player;
 
-class BaseNPC extends Entity {
+abstract class BaseNPC extends Entity {
     public const SNPC_ENTITY_ID = 0;
 
     protected $gravity = 0.0;

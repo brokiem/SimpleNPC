@@ -6,6 +6,9 @@ author: brokiem
 
 mcpe-protocol: [ 440 ]
 
+extensions:
+  Core: '>=7.4'
+
 website: https://github.com/brokiem/SimpleNPC/
 
 permissions:

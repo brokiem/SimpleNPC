@@ -17,6 +17,7 @@ class WalkingHuman extends CustomHuman {
     private int $findNewPosition = 0;
     private float $speed = 0.35;
     private int $jumpTick = 30;
+    protected bool $canWalk = true;
 
     public function onUpdate(int $currentTick): bool {
         if ($this->y <= 1) {

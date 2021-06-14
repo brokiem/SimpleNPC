@@ -90,10 +90,8 @@ class EventHandler implements Listener {
     public function onMotion(EntityMotionEvent $event): void {
         $entity = $event->getEntity();
 
-        if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
-            if ($entity->namedtag->hasTag("Walk") and $entity->namedtag->getShort("Walk")) {
-                $event->setCancelled();
-            }
+        if (($entity instanceof CustomHuman) && $entity->canWalk()) {
+            $event->setCancelled();
         }
     }
 
@@ -128,7 +126,7 @@ class EventHandler implements Listener {
                     $angle = atan2((new Vector2($entity->x, $entity->z))->distance($player->x, $player->z), $player->y - $entity->y);
                     $pitch = (($angle * 180) / M_PI) - 90;
 
-                    if ($entity instanceof CustomHuman and $entity->namedtag->getShort("Walk", 0) === 0 and $entity->namedtag->getShort("Rotate", 1) === 1) {
+                    if ($entity instanceof CustomHuman and !$entity->canWalk() and $entity->namedtag->getShort("Rotate", 1) === 1) {
                         $pk = new MovePlayerPacket();
                         $pk->entityRuntimeId = $entity->getId();
                         $pk->position = $entity->add(0, $entity->getEyeHeight());

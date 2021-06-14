@@ -86,27 +86,27 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     }
 
                     if (isset($args[1])) {
-                        if (in_array(strtolower($args[1]) . "_snpc", SimpleNPC::$npcType, true)) {
-                            if (strtolower($args[1]) . "_snpc" === SimpleNPC::ENTITY_HUMAN) {
+                        if (array_key_exists(strtolower($args[1]) . "_snpc", SimpleNPC::getInstance()->getRegisteredNPC())) {
+                            if (is_a(SimpleNPC::getInstance()->getRegisteredNPC()[strtolower($args[1]) . "_snpc"][0], CustomHuman::class, true)) {
                                 if (isset($args[4])) {
                                     if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[4])) {
                                         $sender->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
                                         return true;
                                     }
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask($args[2], $sender->getName(), $plugin->getDataFolder(), $args[3] === "true", $args[4]));
+                                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask(strtolower($args[1]) . "_snpc", $args[2], $sender->getName(), $plugin->getDataFolder(), $args[4]));
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 } elseif (isset($args[3])) {
-                                    NPCManager::getInstance()->spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, $sender->getSkin()->getSkinData(), $args[3] === "true");
+                                    NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 } elseif (isset($args[2])) {
-                                    NPCManager::getInstance()->spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
+                                    NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
-                                NPCManager::getInstance()->spawnNPC(SimpleNPC::ENTITY_HUMAN, $sender, $sender->getName(), null, null, $sender->getSkin()->getSkinData());
+                                NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $sender->getName(), null, null, $sender->getSkin()->getSkinData());
                             } else {
                                 if (isset($args[2])) {
                                     NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);
@@ -120,7 +120,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                             $sender->sendMessage(TextFormat::RED . "Invalid entity type or entity not registered!");
                         }
                     } else {
-                        $sender->sendMessage(TextFormat::RED . "Usage: /snpc spawn <type> optional: <nametag> <canWalk> <skinUrl>");
+                        $sender->sendMessage(TextFormat::RED . "Usage: /snpc spawn <type> optional: <nametag> <skinUrl>");
                     }
                     break;
                 case "delete":
@@ -194,7 +194,7 @@ class Commands extends Command implements PluginIdentifiableCommand {
                     }
                     break;
                 case "help":
-                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <canWalk> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
+                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc migrate <confirm | cancel>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
                     break;
                 default:
                     $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/snpc help' for help.");

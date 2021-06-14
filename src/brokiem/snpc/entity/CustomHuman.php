@@ -9,9 +9,14 @@ use pocketmine\entity\Human;
 
 class CustomHuman extends Human {
     protected $gravity = 0.0;
+    protected bool $canWalk = false;
 
     public function getIdentifier(): string {
         return $this->namedtag->getString("Identifier");
+    }
+
+    public function canWalk(): bool {
+        return $this->canWalk;
     }
 
     protected function initEntity(): void {

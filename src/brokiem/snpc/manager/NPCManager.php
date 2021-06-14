@@ -29,12 +29,14 @@ use brokiem\snpc\entity\npc\VillagerNPC;
 use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
+use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\event\SNPCCreationEvent;
 use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityIds;
+use pocketmine\entity\Human;
 use pocketmine\level\Level;
 use pocketmine\level\Location;
 use pocketmine\nbt\LittleEndianNBTStream;
@@ -54,6 +56,11 @@ class NPCManager {
     use SingletonTrait;
 
     private static array $npcs = [
+        Human::class => [SimpleNPC::ENTITY_HUMAN, "simplenpc:human"],
+        WalkingHuman::class => [SimpleNPC::ENTITY_WALKING_HUMAN, "simplenpc:walking_human"],
+        AxolotlNPC::class => ["axolotl_snpc", "simplenpc:axolotl"],
+        GoatNPC::class => ["goat_snpc", "simplenpc:goat"],
+        GlowsquidNPC::class => ["glowsquid_snpc", "simplenpc:glowsquid"],
         BatNPC::class => ["bat_snpc", "simplenpc:bat"],
         BlazeNPC::class => ["blaze_snpc", "simplenpc:blaze"],
         ChickenNPC::class => ["chicken_snpc", "simplenpc:chicken"],
@@ -177,7 +184,7 @@ class NPCManager {
         EntityIds::TRIPOD_CAMERA => "simplenpc:tripod_camera"
     ];
 
-    public function getNPCs(): array {
+    public function getDefaultNPC(): array {
         return self::$npcs;
     }
 
@@ -187,14 +194,14 @@ class NPCManager {
         }
     }
 
-    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?CompoundTag $commands = null, ?Location $customPos = null, ?string $skinData = null, bool $canWalk = false): bool {
+    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?CompoundTag $commands = null, ?Location $customPos = null, ?string $skinData = null): bool {
         $nbt = Entity::createBaseNBT($player, null, $player->getYaw(), $player->getPitch());
 
         if ($customPos !== null) {
             $nbt = Entity::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
-        if ($type === SimpleNPC::ENTITY_HUMAN) {
+        if (isset(SimpleNPC::$entities[$type]) && is_a(SimpleNPC::$entities[$type], CustomHuman::class, true)) {
             if ($skinData !== null) {
                 $nbt->setTag(new CompoundTag("Skin", [
                     "Name" => new StringTag("Name", $player->getSkin()->getSkinId()),
@@ -204,17 +211,11 @@ class NPCManager {
                     "GeometryData" => new ByteArrayTag("GeometryData", $player->getSkin()->getGeometryData())
                 ]));
             } else {
-                /** @phpstan-ignore-next-line */
                 $nbt->setTag($player->namedtag->getTag("Skin"));
             }
         }
 
-        if ($type === SimpleNPC::ENTITY_HUMAN and $canWalk) {
-            $type = SimpleNPC::ENTITY_WALKING_HUMAN;
-        }
-
         $nbt->setTag($commands ?? new CompoundTag("Commands", []));
-        $nbt->setShort("Walk", (int)$canWalk);
 
         $pos = $customPos ?? $player;
         $nbt->setString("Identifier", $this->saveNPC($type, [
@@ -224,7 +225,6 @@ class NPCManager {
             "enableRotate" => true,
             "showNametag" => $nametag !== null,
             "scale" => 1.0,
-            "walk" => $canWalk,
             "commands" => $commands === null ? [] : $commands->getValue(),
             "position" => [$pos->getX(), $pos->getY(), $pos->getZ(), $pos->getYaw(), $pos->getPitch()]
         ]));
@@ -271,7 +271,6 @@ class NPCManager {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
 
         if (is_file($file)) {
-            /** @phpstan-ignore-next-line */
             return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
         }
 
@@ -393,7 +392,6 @@ class NPCManager {
                     $error = 0;
                     foreach ($level->getEntities() as $entity) {
                         if ($entity instanceof SlapperEntity) {
-                            /** @phpstan-ignore-next-line */
                             if ($this->spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation())) {
                                 if (!$entity->isFlaggedForDespawn()) {
                                     $entity->flagForDespawn();

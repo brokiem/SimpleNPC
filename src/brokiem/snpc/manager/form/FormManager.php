@@ -42,28 +42,16 @@ class FormManager {
                 if ($button["function"] !== null) {
                     switch ($button["function"]) {
                         case "spawnNPC":
-                            $simpleForm->addButton(new Button("Human NPC", null, function(Player $player) use ($cusForm) {
-                                $dropdown = new Dropdown("Selected NPC:");
-                                $dropdown->addOption(new Option("human", "Human NPC"));
-                                $cusForm->addElement("type", $dropdown);
-
-                                $cusForm->addElement("nametag", new Input("NPC Nametag: [string]\n" . 'Note: Use (" ") if nametag has space'));
-                                $dropdown1 = new Dropdown("NPC Can Walk? [Yes/No]");
-                                $dropdown1->addOption(new Option("false", "No"));
-                                $dropdown1->addOption(new Option("true", "Yes"));
-                                $cusForm->addElement("walk", $dropdown1);
-
-                                $cusForm->addElement("skin", new Input("NPC Skin URL: [null/string]"));
-                                $player->sendForm($cusForm);
-                            }));
-
-                            foreach (NPCManager::getInstance()->getNPCs() as $saveNames) {
-                                $simpleForm->addButton(new Button(ucfirst(str_replace("_snpc", " NPC", $saveNames[0])), null, function(Player $player) use ($saveNames, $cusForm) {
+                            foreach (SimpleNPC::getInstance()->getRegisteredNPC() as $npcName => $saveNames) {
+                                $simpleForm->addButton(new Button(ucfirst(str_replace("_snpc", " NPC", $npcName)), null, function(Player $player) use ($npcName, $saveNames, $cusForm) {
                                     $dropdown = new Dropdown("Selected NPC:");
-                                    $dropdown->addOption(new Option(str_replace("_snpc", "", $saveNames[0]), ucfirst(str_replace("_snpc", " NPC", $saveNames[0]))));
+                                    $dropdown->addOption(new Option(str_replace("_snpc", "", $npcName), ucfirst(str_replace("_snpc", " NPC", $npcName))));
                                     $cusForm->addElement("type", $dropdown);
 
                                     $cusForm->addElement("nametag", new Input("NPC Nametag: [string]\n" . 'Note: Use (" ") if nametag has space'));
+                                    if (is_a($saveNames[0], CustomHuman::class, true)) {
+                                        $cusForm->addElement("skin", new Input("NPC Skin URL: [null/string]"));
+                                    }
                                     $player->sendForm($cusForm);
                                 }));
                             }
@@ -105,7 +93,6 @@ class FormManager {
         $cusForm->setSubmitListener(function(Player $player, FormResponse $response) use ($plugin) {
             $type = strtolower($response->getDropdownSubmittedOptionId("type"));
             $nametag = $response->getInputSubmittedText("nametag") === "" ? $player->getName() : $response->getInputSubmittedText("nametag");
-            $walk = $response->getDropdownSubmittedOptionId("walk");
             $skin = $response->getInputSubmittedText("skin") === "null" ? "" : $response->getInputSubmittedText("skin");
             $npcEditId = $response->getInputSubmittedText("snpcid_edit");
 
@@ -118,7 +105,7 @@ class FormManager {
                 return;
             }
 
-            $plugin->getServer()->getCommandMap()->dispatch($player, "snpc add $type $nametag $walk $skin");
+            $plugin->getServer()->getCommandMap()->dispatch($player, "snpc add $type $nametag $skin");
         });
     }
 
@@ -131,7 +118,6 @@ class FormManager {
 
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
             if (is_file($file = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json")) {
-                /** @phpstan-ignore-next-line */
                 if (empty(json_decode(file_get_contents($file), true))) {
                     if (!$entity->isFlaggedForDespawn()) {
                         $entity->flagForDespawn();

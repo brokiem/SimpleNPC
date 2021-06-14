@@ -24,7 +24,7 @@ class SimpleNPC extends PluginBase {
     public const ENTITY_HUMAN = "human_snpc";
     public const ENTITY_WALKING_HUMAN = "walking_human_snpc";
   
-    public static array $npcType = [];
+    private static array $registeredNPC = [];
     public static array $entities = [];
     private static SimpleNPC $i;
     public array $migrateNPC = [];
@@ -36,13 +36,6 @@ class SimpleNPC extends PluginBase {
     private bool $isDev = true;
 
     public function onEnable(): void {
-        if (PHP_VERSION_ID < 70400) {
-            $this->getLogger()->error("You are using outdated PHP bin (" . PHP_VERSION . ")");
-            $this->getLogger()->info("Please use PHP v7.4 or later to run this plugin!");
-            $this->getServer()->getPluginManager()->disablePlugin($this);
-            return;
-        }
-
         if (!class_exists(Form::class)) {
             $this->getLogger()->alert("UI/Form dependency not found! Please download this plugin from poggit or install the UI/Form virion. Disabling plugin...");
             $this->getServer()->getPluginManager()->disablePlugin($this);
@@ -74,17 +67,21 @@ class SimpleNPC extends PluginBase {
 
         $class = new ReflectionClass($entityClass);
         if (is_a($entityClass, BaseNPC::class, true) || is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
-            self::$entities[$entityClass] = array_merge($saveNames, [$name]);
-            self::$npcType[] = $name;
+            self::$entities[$entityClass] = array_merge([$name], $saveNames);
+            self::$registeredNPC[$name] = array_merge([$entityClass], $saveNames);
 
-            foreach (array_merge($saveNames, [$name]) as $saveName) {
+            foreach (array_merge([$name], $saveNames) as $saveName) {
                 self::$entities[$saveName] = $entityClass;
             }
 
-            return Entity::registerEntity($entityClass, $force, array_merge($saveNames, [$name]));
+            return Entity::registerEntity($entityClass, $force, array_merge([$name], $saveNames));
         }
 
         return false;
+    }
+
+    public function getRegisteredNPC(): array {
+        return self::$registeredNPC;
     }
 
     public function initConfiguration(): void {
