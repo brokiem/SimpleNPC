@@ -84,7 +84,7 @@ class NPCManager {
         }
     }
 
-    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?array $commands = [], ?Location $customPos = null, ?string $skinData = null): bool {
+    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?array $commands = [], ?Location $customPos = null, ?string $skinData = null): ?int {
         $nbt = EntityDataHelper::createBaseNBT($player->getLocation(), null, $player->getLocation()->getYaw(), $player->getLocation()->getPitch());
 
         if ($customPos !== null) {
@@ -117,7 +117,7 @@ class NPCManager {
 
         if ($entity === null) {
             $player->sendMessage(TextFormat::RED . "Entity is null or entity $type is invalid");
-            return false;
+            return null;
         }
 
         if ($nametag !== null) {
@@ -133,7 +133,7 @@ class NPCManager {
         if ($entity instanceof CustomHuman) {
             $this->saveSkinTag($entity);
         }
-        return true;
+        return $entity->getId();
     }
 
     public function saveSkinTag(CustomHuman $entity): void {

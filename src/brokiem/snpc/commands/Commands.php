@@ -9,7 +9,7 @@ use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\form\FormManager;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
-use brokiem\snpc\task\async\SkinURLToNPCTask;
+use brokiem\snpc\task\async\URLToSkinTask;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Entity;
@@ -95,7 +95,16 @@ class Commands extends Command implements PluginOwned {
                                         $sender->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
                                         return true;
                                     }
-                                    $plugin->getServer()->getAsyncPool()->submitTask(new SkinURLToNPCTask(strtolower($args[1]) . "_snpc", $args[2], $sender->getName(), $plugin->getDataFolder(), $args[3]));
+
+                                    $id = NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
+                                    if ($id !== null) {
+                                        $npc = $sender->getServer()->getWorldManager()->findEntity($id);
+
+                                        if ($npc instanceof CustomHuman) {
+                                            $plugin->getServer()->getAsyncPool()->submitTask(new URLToSkinTask($sender->getName(), $plugin->getDataFolder(), $args[3], $npc));
+                                        }
+                                    }
+
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 } elseif (isset($args[2])) {

@@ -10,6 +10,7 @@ use pocketmine\entity\Skin;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
+use pocketmine\utils\TextFormat;
 
 class URLToSkinTask extends AsyncTask {
 
@@ -85,8 +86,12 @@ class URLToSkinTask extends AsyncTask {
 
         $player->saveNBT();
 
-        /** @var string $skinData */
         $skinData = $this->getResult();
+
+        if ($skinData === null) {
+            $player->sendMessage(TextFormat::RED . "Set Skin failed! Invalid link detected (the link doesn't contain images)");
+            return;
+        }
 
         $human->setSkin(new Skin($human->getSkin()->getSkinId(), $skinData, $human->getSkin()->getCapeData(), $human->getSkin()->getGeometryName(), $human->getSkin()->getGeometryData()));
         $human->sendSkin();
