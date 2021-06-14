@@ -5,7 +5,7 @@ parameters:
 	        count: 1
 	        path: src/brokiem/snpc/manager/NPCManager.php
 	    -
-        	message: "#^Parameter \\#1 $buffer of method pocketmine\\\nbt\\\NBTStream::readCompressed() expects string, string\\|false given.$#"
+        	message: "#^Parameter \\#1 \\$buffer of method pocketmine\\\nbt\\\NBTStream::readCompressed() expects string, string\\|false given.$#"
         	count: 1
         	path: src/brokiem/snpc/manager/NPCManager.php
 	    -
