@@ -11,17 +11,20 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
+use pocketmine\utils\TextFormat;
 
 class URLToSkinTask extends AsyncTask {
 
     private string $username;
     private string $dataPath;
     private string $skinUrl;
+    private bool $useFallbackSkin;
 
-    public function __construct(string $username, string $dataPath, string $skinURL, CustomHuman $human) {
+    public function __construct(string $username, string $dataPath, string $skinURL, CustomHuman $human, bool $useFallbackSkin = false) {
         $this->username = $username;
         $this->dataPath = $dataPath;
         $this->skinUrl = $skinURL;
+        $this->useFallbackSkin = $useFallbackSkin;
 
         $this->storeLocal($human);
     }
@@ -86,8 +89,17 @@ class URLToSkinTask extends AsyncTask {
 
         $player->saveNBT();
 
-        /** @var string $skinData */
         $skinData = $this->getResult();
+
+        if ($skinData === null) {
+            $player->sendMessage(TextFormat::RED . "Set Skin failed! Invalid link detected (the link doesn't contain images)." . $this->useFallbackSkin ? " Using fallback skin..." : "");
+
+            if (!$this->useFallbackSkin) {
+                return;
+            }
+
+            $skinData = $player->getSkin()->getSkinData();
+        }
 
         $human->setSkin(new Skin($human->getSkin()->getSkinId(), $skinData, $human->getSkin()->getCapeData(), $human->getSkin()->getGeometryName(), $human->getSkin()->getGeometryData()));
         $human->sendSkin();
