@@ -1,11 +1,11 @@
 parameters:
 	ignoreErrors:
 	    -
-	        message: "#^Parameter \\#1 \\$tag of method pocketmine\nbt\tag\CompoundTag::setTag() expects pocketmine\nbt\tag\NamedTag, pocketmine\nbt\tag\NamedTag\\|\\null given.$#"
+	        message: "#^Parameter \\#1 \\$tag of method pocketmine\nbt\tag\\\CompoundTag::setTag() expects pocketmine\nbt\tag\\\NamedTag, pocketmine\nbt\tag\\\NamedTag\\|\\null given.$#"
 	        count: 1
 	        path: src/brokiem/snpc/manager/NPCManager.php
 	    -
-        	message: "#^Parameter \\#1 $buffer of method pocketmine\nbt\NBTStream::readCompressed() expects string, string\\|\\false given.$#"
+        	message: "#^Parameter \\#1 $buffer of method pocketmine\nbt\\\NBTStream::readCompressed() expects string, string\\|\\false given.$#"
         	count: 1
         	path: src/brokiem/snpc/manager/NPCManager.php
         -
