@@ -92,7 +92,9 @@ class URLToSkinTask extends AsyncTask {
         $skinData = $this->getResult();
 
         if ($skinData === null) {
-            $player->sendMessage(TextFormat::RED . "Set Skin failed! Invalid link detected (the link doesn't contain images)." . $this->useFallbackSkin ? " Using fallback skin..." : "");
+            $text = TextFormat::RED . "Set Skin failed! Invalid link detected (the link doesn't contain images).";
+            $text .= $this->useFallbackSkin ? " Using fallback skin..." : "";
+            $player->sendMessage($text);
 
             if (!$this->useFallbackSkin) {
                 return;
