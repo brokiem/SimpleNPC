@@ -17,11 +17,13 @@ class URLToSkinTask extends AsyncTask {
     private string $username;
     private string $dataPath;
     private string $skinUrl;
+    private bool $useFallbackSkin;
 
-    public function __construct(string $username, string $dataPath, string $skinURL, CustomHuman $human) {
+    public function __construct(string $username, string $dataPath, string $skinURL, CustomHuman $human, bool $useFallbackSkin = false) {
         $this->username = $username;
         $this->dataPath = $dataPath;
         $this->skinUrl = $skinURL;
+        $this->useFallbackSkin = $useFallbackSkin;
 
         $this->storeLocal("snpc_urltoskin", $human);
     }

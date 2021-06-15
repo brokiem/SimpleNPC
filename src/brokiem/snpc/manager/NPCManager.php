@@ -29,6 +29,7 @@ use brokiem\snpc\entity\npc\VillagerNPC;
 use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
+use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\event\SNPCCreationEvent;
 use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\SimpleNPC;
