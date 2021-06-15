@@ -11,13 +11,11 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\Config;
 
 class CustomHuman extends Human {
-    protected $gravity = 0.0;
-    protected bool $canWalk = false;
 
+    protected $gravity = 0.0;
     private string $identifier;
     protected bool $canWalk = false;
     protected bool $lookToPlayers;
-
     protected CompoundTag $skinTag;
     protected CommandManager $commandManager;
 
