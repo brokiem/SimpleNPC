@@ -29,14 +29,12 @@ use brokiem\snpc\entity\npc\VillagerNPC;
 use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
-use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\event\SNPCCreationEvent;
 use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityIds;
-use pocketmine\entity\Human;
 use pocketmine\level\Level;
 use pocketmine\level\Location;
 use pocketmine\nbt\LittleEndianNBTStream;
@@ -56,8 +54,6 @@ class NPCManager {
     use SingletonTrait;
 
     private static array $npcs = [
-        Human::class => [SimpleNPC::ENTITY_HUMAN, "simplenpc:human"],
-        WalkingHuman::class => [SimpleNPC::ENTITY_WALKING_HUMAN, "simplenpc:walking_human"],
         AxolotlNPC::class => ["axolotl_snpc", "simplenpc:axolotl"],
         GoatNPC::class => ["goat_snpc", "simplenpc:goat"],
         GlowsquidNPC::class => ["glowsquid_snpc", "simplenpc:glowsquid"],
@@ -246,9 +242,10 @@ class NPCManager {
 
         (new SNPCCreationEvent($entity, $player))->call();
 
-        if ($type === SimpleNPC::ENTITY_HUMAN || $type === SimpleNPC::ENTITY_WALKING_HUMAN) {
+        if (is_a(SimpleNPC::$entities[$type], CustomHuman::class, true)) {
             $this->saveSkinTag($entity, $nbt);
         }
+
         $this->saveChunkNPC($entity);
         return $entity->getId();
     }
