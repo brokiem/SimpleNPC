@@ -16,7 +16,6 @@ use pocketmine\entity\Entity;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\SingletonTrait;
-use ReflectionClass;
 
 class SimpleNPC extends PluginBase {
     use SingletonTrait;
@@ -65,7 +64,7 @@ class SimpleNPC extends PluginBase {
             throw new \ClassNotFoundException("Class $entityClass not found.");
         }
 
-        $class = new ReflectionClass($entityClass);
+        $class = new \ReflectionClass($entityClass);
         if (is_a($entityClass, BaseNPC::class, true) || is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
             self::$entities[$entityClass] = array_merge([$name], $saveNames);
             self::$registeredNPC[$name] = array_merge([$entityClass], $saveNames);
