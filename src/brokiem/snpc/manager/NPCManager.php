@@ -208,6 +208,7 @@ class NPCManager {
                 ]));
             } else {
                 $nbt->setTag($player->namedtag->getTag("Skin"));
+                /** @phpstan-ignore-line */
             }
         }
 
@@ -269,6 +270,7 @@ class NPCManager {
 
         if (is_file($file)) {
             return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
+            /** @phpstan-ignore-line */
         }
 
         return null;
@@ -390,6 +392,7 @@ class NPCManager {
                     foreach ($level->getEntities() as $entity) {
                         if ($entity instanceof SlapperEntity) {
                             if ($this->spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation())) {
+                                /** @phpstan-ignore-line */
                                 if (!$entity->isFlaggedForDespawn()) {
                                     $entity->flagForDespawn();
                                 }
