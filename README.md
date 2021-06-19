@@ -43,7 +43,7 @@
 
 - Add custom walking path
 
-## 🔴 Issues
+## ❔ Issues
 
 Did you find a bug or error when using this plugin? feel free to open the
 issues [here](https://github.com/brokiem/SimpleNPC/issues/new)

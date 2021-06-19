@@ -133,6 +133,7 @@ class NPCManager {
         if ($entity instanceof CustomHuman) {
             $this->saveSkinTag($entity);
         }
+
         return $entity->getId();
     }
 
