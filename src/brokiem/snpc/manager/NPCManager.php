@@ -207,8 +207,7 @@ class NPCManager {
                     "GeometryData" => new ByteArrayTag("GeometryData", $player->getSkin()->getGeometryData())
                 ]));
             } else {
-                $nbt->setTag($player->namedtag->getTag("Skin"));
-                /** @phpstan-ignore-line */
+                $nbt->setTag($player->namedtag->getTag("Skin")); /** @phpstan-ignore-line */
             }
         }
 
@@ -269,8 +268,7 @@ class NPCManager {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
 
         if (is_file($file)) {
-            return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
-            /** @phpstan-ignore-line */
+            return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file)); /** @phpstan-ignore-line */
         }
 
         return null;
@@ -391,8 +389,7 @@ class NPCManager {
                     $error = 0;
                     foreach ($level->getEntities() as $entity) {
                         if ($entity instanceof SlapperEntity) {
-                            if ($this->spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation())) {
-                                /** @phpstan-ignore-line */
+                            if ($this->spawnNPC(self::LEGACY_ID_MAP_BC[$entity::TYPE_ID], $sender, $entity->getNameTag(), $entity->namedtag->getCompoundTag("Commands"), $entity->getLocation())) { /** @phpstan-ignore-line */
                                 if (!$entity->isFlaggedForDespawn()) {
                                     $entity->flagForDespawn();
                                 }

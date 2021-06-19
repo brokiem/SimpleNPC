@@ -118,8 +118,7 @@ class FormManager {
 
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
             if (is_file($file = $plugin->getDataFolder() . "npcs/" . $entity->namedtag->getString("Identifier") . ".json")) {
-                if (empty(json_decode(file_get_contents($file), true))) {
-                    /** @phpstan-ignore-line */
+                if (empty(json_decode(file_get_contents($file), true))) { /** @phpstan-ignore-line */
                     if (!$entity->isFlaggedForDespawn()) {
                         $entity->flagForDespawn();
                     }
