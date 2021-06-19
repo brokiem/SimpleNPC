@@ -12,7 +12,6 @@ use pocketmine\utils\Config;
 
 class CustomHuman extends Human {
     protected $gravity = 0.0;
-    protected bool $canWalk = false;
 
     private string $identifier;
     protected bool $canWalk = false;

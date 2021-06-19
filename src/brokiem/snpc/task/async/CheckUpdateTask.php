@@ -36,9 +36,7 @@ class CheckUpdateTask extends AsyncTask {
             return;
         }
 
-        $version = "";
-        $date = "";
-        $updateUrl = "";
+        $version = ""; $date = ""; $updateUrl = "";
 
         foreach ($poggit as $pog) {
             if (version_compare($this->version, str_replace("-beta", "", $pog["version"]), ">=")) {

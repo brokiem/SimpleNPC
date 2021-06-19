@@ -94,10 +94,6 @@ class SimpleNPC extends PluginBase {
         return self::$registeredNPC;
     }
 
-    public function getRegisteredNPC(): array {
-        return self::$registeredNPC;
-    }
-
     public function initConfiguration(): void {
         if (!is_dir($this->getDataFolder() . "npcs")) {
             mkdir($this->getDataFolder() . "npcs");
