@@ -34,11 +34,14 @@ use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\entity\Entity;
-use pocketmine\entity\EntityDataHelper;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\TreeRoot;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
@@ -85,10 +88,10 @@ class NPCManager {
     }
 
     public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?array $commands = [], ?Location $customPos = null, ?string $skinData = null): ?int {
-        $nbt = EntityDataHelper::createBaseNBT($player->getLocation(), null, $player->getLocation()->getYaw(), $player->getLocation()->getPitch());
+        $nbt = $this->createBaseNBT($player->getLocation(), null, $player->getLocation()->getYaw(), $player->getLocation()->getPitch());
 
         if ($customPos !== null) {
-            $nbt = EntityDataHelper::createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
+            $nbt = $this->createBaseNBT($customPos, null, $customPos->getYaw(), $customPos->getPitch());
         }
 
         $pos = $customPos ?? $player->getLocation();
@@ -258,11 +261,32 @@ class NPCManager {
         }
 
         execute:
-        if (($commands = $entity->getCommandManager()->getAll()) !== null) {
+        if (!empty($commands = $entity->getCommandManager()->getAll())) {
             foreach ($commands as $command) {
                 $plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender($player->getServer(), $player->getLanguage()), str_replace("{player}", $player->getName(), $command));
             }
         }
+    }
+
+    /**
+     * Helper function which creates minimal NBT needed to spawn an entity.
+     */
+    public function createBaseNBT(Vector3 $pos, ?Vector3 $motion = null, float $yaw = 0.0, float $pitch = 0.0): CompoundTag {
+        return CompoundTag::create()
+            ->setTag("Pos", new ListTag([
+                new DoubleTag($pos->x),
+                new DoubleTag($pos->y),
+                new DoubleTag($pos->z)
+            ]))
+            ->setTag("Motion", new ListTag([
+                new DoubleTag($motion !== null ? $motion->x : 0.0),
+                new DoubleTag($motion !== null ? $motion->y : 0.0),
+                new DoubleTag($motion !== null ? $motion->z : 0.0)
+            ]))
+            ->setTag("Rotation", new ListTag([
+                new FloatTag($yaw),
+                new FloatTag($pitch)
+            ]));
     }
 
     /**
