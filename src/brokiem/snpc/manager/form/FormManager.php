@@ -248,7 +248,7 @@ class FormManager {
                                         if ($entity instanceof WalkingHuman) {
                                             $entity->randomPosition = $entity->asVector3();
                                         }
-                                        $npcConfig->set("position", [$entity->getX(), $entity->getY(), $entity->getZ(), $entity->getYaw(), $entity->getPitch()]);
+                                        $npcConfig->set("position", [$entity->getLocation()->getX(), $entity->getLocation()->getY(), $entity->getLocation()->getZ(), $entity->getLocation()->getYaw(), $entity->getLocation()->getPitch()]);
                                         $npcConfig->save();
                                         NPCManager::getInstance()->saveChunkNPC($entity);
                                         $sender->sendMessage(TextFormat::GREEN . "Teleported!");
