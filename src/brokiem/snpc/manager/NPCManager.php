@@ -32,7 +32,7 @@ use brokiem\snpc\entity\npc\ZombieNPC;
 use brokiem\snpc\event\SNPCCreationEvent;
 use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\SimpleNPC;
-use pocketmine\command\ConsoleCommandSender;
+use pocketmine\console\ConsoleCommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
