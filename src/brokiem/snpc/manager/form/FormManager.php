@@ -232,7 +232,7 @@ class FormManager {
                                         if ($entity instanceof WalkingHuman) {
                                             $entity->randomPosition = $entity->getLocation()->asVector3();
                                         }
-                                        $npcConfig->set("position", [$entity->getX(), $entity->getY(), $entity->getZ(), $entity->getYaw(), $entity->getPitch()]);
+                                        $npcConfig->set("position", [$entity->getLocation()->x, $entity->getLocation()-y, $entity->getLocation()->z, $entity->getLocation()->yaw, $entity->getLocation()->pitch]);
                                         $npcConfig->save();
                                         $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                                     }));
