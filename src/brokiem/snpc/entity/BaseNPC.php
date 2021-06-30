@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (c) 2021 brokiem
+ * SimpleNPC is licensed under the GNU Lesser General Public License v3.0
+ */
+
 declare(strict_types=1);
 
 namespace brokiem\snpc\entity;
@@ -13,6 +18,7 @@ use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
 use pocketmine\utils\Config;
 
 abstract class BaseNPC extends Entity {
+
     protected $gravity = 0.0;
 
     private string $identifier;

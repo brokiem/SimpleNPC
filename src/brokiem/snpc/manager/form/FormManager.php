@@ -1,5 +1,10 @@
 <?php /** @noinspection TypeUnsafeComparisonInspection */
 
+/**
+ * Copyright (c) 2021 brokiem
+ * SimpleNPC is licensed under the GNU Lesser General Public License v3.0
+ */
+
 declare(strict_types=1);
 
 namespace brokiem\snpc\manager\form;
