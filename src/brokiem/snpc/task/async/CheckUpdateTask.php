@@ -12,7 +12,6 @@ namespace brokiem\snpc\task\async;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\scheduler\ClosureTask;
-use pocketmine\Server;
 use pocketmine\utils\Internet;
 
 class CheckUpdateTask extends AsyncTask {
@@ -26,17 +25,17 @@ class CheckUpdateTask extends AsyncTask {
         $this->retry = $retry;
         $this->name = $plugin->getDescription()->getName();
         $this->version = $plugin->getDescription()->getVersion();
-        $this->storeLocal([$plugin]);
+        $this->storeLocal("snpc_checkupdate", [$plugin]);
     }
 
     public function onRun(): void {
         $poggitData = Internet::getURL(self::POGGIT_URL . $this->name);
 
-        if (!$poggitData) {
+        if ($poggitData === null) {
             return;
         }
 
-        $poggit = json_decode($poggitData, true);
+        $poggit = json_decode($poggitData->getBody(), true);
 
         if (!is_array($poggit)) {
             return;
@@ -55,9 +54,9 @@ class CheckUpdateTask extends AsyncTask {
         $this->setResult([$version, $date, $updateUrl]);
     }
 
-    public function onCompletion(Server $server): void {
+    public function onCompletion(): void {
         /** @var SimpleNPC $plugin */
-        [$plugin] = $this->fetchLocal();
+        [$plugin] = $this->fetchLocal("snpc_checkupdate");
 
         if ($this->getResult() === null) {
             $plugin->getLogger()->debug("Async update check failed!");

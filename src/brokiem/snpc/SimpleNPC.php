@@ -18,9 +18,14 @@ use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\task\async\CheckUpdateTask;
 use EasyUI\Form;
 use pocketmine\entity\Entity;
+use pocketmine\entity\EntityDataHelper;
+use pocketmine\entity\EntityFactory;
+use pocketmine\entity\Human;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\SingletonTrait;
+use pocketmine\world\World;
 
 class SimpleNPC extends PluginBase {
     use SingletonTrait;
@@ -39,7 +44,7 @@ class SimpleNPC extends PluginBase {
     public array $idPlayers = [];
     private bool $isDev = true;
 
-    public function onEnable(): void {
+    protected function onEnable(): void {
         if (!class_exists(Form::class)) {
             $this->getLogger()->alert("UI/Form dependency not found! Please download this plugin from poggit or install the UI/Form virion. Disabling plugin...");
             $this->getServer()->getPluginManager()->disablePlugin($this);
@@ -64,13 +69,13 @@ class SimpleNPC extends PluginBase {
         }), 864000); // 12 hours
     }
 
-    public static function registerEntity(string $entityClass, string $name, bool $force = true, array $saveNames = []): bool {
+    public static function registerEntity(string $entityClass, string $name, array $saveNames = []): void {
         if (!class_exists($entityClass)) {
-            throw new \ClassNotFoundException("Class $entityClass not found.");
+            throw new \RuntimeException("Class $entityClass not found.");
         }
 
-        $class = new \ReflectionClass($entityClass);
-        if (is_a($entityClass, BaseNPC::class, true) || is_a($entityClass, CustomHuman::class, true) and !$class->isAbstract()) {
+        $refClass = new \ReflectionClass($entityClass);
+        if (is_a($entityClass, BaseNPC::class, true) || is_a($entityClass, CustomHuman::class, true) and !$refClass->isAbstract()) {
             self::$entities[$entityClass] = array_merge([$name], $saveNames);
             self::$registeredNPC[$name] = array_merge([$entityClass], $saveNames);
 
@@ -78,10 +83,16 @@ class SimpleNPC extends PluginBase {
                 self::$entities[$saveName] = $entityClass;
             }
 
-            return Entity::registerEntity($entityClass, $force, array_merge([$name], $saveNames));
+            if (is_a($entityClass, CustomHuman::class, true)) {
+                EntityFactory::getInstance()->register($entityClass, function(World $world, CompoundTag $nbt) use ($entityClass): Entity {
+                    return new $entityClass(EntityDataHelper::parseLocation($nbt, $world), Human::parseSkinNBT($nbt), $nbt);
+                }, [$entityClass]);
+            } else {
+                EntityFactory::getInstance()->register($entityClass, function(World $world, CompoundTag $nbt) use ($entityClass): Entity {
+                    return new $entityClass(EntityDataHelper::parseLocation($nbt, $world), $nbt);
+                }, [$entityClass]);
+            }
         }
-
-        return false;
     }
 
     public function getRegisteredNPC(): array {

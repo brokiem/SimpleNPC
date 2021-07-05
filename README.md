@@ -1,4 +1,4 @@
-<h1>SimpleNPC<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/image.png" height="64" width="64" align="left" alt=""></h1><br>
+<h1>SimpleNPC<img src="assets/icon.png" height="64" width="64" align="left" alt=""></h1><br>
 
 <b>An Ultimate NPC plugin made by brokiem for PocketMine-MP.</b><br>
 [![License](https://img.shields.io/github/license/brokiem/SimpleNPC)](https://github.com/brokiem/SimpleNPC)
@@ -6,11 +6,10 @@
 [![Discord](https://img.shields.io/discord/830063409000087612?color=7389D8&label=discord)](https://discord.com/invite/jy6abSrjhQ)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/brokiem)
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbrokiem%26type%3Dpatrons&style=flat)](https://patreon.com/brokiem)
-[![](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
+[![Poggit](https://poggit.pmmp.io/shield.dl.total/SimpleNPC)](https://poggit.pmmp.io/p/SimpleNPC)
 
 ## ✨ Features
 
-- Migration from Slapper supported! ✔
 - Right click to interact! ✔
 - NPC can walk! ✔
 - Set NPC skin with URL! ✔
@@ -39,7 +38,6 @@
 | ```/snpc id``` | ```Get the npc id``` | ```simplenpc.id``` | ```op``` |
 | ```/snpc reload``` | ```Reload plugin config``` | ```simplenpc.reload``` | ```op``` |
 | ```/snpc remove``` | ```Remove the npc``` | ```simplenpc.remove``` | ```op``` |
-| ```/snpc migrate``` | ```Migrate the npc from Slapper``` | ```simplenpc.migrate``` | ```op``` |
 | ```/snpc list``` | ```See the npc list``` | ```simplenpc.list``` | ```op``` |
 
 ## 📝 Todo List
@@ -53,7 +51,8 @@ issues [here](https://github.com/brokiem/SimpleNPC/issues/new)
 
 ## 🖥 Developers
 
-If you want to register your own entity, take a look at this [plugin](https://github.com/brokiem/CustomEntity/)<br>
+If you want to register your own entity, take a look at
+this [plugin](https://github.com/brokiem-pm-pl/CustomEntity/tree/pm4)<br>
 You can also customize NPCs geometry by customizing the NPC skins
 
 ## 👑 Donation
@@ -63,4 +62,5 @@ Saweria - https://saweria.co/brokiem
 
 ## 🖼 Images
 
-<img src="https://github.com/brokiem/SimpleNPC/blob/master/assets/simplenpc.png" alt="">
+<img src="assets/simplenpc.png" alt="">
+<img src="assets/1.17-npc.png" alt="">

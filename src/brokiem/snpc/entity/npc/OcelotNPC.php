@@ -10,11 +10,19 @@ declare(strict_types=1);
 namespace brokiem\snpc\entity\npc;
 
 use brokiem\snpc\entity\BaseNPC;
+use pocketmine\entity\EntitySizeInfo;
+use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
 class OcelotNPC extends BaseNPC {
 
-    public const SNPC_ENTITY_ID = "minecraft:ocelot";
+    public float $height = 0.7;
+    public float $width = 0.7;
 
-    public $height = 0.7;
-    public $width = 0.7;
+    protected function getInitialSizeInfo(): EntitySizeInfo {
+        return new EntitySizeInfo($this->height, $this->width);
+    }
+
+    public static function getNetworkTypeId(): string {
+        return EntityIds::OCELOT;
+    }
 }

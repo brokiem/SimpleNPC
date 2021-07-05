@@ -11,7 +11,7 @@ namespace brokiem\snpc\event;
 
 use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityEvent;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class SNPCCreationEvent extends EntityEvent {
     private Player $creator;

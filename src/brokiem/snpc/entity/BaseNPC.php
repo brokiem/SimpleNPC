@@ -9,42 +9,71 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\entity;
 
-use brokiem\snpc\manager\NPCManager;
+use brokiem\snpc\manager\command\CommandManager;
+use brokiem\snpc\SimpleNPC;
 use pocketmine\entity\Entity;
-use pocketmine\network\mcpe\protocol\AddActorPacket;
-use pocketmine\Player;
+use pocketmine\entity\EntitySizeInfo;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
+use pocketmine\utils\Config;
 
 abstract class BaseNPC extends Entity {
-    public const SNPC_ENTITY_ID = null;
 
     protected $gravity = 0.0;
 
+    private string $identifier;
+    protected bool $lookToPlayers;
+
+    protected CommandManager $commandManager;
+
     public function getIdentifier(): string {
-        return $this->namedtag->getString("Identifier");
+        return $this->identifier;
     }
 
-    protected function initEntity(): void {
-        parent::initEntity();
-        $this->setGenericFlag(Entity::DATA_FLAG_SILENT, true);
+    protected function initEntity(CompoundTag $nbt): void {
+        parent::initEntity($nbt);
+
+        $identifier = $nbt->getString("Identifier");
+
+        $this->identifier = $identifier;
+        $this->commandManager = new CommandManager($this);
+        $this->lookToPlayers = $this->getConfig()->get("enableRotate", true);
+
+        $this->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::SILENT, true);
         $this->setNameTagAlwaysVisible();
 
-        $scale = NPCManager::getInstance()->getConfigNPC($this->getIdentifier())->get("scale", 1.0);
-        if ($this->getScale() !== (float)$scale) {
+        $scale = (float)$this->getConfig()->get("scale", 1.0);
+        if ($this->getScale() !== $scale) {
             $this->setScale($scale);
         }
     }
 
-    protected function sendSpawnPacket(Player $player): void {
-        $pk = new AddActorPacket();
-        $pk->entityRuntimeId = $this->getId();
-        $pk->type = is_string(static::SNPC_ENTITY_ID) ? static::SNPC_ENTITY_ID : AddActorPacket::LEGACY_ID_MAP_BC[static::SNPC_ENTITY_ID];
-        $pk->position = $this->asVector3();
-        $pk->motion = $this->getMotion();
-        $pk->yaw = $pk->headYaw = $this->yaw;
-        $pk->pitch = $this->pitch;
-        $pk->attributes = $this->attributeMap->getAll();
-        $pk->metadata = $this->propertyManager->getAll();
-
-        $player->dataPacket($pk);
+    public function saveNBT(): CompoundTag {
+        $nbt = parent::saveNBT();
+        $nbt->setString("Identifier", $this->identifier);
+        return $nbt;
     }
+
+    public function getConfig(): Config {
+        return new Config(SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.json", Config::JSON);
+    }
+
+    public function setCanLookToPlayers(bool $value): void {
+        $this->getConfig()->set("enableRotate", $value);
+        $this->getConfig()->save();
+
+        $this->lookToPlayers = $value;
+    }
+
+    public function canLookToPlayers(): bool {
+        return $this->lookToPlayers;
+    }
+
+    public function getCommandManager(): CommandManager {
+        return $this->commandManager;
+    }
+
+    abstract protected function getInitialSizeInfo(): EntitySizeInfo;
+
+    abstract public static function getNetworkTypeId(): string;
 }
