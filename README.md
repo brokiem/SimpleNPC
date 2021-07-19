@@ -58,6 +58,7 @@ You can also customize NPCs geometry by customizing the NPC skins
 
 ## 👑 Donation
 
+Paypal - https://www.paypal.me/brokiem <br>
 Patreon - https://www.patreon.com/join/brokiem <br>
 Saweria - https://saweria.co/brokiem
 
