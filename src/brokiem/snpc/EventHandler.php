@@ -19,7 +19,6 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\server\CommandEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\math\Vector2;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
@@ -27,21 +26,10 @@ use pocketmine\network\mcpe\protocol\MoveActorAbsolutePacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionData;
 use pocketmine\Player;
-use pocketmine\utils\TextFormat;
 
 class EventHandler implements Listener {
 
     public function __construct(private SimpleNPC $plugin) {}
-
-    public function onCommand(CommandEvent $event): void {
-        $command = strtolower($event->getCommand());
-
-        // TODO: find another way to fix this
-        if ($command === "reload") {
-            $event->getSender()->sendMessage(TextFormat::RED . "[SimpleNPC] Don't use reload command or in some cases SimpleNPC NPC's will duplicates!");
-            $event->setCancelled();
-        }
-    }
 
     public function onJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();
