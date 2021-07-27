@@ -224,10 +224,7 @@ class NPCManager {
         file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($skinTag));
     }
 
-    /**
-     * @return NamedTag|NamedTag[]|null
-     */
-    public function getSkinTag(CustomHuman $human) {
+    public function getSkinTag(CustomHuman $human): NamedTag|array|null {
         $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->namedtag->getString("Identifier") . ".dat";
 
         if (is_file($file)) {
@@ -431,9 +428,6 @@ class NPCManager {
         }
     }
 
-    /**
-     * @return null|BaseNPC[]|CustomHuman[]
-     */
     public function getAllNPCs(): ?array {
         $npcs = null;
         foreach (SimpleNPC::getInstance()->getServer()->getLevels() as $world) {

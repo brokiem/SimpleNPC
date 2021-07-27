@@ -7,7 +7,7 @@ author: brokiem
 mcpe-protocol: [ 440, 448 ]
 
 extensions:
-  Core: '>=7.4'
+  Core: '>=8.0'
 
 website: https://github.com/brokiem/SimpleNPC/
 

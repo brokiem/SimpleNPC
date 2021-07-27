@@ -1,5 +1,10 @@
 <?php /** @noinspection RedundantElseClauseInspection */
 
+/**
+ * Copyright (c) 2021 brokiem
+ * SimpleNPC is licensed under the GNU Lesser General Public License v3.0
+ */
+
 declare(strict_types=1);
 
 namespace brokiem\snpc\commands;
@@ -20,10 +25,7 @@ use pocketmine\utils\TextFormat;
 
 class Commands extends Command implements PluginIdentifiableCommand {
 
-    private SimpleNPC $plugin;
-
-    public function __construct(string $name, SimpleNPC $owner) {
-        $this->plugin = $owner;
+    public function __construct(string $name, private SimpleNPC $plugin) {
         parent::__construct($name, "SimpleNPC commands");
     }
 

@@ -18,19 +18,13 @@ use pocketmine\utils\Internet;
 class CheckUpdateTask extends AsyncTask {
 
     private const POGGIT_URL = "https://poggit.pmmp.io/releases.json?name=";
-    private string $version;
-    private string $name;
-    private bool $retry;
 
-    public function __construct(SimpleNPC $plugin, bool $retry) {
-        $this->retry = $retry;
-        $this->name = $plugin->getDescription()->getName();
-        $this->version = $plugin->getDescription()->getVersion();
+    public function __construct(private SimpleNPC $plugin, private bool $retry) {
         $this->storeLocal([$plugin]);
     }
 
     public function onRun(): void {
-        $poggitData = Internet::getURL(self::POGGIT_URL . $this->name);
+        $poggitData = Internet::getURL(self::POGGIT_URL . $this->plugin->getDescription()->getName());
 
         if (!$poggitData) {
             return;
@@ -45,7 +39,7 @@ class CheckUpdateTask extends AsyncTask {
         $version = ""; $date = ""; $updateUrl = "";
 
         foreach ($poggit as $pog) {
-            if (version_compare($this->version, str_replace("-beta", "", $pog["version"]), ">=")) {
+            if (version_compare($this->plugin->getDescription()->getVersion(), str_replace("-beta", "", $pog["version"]), ">=")) {
                 continue;
             }
 
@@ -76,7 +70,7 @@ class CheckUpdateTask extends AsyncTask {
         if ($latestVersion != "" || $updateDateUnix != null || $updateUrl !== "") {
             $updateDate = date("j F Y", (int)$updateDateUnix);
 
-            if ($this->version !== $latestVersion) {
+            if ($this->plugin->getDescription()->getVersion() !== $latestVersion) {
                 $plugin->getLogger()->notice("SimpleNPC v$latestVersion has been released on $updateDate. Download the new update at $updateUrl");
                 $plugin->cachedUpdate = [$latestVersion, $updateDate, $updateUrl];
             }

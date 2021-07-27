@@ -14,11 +14,9 @@ use pocketmine\event\entity\EntityEvent;
 use pocketmine\Player;
 
 class SNPCCreationEvent extends EntityEvent {
-    private Player $creator;
 
-    public function __construct(Entity $entity, Player $creator) {
+    public function __construct(Entity $entity, private Player $creator) {
         $this->entity = $entity;
-        $this->creator = $creator;
     }
 
     public function getCreator(): Player {

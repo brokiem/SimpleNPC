@@ -31,11 +31,7 @@ use pocketmine\utils\TextFormat;
 
 class EventHandler implements Listener {
 
-    private SimpleNPC $plugin;
-
-    public function __construct(SimpleNPC $plugin) {
-        $this->plugin = $plugin;
-    }
+    public function __construct(private SimpleNPC $plugin) {}
 
     public function onCommand(CommandEvent $event): void {
         $command = strtolower($event->getCommand());

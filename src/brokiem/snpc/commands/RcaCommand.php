@@ -19,10 +19,7 @@ use pocketmine\utils\TextFormat;
 
 class RcaCommand extends Command implements PluginIdentifiableCommand {
 
-    private SimpleNPC $plugin;
-
-    public function __construct(string $name, SimpleNPC $owner) {
-        $this->plugin = $owner;
+    public function __construct(string $name, private SimpleNPC $plugin) {
         parent::__construct($name, "Execute command by player like sudo");
         $this->setPermission("simplenpc.rca");
     }

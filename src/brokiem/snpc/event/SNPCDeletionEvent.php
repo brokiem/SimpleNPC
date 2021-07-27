@@ -14,14 +14,12 @@ use pocketmine\event\entity\EntityEvent;
 use pocketmine\Player;
 
 class SNPCDeletionEvent extends EntityEvent {
-    private ?Player $deletetor;
 
-    public function __construct(Entity $entity, Player $deletor = null) {
+    public function __construct(Entity $entity, private ?Player $deletor = null) {
         $this->entity = $entity;
-        $this->deletetor = $deletor;
     }
 
     public function getDeletor(): ?Player {
-        return $this->deletetor;
+        return $this->deletor;
     }
 }
