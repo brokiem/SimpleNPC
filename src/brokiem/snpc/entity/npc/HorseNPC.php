@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * Copyright (c) 2021 brokiem
  * SimpleNPC is licensed under the GNU Lesser General Public License v3.0
  */
