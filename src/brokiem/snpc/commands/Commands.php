@@ -14,7 +14,6 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\player\Player;
-use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
 use pocketmine\plugin\PluginOwnedTrait;
 use pocketmine\utils\TextFormat;
@@ -25,7 +24,7 @@ class Commands extends Command implements PluginOwned {
     private SimpleNPC $plugin;
 
     public function __construct(string $name, SimpleNPC $owner) {
-        $this->plugin = $owner;
+        $this->owningPlugin = $owner;
         parent::__construct($name, "SimpleNPC commands");
     }
 
@@ -35,7 +34,7 @@ class Commands extends Command implements PluginOwned {
         }
 
         /** @var SimpleNPC $plugin */
-        $plugin = $this->getPlugin();
+        $plugin = $this->getOwningPlugin();
 
         if (isset($args[0])) {
             switch (strtolower($args[0])) {
@@ -201,13 +200,9 @@ class Commands extends Command implements PluginOwned {
                     break;
             }
         } else {
-            $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n§7---- ---- ---- - ---- ---- ----");
+            $sender->sendMessage("§7---- ---- [ §3SimpleNPC§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimpleNPC\nVersion " . $this->getOwningPlugin()->getDescription()->getVersion() . "\n§7---- ---- ---- - ---- ---- ----");
         }
 
         return true;
-    }
-
-    public function getPlugin(): Plugin {
-        return $this->plugin;
     }
 }

@@ -265,7 +265,7 @@ class NPCManager {
         execute:
         if (!empty($commands = $entity->getCommandManager()->getAll())) {
             foreach ($commands as $command) {
-                $plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender($player->getServer(), $player->getLanguage()), str_replace("{player}", $player->getName(), $command));
+                $plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender($player->getServer(), $plugin->getServer()->getLanguage()), str_replace("{player}", $player->getName(), $command));
             }
         }
     }
