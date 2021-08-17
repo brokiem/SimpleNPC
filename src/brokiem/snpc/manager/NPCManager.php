@@ -229,10 +229,7 @@ class NPCManager {
         $npc->getInventory()->setItemInHand($player->getInventory()->getItemInHand());
     }
 
-    /**
-     * @param CustomHuman|BaseNPC $entity
-     */
-    public function interactToNPC($entity, Player $player): void {
+    public function interactToNPC(CustomHuman|BaseNPC $entity, Player $player): void {
         $plugin = SimpleNPC::getInstance();
 
         if (isset($plugin->idPlayers[$player->getName()])) {

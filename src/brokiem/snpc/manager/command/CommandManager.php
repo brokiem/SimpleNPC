@@ -11,8 +11,7 @@ final class CommandManager {
 
     private array $commands;
 
-    /** @param BaseNPC|CustomHuman $npc */
-    public function __construct($npc) {
+    public function __construct(CustomHuman|BaseNPC $npc) {
         $this->commands = $npc->getConfig()->get("commands", []);
     }
 

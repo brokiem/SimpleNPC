@@ -4,7 +4,7 @@ version: 3.0.0-snapshot
 api: 4.0.0
 author: brokiem
 
-mcpe-protocol: [ 422, 428, 431, 440 ]
+mcpe-protocol: [ 422, 428, 431, 440, 448 ]
 
 website: https://github.com/brokiem/SimpleNPC
 
