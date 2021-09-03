@@ -12,7 +12,6 @@ namespace brokiem\snpc\manager\form;
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
-use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
 use brokiem\snpc\task\async\URLToCapeTask;
 use brokiem\snpc\task\async\URLToSkinTask;
@@ -177,7 +176,7 @@ class FormManager {
                                 break;
                             case "setArmor":
                                 if ($entity instanceof CustomHuman) {
-                                    NPCManager::getInstance()->applyArmorFrom($sender, $entity);
+                                    $entity->applyArmorFrom($sender);
                                     $sender->sendMessage(TextFormat::GREEN . "Successfully set your armor to NPC ID: " . $entity->getId());
                                 } else {
                                     $sender->sendMessage(TextFormat::RED . "Only human npc can wear armor");
@@ -188,7 +187,7 @@ class FormManager {
                                     if ($sender->getInventory()->getItemInHand()->getId() === ItemIds::AIR) {
                                         $sender->sendMessage(TextFormat::RED . "Please hold the item in your hand");
                                     } else {
-                                        NPCManager::getInstance()->sendHeldItemFrom($sender, $entity);
+                                        $entity->sendHeldItemFrom($sender);
                                         $sender->sendMessage(TextFormat::GREEN . "Successfully set held item '" . $sender->getInventory()->getItemInHand()->getVanillaName() . "' to npc ID: " . $entity->getId());
                                     }
                                 } else {
@@ -305,7 +304,7 @@ class FormManager {
                         $entity->getSkinTag()->setByteArray("Data", $pCape->getSkin()->getSkinData());
                         $entity->getSkinTag()->setByteArray("CapeData", $pCape->getSkin()->getCapeData());
 
-                        NPCManager::getInstance()->saveSkinTag($entity);
+                        $entity->saveSkinTag();
 
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc cape (NPC ID: " . $entity->getId() . ")");
                         return;
@@ -327,7 +326,7 @@ class FormManager {
                         $entity->getSkinTag()->setString("Name", $player->getSkin()->getSkinId());
                         $entity->getSkinTag()->setByteArray("Data", $player->getSkin()->getSkinData());
 
-                        NPCManager::getInstance()->saveSkinTag($entity);
+                        $entity->saveSkinTag();
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                         return;
                     }

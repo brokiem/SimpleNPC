@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace brokiem\snpc\task\async;
 
 use brokiem\snpc\entity\CustomHuman;
-use brokiem\snpc\manager\NPCManager;
 use pocketmine\entity\Skin;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -102,6 +101,6 @@ class URLToSkinTask extends AsyncTask {
         $human->sendSkin();
 
         $human->getSkinTag()->setByteArray("Data", $skinData);
-        NPCManager::getInstance()->saveSkinTag($human);
+        $human->saveSkinTag();
     }
 }

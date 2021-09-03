@@ -15,12 +15,9 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
-use pocketmine\plugin\PluginOwnedTrait;
 use pocketmine\utils\TextFormat;
 
 class RcaCommand extends Command implements PluginOwned {
-    use PluginOwnedTrait;
-
     private SimpleNPC $plugin;
 
     public function __construct(string $name, SimpleNPC $owner) {
@@ -39,9 +36,9 @@ class RcaCommand extends Command implements PluginOwned {
             return true;
         }
 
-        $player = $this->getPlugin()->getServer()->getPlayerExact(array_shift($args));
+        $player = $this->getOwningPlugin()->getServer()->getPlayerExact(array_shift($args));
         if ($player instanceof Player) {
-            $this->getPlugin()->getServer()->getCommandMap()->dispatch($player, trim(implode(" ", $args)));
+            $this->getOwningPlugin()->getServer()->getCommandMap()->dispatch($player, trim(implode(" ", $args)));
             return true;
         }
 
@@ -49,7 +46,7 @@ class RcaCommand extends Command implements PluginOwned {
         return true;
     }
 
-    public function getPlugin(): Plugin {
+    public function getOwningPlugin(): Plugin {
         return $this->plugin;
     }
 }

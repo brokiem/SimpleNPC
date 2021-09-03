@@ -35,25 +35,21 @@ use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
 use brokiem\snpc\entity\npc\ZombieNPC;
 use brokiem\snpc\event\SNPCCreationEvent;
-use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\SimpleNPC;
-use pocketmine\console\ConsoleCommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\TreeRoot;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 
-class NPCManager {
+class NPCFactory {
     use SingletonTrait;
 
     private static array $npcs = [
@@ -139,26 +135,10 @@ class NPCManager {
         (new SNPCCreationEvent($entity, $player))->call();
 
         if ($entity instanceof CustomHuman) {
-            $this->saveSkinTag($entity);
+            $entity->saveSkinTag();
         }
 
         return $entity->getId();
-    }
-
-    public function saveSkinTag(CustomHuman $entity): void {
-        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".dat";
-        file_put_contents($file, zlib_encode((new LittleEndianNbtSerializer())->write(new TreeRoot($entity->getSkinTag())), ZLIB_ENCODING_GZIP));
-    }
-
-    public function getSavedSkinTag(CustomHuman $human): ?CompoundTag {
-        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $human->getIdentifier() . ".dat";
-
-        if (is_file($file)) {
-            $decompressed = @zlib_decode(file_get_contents($file));
-            return (new LittleEndianNbtSerializer())->read($decompressed)->mustGetCompoundTag();
-        }
-
-        return null;
     }
 
     public function saveNPCData(string $type, array $saves): string {
@@ -194,80 +174,6 @@ class NPCManager {
         }
 
         return null;
-    }
-
-    public function removeNPC(string $identifier, Entity $entity, Player $deletor = null): bool {
-        if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-            (new SNPCDeletionEvent($entity, $deletor))->call();
-
-            if (!$entity->isFlaggedForDespawn()) {
-                $entity->flagForDespawn();
-            }
-
-            $jsonPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
-            $datPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.dat";
-
-            if (is_file($jsonPath)) {
-                unlink($jsonPath);
-            }
-
-            if (is_file($datPath)) {
-                unlink($datPath);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public function applyArmorFrom(Player $player, CustomHuman $npc): void {
-        $npc->getArmorInventory()->setContents($player->getArmorInventory()->getContents());
-    }
-
-    public function sendHeldItemFrom(Player $player, CustomHuman $npc): void {
-        $npc->getInventory()->setItemInHand($player->getInventory()->getItemInHand());
-    }
-
-    public function interactToNPC(CustomHuman|BaseNPC $entity, Player $player): void {
-        $plugin = SimpleNPC::getInstance();
-
-        if (isset($plugin->idPlayers[$player->getName()])) {
-            $player->sendMessage(TextFormat::GREEN . "NPC ID: " . $entity->getId());
-            unset($plugin->idPlayers[$player->getName()]);
-            return;
-        }
-
-        if (isset($plugin->removeNPC[$player->getName()]) && !$entity->isFlaggedForDespawn()) {
-            if ($this->removeNPC($entity->getIdentifier(), $entity, $player)) {
-                $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
-            } else {
-                $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
-            }
-            unset($plugin->removeNPC[$player->getName()]);
-            return;
-        }
-
-        if ($plugin->settings["enableCommandCooldown"] ?? true) {
-            if (!isset($plugin->lastHit[$player->getName()][$entity->getId()])) {
-                $plugin->lastHit[$player->getName()][$entity->getId()] = microtime(true);
-                goto execute;
-            }
-
-            $coldown = $plugin->settings["commandExecuteCooldown"] ?? 1.0;
-            if (($coldown + (float)$plugin->lastHit[$player->getName()][$entity->getId()]) > microtime(true)) {
-                return;
-            }
-
-            $plugin->lastHit[$player->getName()][$entity->getId()] = microtime(true);
-        }
-
-        execute:
-        if (!empty($commands = $entity->getCommandManager()->getAll())) {
-            foreach ($commands as $command) {
-                $plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender($player->getServer(), $plugin->getServer()->getLanguage()), str_replace("{player}", $player->getName(), $command));
-            }
-        }
     }
 
     /**

@@ -11,7 +11,6 @@ namespace brokiem\snpc;
 
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
-use brokiem\snpc\manager\NPCManager;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
@@ -60,7 +59,7 @@ class EventHandler implements Listener {
                 $damager = $event->getDamager();
 
                 if ($damager instanceof Player) {
-                    NPCManager::getInstance()->interactToNPC($entity, $damager);
+                    $entity->interactToNPC($damager);
                 }
             }
         }
@@ -74,7 +73,7 @@ class EventHandler implements Listener {
             $entity = $this->plugin->getServer()->getWorldManager()->findEntity($packet->trData->getEntityRuntimeId());
 
             if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                NPCManager::getInstance()->interactToNPC($entity, $player);
+                $entity->interactToNPC($player);
             }
         }
     }

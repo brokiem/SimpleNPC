@@ -9,13 +9,17 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\entity;
 
+use brokiem\snpc\event\SNPCDeletionEvent;
 use brokiem\snpc\manager\command\CommandManager;
 use brokiem\snpc\SimpleNPC;
+use pocketmine\console\ConsoleCommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntitySizeInfo;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
+use pocketmine\player\Player;
 use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
 
 abstract class BaseNPC extends Entity {
 
@@ -52,6 +56,68 @@ abstract class BaseNPC extends Entity {
         $nbt = parent::saveNBT();
         $nbt->setString("Identifier", $this->identifier);
         return $nbt;
+    }
+
+    public function removeNPC(Player $deletor = null): bool {
+        (new SNPCDeletionEvent($this, $deletor))->call();
+
+        if (!$this->isFlaggedForDespawn()) {
+            $this->flagForDespawn();
+        }
+
+        $jsonPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.json";
+        $datPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.dat";
+
+        if (is_file($jsonPath)) {
+            unlink($jsonPath);
+        }
+
+        if (is_file($datPath)) {
+            unlink($datPath);
+        }
+
+        return true;
+    }
+
+    public function interactToNPC(Player $player): void {
+        $plugin = SimpleNPC::getInstance();
+
+        if (isset($plugin->idPlayers[$player->getName()])) {
+            $player->sendMessage(TextFormat::GREEN . "NPC ID: " . $this->getId());
+            unset($plugin->idPlayers[$player->getName()]);
+            return;
+        }
+
+        if (isset($plugin->removeNPC[$player->getName()]) && !$this->isFlaggedForDespawn()) {
+            if ($this->removeNPC($player)) {
+                $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
+            } else {
+                $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
+            }
+            unset($plugin->removeNPC[$player->getName()]);
+            return;
+        }
+
+        if ($plugin->settings["enableCommandCooldown"] ?? true) {
+            if (!isset($plugin->lastHit[$player->getName()][$this->getId()])) {
+                $plugin->lastHit[$player->getName()][$this->getId()] = microtime(true);
+                goto execute;
+            }
+
+            $coldown = $plugin->settings["commandExecuteCooldown"] ?? 1.0;
+            if (($coldown + (float)$plugin->lastHit[$player->getName()][$this->getId()]) > microtime(true)) {
+                return;
+            }
+
+            $plugin->lastHit[$player->getName()][$this->getId()] = microtime(true);
+        }
+
+        execute:
+        if (!empty($commands = $this->getCommandManager()->getAll())) {
+            foreach ($commands as $command) {
+                $plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender($player->getServer(), $plugin->getServer()->getLanguage()), str_replace("{player}", $player->getName(), $command));
+            }
+        }
     }
 
     public function getConfig(): Config {
