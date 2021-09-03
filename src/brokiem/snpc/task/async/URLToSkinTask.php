@@ -23,7 +23,7 @@ class URLToSkinTask extends AsyncTask {
     private string $dataPath;
     private string $skinUrl;
 
-    public function __construct(string $username, string $dataPath, string $skinURL, CustomHuman $human, bool $useFallbackSkin = false) {
+    public function __construct(string $username, string $dataPath, string $skinURL, CustomHuman $human) {
         $this->username = $username;
         $this->dataPath = $dataPath;
         $this->skinUrl = $skinURL;

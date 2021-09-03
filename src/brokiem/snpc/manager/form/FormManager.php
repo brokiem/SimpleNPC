@@ -245,7 +245,6 @@ class FormManager {
                                     $sender->sendForm($simpleForm);
                                     break;
                             }
-                            return;
                         }
                     }
                 }));
