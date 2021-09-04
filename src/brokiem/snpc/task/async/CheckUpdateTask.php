@@ -17,15 +17,9 @@ use pocketmine\utils\Internet;
 class CheckUpdateTask extends AsyncTask {
 
     private const POGGIT_URL = "https://poggit.pmmp.io/releases.json?name=";
-    private string $version;
-    private string $name;
-    private bool $retry;
 
-    public function __construct(SimpleNPC $plugin, bool $retry) {
-        $this->retry = $retry;
-        $this->name = $plugin->getDescription()->getName();
-        $this->version = $plugin->getDescription()->getVersion();
-        $this->storeLocal("snpc_checkupdate", [$plugin]);
+    public function __construct(private string $name, private string $version, private bool $retry) {
+        $this->storeLocal("snpc_checkupdate", [SimpleNPC::getInstance()]);
     }
 
     public function onRun(): void {

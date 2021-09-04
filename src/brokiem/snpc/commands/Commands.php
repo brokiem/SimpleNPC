@@ -14,17 +14,13 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\player\Player;
+use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
-use pocketmine\plugin\PluginOwnedTrait;
 use pocketmine\utils\TextFormat;
 
 class Commands extends Command implements PluginOwned {
-    use PluginOwnedTrait;
 
-    private SimpleNPC $plugin;
-
-    public function __construct(string $name, SimpleNPC $owner) {
-        $this->owningPlugin = $owner;
+    public function __construct(string $name, private SimpleNPC $owner) {
         parent::__construct($name, "SimpleNPC commands");
     }
 
@@ -204,5 +200,9 @@ class Commands extends Command implements PluginOwned {
         }
 
         return true;
+    }
+
+    public function getOwningPlugin(): Plugin {
+        return $this->owner;
     }
 }

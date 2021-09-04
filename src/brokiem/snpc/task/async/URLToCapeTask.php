@@ -18,15 +18,7 @@ use pocketmine\utils\TextFormat;
 
 class URLToCapeTask extends AsyncTask {
 
-    private string $url;
-    private string $dataPath;
-    private string $player;
-
-    public function __construct(string $url, string $dataPath, CustomHuman $npc, string $player) {
-        $this->dataPath = $dataPath;
-        $this->url = $url;
-        $this->player = $player;
-
+    public function __construct(private string $url, private string $dataPath, CustomHuman $npc, private string $player) {
         $this->storeLocal("snpc_urltocape", [$npc]);
     }
 

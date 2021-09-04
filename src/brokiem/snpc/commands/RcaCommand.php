@@ -18,10 +18,8 @@ use pocketmine\plugin\PluginOwned;
 use pocketmine\utils\TextFormat;
 
 class RcaCommand extends Command implements PluginOwned {
-    private SimpleNPC $plugin;
 
-    public function __construct(string $name, SimpleNPC $owner) {
-        $this->plugin = $owner;
+    public function __construct(string $name, private SimpleNPC $owner) {
         parent::__construct($name, "Execute command by player like sudo");
         $this->setPermission("simplenpc.rca");
     }
@@ -47,6 +45,6 @@ class RcaCommand extends Command implements PluginOwned {
     }
 
     public function getOwningPlugin(): Plugin {
-        return $this->plugin;
+        return $this->owner;
     }
 }

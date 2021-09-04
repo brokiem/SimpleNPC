@@ -27,11 +27,7 @@ use pocketmine\player\Player;
 
 class EventHandler implements Listener {
 
-    private SimpleNPC $plugin;
-
-    public function __construct(SimpleNPC $plugin) {
-        $this->plugin = $plugin;
-    }
+    public function __construct(private SimpleNPC $plugin) { }
 
     public function onJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();

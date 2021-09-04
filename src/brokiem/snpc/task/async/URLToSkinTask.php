@@ -18,15 +18,7 @@ use pocketmine\utils\TextFormat;
 
 class URLToSkinTask extends AsyncTask {
 
-    private string $username;
-    private string $dataPath;
-    private string $skinUrl;
-
-    public function __construct(string $username, string $dataPath, string $skinURL, CustomHuman $human) {
-        $this->username = $username;
-        $this->dataPath = $dataPath;
-        $this->skinUrl = $skinURL;
-
+    public function __construct(private string $username, private string $dataPath, private string $skinUrl, CustomHuman $human) {
         $this->storeLocal("snpc_urltoskin", $human);
     }
 

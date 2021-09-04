@@ -120,6 +120,6 @@ class SimpleNPC extends PluginBase {
     }
 
     public function checkUpdate(bool $isRetry = false): void {
-        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this, $isRetry));
+        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getName(), $this->getDescription()->getVersion(), $isRetry));
     }
 }
