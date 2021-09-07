@@ -93,12 +93,12 @@ class EventHandler implements Listener {
     public function onMove(PlayerMoveEvent $event): void {
         $player = $event->getPlayer();
 
-        if ($this->plugin->settings["lookToPlayersEnabled"]) {
+        if ($this->plugin->getConfig()->get("enable-look-to-players", true)) {
             if ($event->getFrom()->distance($event->getTo()) < 0.1) {
                 return;
             }
 
-            foreach ($player->getWorld()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"], $this->plugin->settings["maxLookDistance"]), $player) as $entity) {
+            foreach ($player->getWorld()->getNearbyEntities($player->getBoundingBox()->expandedCopy($this->plugin->getConfig()->get("max-look-distance", 8), $this->plugin->getConfig()->get("max-look-distance", 8), $this->plugin->getConfig()->get("max-look-distance", 8)), $player) as $entity) {
                 if (($entity instanceof CustomHuman) or $entity instanceof BaseNPC) {
                     $angle = atan2($player->getLocation()->z - $entity->getLocation()->z, $player->getLocation()->x - $entity->getLocation()->x);
                     $yaw = (($angle * 180) / M_PI) - 90;

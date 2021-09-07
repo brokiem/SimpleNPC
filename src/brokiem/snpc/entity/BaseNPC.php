@@ -98,13 +98,13 @@ abstract class BaseNPC extends Entity {
             return;
         }
 
-        if ($plugin->settings["enableCommandCooldown"] ?? true) {
+        if ($plugin->getConfig()->get("enable-command-cooldown", true)) {
             if (!isset($plugin->lastHit[$player->getName()][$this->getId()])) {
                 $plugin->lastHit[$player->getName()][$this->getId()] = microtime(true);
                 goto execute;
             }
 
-            $coldown = $plugin->settings["commandExecuteCooldown"] ?? 1.0;
+            $coldown = (float)$this->getConfig()->get("command-execute-cooldown", 1.0);
             if (($coldown + (float)$plugin->lastHit[$player->getName()][$this->getId()]) > microtime(true)) {
                 return;
             }

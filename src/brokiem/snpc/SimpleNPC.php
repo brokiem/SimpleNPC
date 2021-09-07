@@ -38,7 +38,6 @@ class SimpleNPC extends PluginBase {
     private static SimpleNPC $i;
     public array $migrateNPC = [];
     public array $removeNPC = [];
-    public array $settings = [];
     public array $lastHit = [];
     public array $cachedUpdate = [];
     public array $idPlayers = [];
@@ -112,11 +111,6 @@ class SimpleNPC extends PluginBase {
         }
 
         $this->reloadConfig();
-
-        $this->settings["lookToPlayersEnabled"] = $this->getConfig()->get("enable-look-to-players", true);
-        $this->settings["maxLookDistance"] = $this->getConfig()->get("max-look-distance", 8);
-        $this->settings["enableCommandCooldown"] = $this->getConfig()->get("enable-command-cooldown", true);
-        $this->settings["commandExecuteCooldown"] = (float)$this->getConfig()->get("command-execute-cooldown", 1.0);
     }
 
     public function checkUpdate(bool $isRetry = false): void {
