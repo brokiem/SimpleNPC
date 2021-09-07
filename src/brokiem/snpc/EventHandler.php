@@ -55,7 +55,7 @@ class EventHandler implements Listener {
                 $damager = $event->getDamager();
 
                 if ($damager instanceof Player) {
-                    $entity->interactToNPC($damager);
+                    $entity->interact($damager);
                 }
             }
         }
@@ -69,7 +69,7 @@ class EventHandler implements Listener {
             $entity = $this->plugin->getServer()->getWorldManager()->findEntity($packet->trData->getEntityRuntimeId());
 
             if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                $entity->interactToNPC($player);
+                $entity->interact($player);
             }
         }
     }

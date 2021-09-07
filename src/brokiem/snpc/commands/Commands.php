@@ -7,7 +7,7 @@ namespace brokiem\snpc\commands;
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\manager\form\FormManager;
-use brokiem\snpc\manager\NPCFactory;
+use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\SimpleNPC;
 use brokiem\snpc\task\async\URLToSkinTask;
 use pocketmine\command\Command;
@@ -91,7 +91,7 @@ class Commands extends Command implements PluginOwned {
                                         return true;
                                     }
 
-                                    $id = NPCFactory::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
+                                    $id = NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
                                     if ($id !== null) {
                                         $npc = $sender->getServer()->getWorldManager()->findEntity($id);
 
@@ -104,19 +104,19 @@ class Commands extends Command implements PluginOwned {
                                     return true;
                                 } elseif (isset($args[2])) {
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
-                                    NPCFactory::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
+                                    NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
                                     return true;
                                 }
 
-                                NPCFactory::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $sender->getName(), null, null, $sender->getSkin()->getSkinData());
+                                NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $sender->getName(), null, null, $sender->getSkin()->getSkinData());
                             } else {
                                 if (isset($args[2])) {
-                                    NPCFactory::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);
+                                    NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
                                     return true;
                                 }
 
-                                NPCFactory::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender);
+                                NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender);
                             }
                             $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC without nametag for you...");
                         } else {
@@ -137,7 +137,7 @@ class Commands extends Command implements PluginOwned {
                         $entity = $plugin->getServer()->getWorldManager()->findEntity((int)$args[1]);
 
                         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-                            if ($entity->removeNPC()) {
+                            if ($entity->despawn()) {
                                 $sender->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
                             } else {
                                 $sender->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");

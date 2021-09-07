@@ -49,7 +49,7 @@ use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 
-class NPCFactory {
+class NPCManager {
     use SingletonTrait;
 
     private static array $npcs = [

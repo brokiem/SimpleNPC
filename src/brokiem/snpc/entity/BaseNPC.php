@@ -58,7 +58,7 @@ abstract class BaseNPC extends Entity {
         return $nbt;
     }
 
-    public function removeNPC(Player $deletor = null): bool {
+    public function despawn(Player $deletor = null): bool {
         (new SNPCDeletionEvent($this, $deletor))->call();
 
         if (!$this->isFlaggedForDespawn()) {
@@ -79,7 +79,7 @@ abstract class BaseNPC extends Entity {
         return true;
     }
 
-    public function interactToNPC(Player $player): void {
+    public function interact(Player $player): void {
         $plugin = SimpleNPC::getInstance();
 
         if (isset($plugin->idPlayers[$player->getName()])) {
@@ -89,7 +89,7 @@ abstract class BaseNPC extends Entity {
         }
 
         if (isset($plugin->removeNPC[$player->getName()]) && !$this->isFlaggedForDespawn()) {
-            if ($this->removeNPC($player)) {
+            if ($this->despawn($player)) {
                 $player->sendMessage(TextFormat::GREEN . "The NPC was successfully removed!");
             } else {
                 $player->sendMessage(TextFormat::YELLOW . "The NPC was failed removed! (File not found)");
