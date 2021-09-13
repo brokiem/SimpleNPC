@@ -94,7 +94,7 @@ class FormManager {
 
         $sender->sendForm($form);
         $cusForm->setSubmitListener(function(Player $player, FormResponse $response) use ($plugin) {
-            $type = strtolower($response->getDropdownSubmittedOptionId("type"));
+            $type = $response->getDropdownSubmittedOptionId("type") === null ? "" : strtolower($response->getDropdownSubmittedOptionId("type"));
             $nametag = $response->getInputSubmittedText("nametag") === "" ? $player->getName() : $response->getInputSubmittedText("nametag");
             $skin = $response->getInputSubmittedText("skin") === "null" ? "" : $response->getInputSubmittedText("skin");
             $npcEditId = $response->getInputSubmittedText("snpcid_edit");

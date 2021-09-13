@@ -160,7 +160,12 @@ class Commands extends Command implements PluginOwned {
                     break;
                 case "edit":
                 case "manage":
-                    if (!$sender->hasPermission("simplenpc.edit") or !$sender instanceof Player) {
+                    if (!$sender instanceof Player) {
+                        $sender->sendMessage("Only player can run this command!");
+                        return true;
+                    }
+
+                    if (!$sender->hasPermission("simplenpc.edit")) {
                         $sender->sendMessage(TextFormat::RED . "You don't have permission");
                         return true;
                     }
