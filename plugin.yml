@@ -4,7 +4,7 @@ version: 2.1.7-dev
 api: 3.20.0
 author: brokiem
 
-mcpe-protocol: [ 440, 448 ]
+mcpe-protocol: [ 440, 448, 465 ]
 
 extensions:
   Core: '>=7.4'
