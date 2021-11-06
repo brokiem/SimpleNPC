@@ -66,7 +66,7 @@ class EventHandler implements Listener {
         $packet = $event->getPacket();
 
         if ($player !== null and $packet instanceof InventoryTransactionPacket && $packet->trData instanceof UseItemOnEntityTransactionData && $packet->trData->getActionType() === UseItemOnEntityTransactionData::ACTION_INTERACT) {
-            $entity = $this->plugin->getServer()->getWorldManager()->findEntity($packet->trData->getEntityRuntimeId());
+            $entity = $this->plugin->getServer()->getWorldManager()->findEntity($packet->trData->getActorRuntimeId());
 
             if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
                 $entity->interact($player);
@@ -102,12 +102,12 @@ class EventHandler implements Listener {
                 if (($entity instanceof CustomHuman) or $entity instanceof BaseNPC) {
                     $angle = atan2($player->getLocation()->z - $entity->getLocation()->z, $player->getLocation()->x - $entity->getLocation()->x);
                     $yaw = (($angle * 180) / M_PI) - 90;
-                    $angle = atan2((new Vector2($entity->getLocation()->x, $entity->getLocation()->z))->distance($player->getLocation()->x, $player->getLocation()->z), $player->getLocation()->y - $entity->getLocation()->y);
+                    $angle = atan2((new Vector2($entity->getLocation()->x, $entity->getLocation()->z))->distance(new Vector2($player->getLocation()->x, $player->getLocation()->z)), $player->getLocation()->y - $entity->getLocation()->y);
                     $pitch = (($angle * 180) / M_PI) - 90;
 
                     if ($entity instanceof CustomHuman and !$entity->canWalk() and $entity->canLookToPlayers()) {
                         $pk = new MovePlayerPacket();
-                        $pk->entityRuntimeId = $entity->getId();
+                        $pk->actorRuntimeId = $entity->getId();
                         $pk->position = $entity->getLocation()->add(0, $entity->getEyeHeight(), 0);
                         $pk->yaw = $yaw;
                         $pk->pitch = $pitch;
@@ -116,11 +116,11 @@ class EventHandler implements Listener {
                         $player->getNetworkSession()->sendDataPacket($pk);
                     } elseif ($entity instanceof BaseNPC and $entity->canLookToPlayers()) {
                         $pk = new MoveActorAbsolutePacket();
-                        $pk->entityRuntimeId = $entity->getId();
+                        $pk->actorRuntimeId = $entity->getId();
                         $pk->position = $entity->getLocation()->asVector3();
-                        $pk->xRot = $pitch;
-                        $pk->yRot = $yaw;
-                        $pk->zRot = $yaw;
+                        $pk->pitch = $pitch;
+                        $pk->yaw = $yaw;
+                        $pk->headYaw = $yaw;
                         $player->getNetworkSession()->sendDataPacket($pk);
                     }
                 }
