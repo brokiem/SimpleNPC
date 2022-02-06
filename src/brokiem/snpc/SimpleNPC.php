@@ -35,7 +35,6 @@ class SimpleNPC extends PluginBase {
   
     private static array $registeredNPC = [];
     public static array $entities = [];
-    private static SimpleNPC $i;
     public array $migrateNPC = [];
     public array $removeNPC = [];
     public array $lastHit = [];
