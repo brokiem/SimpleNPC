@@ -15,6 +15,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
 class RcaCommand extends Command implements PluginOwned {
@@ -34,9 +35,9 @@ class RcaCommand extends Command implements PluginOwned {
             return true;
         }
 
-        $player = $this->getOwningPlugin()->getServer()->getPlayerExact(array_shift($args));
+        $player = Server::getInstance()->getPlayerExact(array_shift($args));
         if ($player instanceof Player) {
-            $this->getOwningPlugin()->getServer()->getCommandMap()->dispatch($player, trim(implode(" ", $args)));
+            Server::getInstance()->getCommandMap()->dispatch($player, trim(implode(" ", $args)));
             return true;
         }
 
