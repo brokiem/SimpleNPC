@@ -126,7 +126,7 @@ class CustomHuman extends Human {
         execute:
         if (!empty($commands = $this->getCommandManager()->getAll())) {
             foreach ($commands as $command) {
-                $plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender($player->getServer(), $plugin->getServer()->getLanguage()), str_replace("{player}", $player->getName(), $command));
+                $plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender($player->getServer(), $plugin->getServer()->getLanguage()), str_replace("{player}", '"' . $player->getName() . '"', $command));
             }
         }
     }
