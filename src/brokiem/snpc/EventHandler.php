@@ -36,7 +36,7 @@ class EventHandler implements Listener {
             [$latestVersion, $updateDate, $updateUrl] = $this->plugin->cachedUpdate;
 
             if ($this->plugin->getDescription()->getVersion() !== $latestVersion) {
-                $player->sendMessage(" \n§aSimpleNPC §bv$latestVersion §ahas been released on §b$updateDate. §aDownload the new update at §b$updateUrl\n ");
+                $player->sendMessage(" \n§aSimpleNPC §bv$latestVersion §ahas been released on §b" . date("j F Y", $updateDate) . ". §aDownload the new update at §b$updateUrl\n ");
             }
         }
     }
