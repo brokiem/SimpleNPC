@@ -15,7 +15,8 @@ use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\manager\NPCManager;
-use brokiem\snpc\task\async\CheckUpdateTask;
+use brokiem\updatechecker\Promise;
+use brokiem\updatechecker\UpdateChecker;
 use EasyUI\Form;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityDataHelper;
@@ -63,7 +64,11 @@ class SimpleNPC extends PluginBase {
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
 
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(): void {
-            $this->checkUpdate();
+            UpdateChecker::checkUpdate($this->getDescription()->getName(), $promise = new Promise());
+
+            $promise->then(function($data) {
+                $this->cachedUpdate = [$data["version"], $data["last_state_change_date"], $data["html_url"]];
+            });
         }), 864000); // 12 hours
     }
 
@@ -110,9 +115,5 @@ class SimpleNPC extends PluginBase {
         }
 
         $this->reloadConfig();
-    }
-
-    public function checkUpdate(bool $isRetry = false): void {
-        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this->getDescription()->getName(), $this->getDescription()->getVersion(), $isRetry));
     }
 }
