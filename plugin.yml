@@ -1,6 +1,6 @@
 name: SimpleNPC
 main: brokiem\snpc\SimpleNPC
-version: 3.0.2
+version: 3.0.3-dev
 api: 4.0.0
 author: brokiem
 
