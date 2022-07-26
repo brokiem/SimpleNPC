@@ -183,15 +183,16 @@ class Commands extends Command implements PluginOwned {
                         return true;
                     }
 
+                    $entityNames = [];
                     foreach ($plugin->getServer()->getWorldManager()->getWorlds() as $world) {
                         $entityNames = array_map(static function(Entity $entity): string {
                             return TextFormat::YELLOW . "ID: (" . $entity->getId() . ") " . TextFormat::GREEN . $entity->getNameTag() . " §7-- §b" . $entity->getWorld()->getFolderName() . ": " . $entity->getLocation()->getFloorX() . "/" . $entity->getLocation()->getFloorY() . "/" . $entity->getLocation()->getFloorZ();
                         }, array_filter($world->getEntities(), static function(Entity $entity): bool {
                             return $entity instanceof BaseNPC or $entity instanceof CustomHuman;
                         }));
-
-                        $sender->sendMessage("§csNPC List and Location: (" . count($entityNames) . ")\n §f- " . implode("\n - ", $entityNames));
                     }
+
+                    $sender->sendMessage("§cNPC List and Location: (" . count($entityNames) . ")\n §f- " . implode("\n - ", $entityNames));
                     break;
                 case "help":
                     $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /snpc spawn <type> <nametag> <skinUrl>\n§2» /snpc edit <id>\n§2» /snpc reload\n§2» /snpc ui\n§2» /snpc remove <id>\n§2» /snpc list\n§7---- ---- ---- - ---- ---- ----");
