@@ -180,7 +180,7 @@ class FormManager {
                                 case "commandList":
                                     $cmds = "This NPC (ID: {$entity->getId()}) does not have any commands.";
                                     $commands = $entity->getCommandManager()->getAll();
-                                    if (!empty($commands->get("commands"))) {
+                                    if (!empty($commands)) {
                                         $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list (" . count($commands) . ")\n";
 
                                         foreach ($commands as $cmd) {
