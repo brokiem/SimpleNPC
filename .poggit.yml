@@ -2,6 +2,7 @@
 branches:
   - master
   - pm4-new
+  - use-nbt
 projects:
   SimpleNPC:
     path: ""
