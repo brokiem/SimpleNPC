@@ -23,6 +23,6 @@ class EndermanNPC extends BaseNPC {
     }
 
     public static function getNetworkTypeId(): string {
-        return EntityIds::BAT;
+        return EntityIds::ENDERMAN;
     }
 }
