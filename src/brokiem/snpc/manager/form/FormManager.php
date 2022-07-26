@@ -26,7 +26,6 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\item\ItemIds;
 use pocketmine\player\Player;
-use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 
@@ -121,47 +120,18 @@ class FormManager {
         $simpleForm = new SimpleForm("Manage NPC");
 
         if ($entity instanceof BaseNPC || $entity instanceof CustomHuman) {
-            if (is_file($file = $plugin->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".json")) {
-                /** @phpstan-ignore-next-line */
-                if (empty(json_decode(file_get_contents($file), true))) {
-                    if (!$entity->isFlaggedForDespawn()) {
-                        $entity->flagForDespawn();
-                    }
-
-                    if (is_file($dat = $plugin->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".dat")) {
-                        unlink($dat);
-                    }
-                    unlink($file);
-                    $sender->sendMessage(TextFormat::RED . "NPC Config file is empty! Please re-create the NPC.");
-                    return;
-                }
-            } else {
-                if (!$entity->isFlaggedForDespawn()) {
-                    $entity->flagForDespawn();
-                }
-                $sender->sendMessage(TextFormat::RED . "NPC Config file not found! Please re-create the NPC.");
-                return;
-            }
-
-            $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".json", Config::JSON);
             $editUI = new SimpleForm("Manage NPC", "§aID:§2 $args[1]\n§aClass: §2" . get_class($entity) . "\n§aNametag: §2" . $entity->getNameTag() . "\n§aPosition: §2" . $entity->getLocation()->getFloorX() . "/" . $entity->getLocation()->getFloorY() . "/" . $entity->getLocation()->getFloorZ());
 
             foreach (ButtonManager::getInstance()->getEditButtons() as $button) {
                 if (empty($button["element"]) && !empty($button["additional"]) && $button["additional"]["button"]["force"]) {
-                    $editUI->addButton(new Button($button["additional"]["button"]["text"], $button["additional"]["button"]["icon"], function(Player $sender) use ($entity, $npcConfig, $button) {
+                    $editUI->addButton(new Button($button["additional"]["button"]["text"], $button["additional"]["button"]["icon"], function(Player $sender) use ($entity, $button) {
                         switch ($button["additional"]["button"]["function"]) {
                             case "showNametag":
-                                $npcConfig->set("showNametag", true);
-                                $npcConfig->save();
-                                $entity->setNameTag(str_replace("{line}", "\n", $npcConfig->get("nametag", $sender->getName())));
                                 $entity->setNameTagAlwaysVisible();
                                 $entity->setNameTagVisible();
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully showing NPC nametag (NPC ID: " . $entity->getId() . ")");
                                 break;
                             case "hideNametag":
-                                $npcConfig->set("showNametag", false);
-                                $npcConfig->save();
-                                $entity->setNameTag("");
                                 $entity->setNameTagAlwaysVisible(false);
                                 $entity->setNameTagVisible(false);
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully remove NPC nametag (NPC ID: " . $entity->getId() . ")");
@@ -170,7 +140,7 @@ class FormManager {
                                 $entity->setCanLookToPlayers(false);
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully disable npc rotate (NPC ID: " . $entity->getId() . ")");
                                 break;
-                            case "enableRotate":
+                            case "EnableRotation":
                                 $entity->setCanLookToPlayers(true);
                                 $sender->sendMessage(TextFormat::GREEN . "Successfully enable npc rotate (NPC ID: " . $entity->getId() . ")");
                                 break;
@@ -200,7 +170,7 @@ class FormManager {
                     continue;
                 }
 
-                $editUI->addButton(new Button($button["text"], $button["icon"], function(Player $sender) use ($npcConfig, $entity, $simpleForm, $editUI, $customForm, $button) {
+                $editUI->addButton(new Button($button["text"], $button["icon"], function(Player $sender) use ($entity, $simpleForm, $editUI, $customForm, $button) {
                     if (!empty($button["element"]) && empty($button["additional"])) {
                         $customForm->addElement($button["element"]["id"], $button["element"]["element"]);
                         $sender->sendForm($customForm);
@@ -209,10 +179,11 @@ class FormManager {
                             switch ($button["additional"]["button"]["function"]) {
                                 case "commandList":
                                     $cmds = "This NPC (ID: {$entity->getId()}) does not have any commands.";
-                                    if (!empty($npcConfig->get("commands"))) {
-                                        $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list (" . count($npcConfig->get("commands")) . ")\n";
+                                    $commands = $entity->getCommandManager()->getAll();
+                                    if (!empty($commands->get("commands"))) {
+                                        $cmds = TextFormat::AQUA . "NPC ID: {$entity->getId()} Command list (" . count($commands) . ")\n";
 
-                                        foreach ($npcConfig->get("commands") as $cmd) {
+                                        foreach ($commands as $cmd) {
                                             $cmds .= TextFormat::GREEN . "- " . $cmd . "\n";
                                         }
                                     }
@@ -231,13 +202,11 @@ class FormManager {
                                         $sender->teleport($entity->getLocation());
                                         $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                                     }));
-                                    $simpleForm->addButton(new Button("NPC to You", null, function(Player $sender) use ($npcConfig, $entity): void {
+                                    $simpleForm->addButton(new Button("NPC to You", null, function(Player $sender) use ($entity): void {
                                         $entity->teleport($sender->getLocation());
                                         if ($entity instanceof WalkingHuman) {
                                             $entity->randomPosition = $entity->getLocation()->asVector3();
                                         }
-                                        $npcConfig->set("position", [$entity->getLocation()->x, $entity->getLocation()->y, $entity->getLocation()->z, $entity->getLocation()->yaw, $entity->getLocation()->pitch]);
-                                        $npcConfig->save();
                                         $sender->sendMessage(TextFormat::GREEN . "Teleported!");
                                     }));
 
@@ -256,38 +225,28 @@ class FormManager {
                 $scale = $response->getInputSubmittedText("changescale");
                 $skin = $response->getInputSubmittedText("changeskin");
                 $cape = $response->getInputSubmittedText("changecape");
-                $npcConfig = new Config($plugin->getDataFolder() . "npcs/" . $entity->getIdentifier() . ".json", Config::JSON);
 
                 if ($rmcmd != "") {
-                    if (!in_array($rmcmd, $npcConfig->get("commands"), true)) {
+                    if (!in_array($rmcmd, $entity->getCommandManager()->getAll(), true)) {
                         $player->sendMessage(TextFormat::RED . "Command '$rmcmd' not found in command list.");
                         return;
                     }
 
                     $entity->getCommandManager()->remove($rmcmd);
-
-                    $npcConfig->set("commands", $entity->getCommandManager()->getAll());
-                    $npcConfig->save();
                     $player->sendMessage(TextFormat::GREEN . "Successfully remove command '$rmcmd' (NPC ID: " . $entity->getId() . ")");
                 } elseif ($addcmd != "") {
-                    if (in_array($addcmd, $npcConfig->get("commands"), true)) {
+                    if (in_array($addcmd, $entity->getCommandManager()->getAll(), true)) {
                         $player->sendMessage(TextFormat::RED . "Command '$addcmd' has already been added.");
                         return;
                     }
 
                     $entity->getCommandManager()->add($addcmd);
-
-                    $npcConfig->set("commands", $entity->getCommandManager()->getAll());
-                    $npcConfig->save();
                     $player->sendMessage(TextFormat::GREEN . "Successfully added command '$addcmd' (NPC ID: " . $entity->getId() . ")");
                 } elseif ($chnmtd != "") {
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc nametag from '{$entity->getNameTag()}' to '$chnmtd'  (NPC ID: " . $entity->getId() . ")");
 
                     $entity->setNameTag(str_replace("{line}", "\n", $chnmtd));
                     $entity->setNameTagAlwaysVisible();
-
-                    $npcConfig->set("nametag", $chnmtd);
-                    $npcConfig->save();
                 } elseif ($cape != "") {
                     if (!$entity instanceof CustomHuman) {
                         $player->sendMessage(TextFormat::RED . "Only human NPC can change cape!");
@@ -300,11 +259,6 @@ class FormManager {
                         $capeSkin = new Skin($entity->getSkin()->getSkinId(), $entity->getSkin()->getSkinData(), $pCape->getSkin()->getCapeData(), $entity->getSkin()->getGeometryName(), $entity->getSkin()->getGeometryData());
                         $entity->setSkin($capeSkin);
                         $entity->sendSkin();
-
-                        $entity->getSkinTag()->setByteArray("Data", $pCape->getSkin()->getSkinData());
-                        $entity->getSkinTag()->setByteArray("CapeData", $pCape->getSkin()->getCapeData());
-
-                        $entity->saveSkinTag();
 
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc cape (NPC ID: " . $entity->getId() . ")");
                         return;
@@ -323,10 +277,6 @@ class FormManager {
                         $entity->setSkin($pSkin->getSkin());
                         $entity->sendSkin();
 
-                        $entity->getSkinTag()->setString("Name", $player->getSkin()->getSkinId());
-                        $entity->getSkinTag()->setByteArray("Data", $player->getSkin()->getSkinData());
-
-                        $entity->saveSkinTag();
                         $player->sendMessage(TextFormat::GREEN . "Successfully change npc skin (NPC ID: " . $entity->getId() . ")");
                         return;
                     }
@@ -344,8 +294,6 @@ class FormManager {
                         return;
                     }
 
-                    $npcConfig->set("scale", (float)$scale);
-                    $npcConfig->save();
                     $entity->setScale((float)$scale);
 
                     $player->sendMessage(TextFormat::GREEN . "Successfully change npc size to $scale (NPC ID: " . $entity->getId() . ")");

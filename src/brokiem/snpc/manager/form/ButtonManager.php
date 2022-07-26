@@ -149,7 +149,7 @@ class ButtonManager {
                     "button" => [
                         "text" => "Enable Rotate\n(Look to player)",
                         "icon" => null,
-                        "function" => "enableRotate",
+                        "function" => "EnableRotation",
                         "force" => true
                     ]
                 ]

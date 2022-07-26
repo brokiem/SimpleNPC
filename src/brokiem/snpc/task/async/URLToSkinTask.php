@@ -91,8 +91,5 @@ class URLToSkinTask extends AsyncTask {
 
         $human->setSkin(new Skin($human->getSkin()->getSkinId(), $skinData, $human->getSkin()->getCapeData(), $human->getSkin()->getGeometryName(), $human->getSkin()->getGeometryData()));
         $human->sendSkin();
-
-        $human->getSkinTag()->setByteArray("Data", $skinData);
-        $human->saveSkinTag();
     }
 }

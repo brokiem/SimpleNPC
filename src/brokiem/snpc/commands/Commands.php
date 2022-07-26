@@ -91,7 +91,7 @@ class Commands extends Command implements PluginOwned {
                                         return true;
                                     }
 
-                                    $id = NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
+                                    $id = NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, $sender->getSkin()->getSkinData());
                                     if ($id !== null) {
                                         $npc = $sender->getServer()->getWorldManager()->findEntity($id);
 
@@ -104,11 +104,11 @@ class Commands extends Command implements PluginOwned {
                                     return true;
                                 } elseif (isset($args[2])) {
                                     $sender->sendMessage(TextFormat::DARK_GREEN . "Creating " . ucfirst($args[1]) . " NPC with nametag $args[2] for you...");
-                                    NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, null, $sender->getSkin()->getSkinData());
+                                    NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2], null, $sender->getSkin()->getSkinData());
                                     return true;
                                 }
 
-                                NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $sender->getName(), null, null, $sender->getSkin()->getSkinData());
+                                NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $sender->getName(), null, $sender->getSkin()->getSkinData());
                             } else {
                                 if (isset($args[2])) {
                                     NPCManager::getInstance()->spawnNPC(strtolower($args[1]) . "_snpc", $sender, $args[2]);
