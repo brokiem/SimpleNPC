@@ -38,7 +38,6 @@ abstract class BaseNPC extends Entity {
         $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 0);
 
         $this->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::SILENT, true);
-        $this->setNameTagAlwaysVisible();
 
         $this->setScale($nbt->getFloat("Scale", 1));
     }

@@ -41,8 +41,6 @@ class CustomHuman extends Human {
         $this->commandManager = new CommandManager($nbt);
         $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 0);
 
-        $this->setNameTagAlwaysVisible();
-
         $this->setScale($nbt->getFloat("Scale", 1));
     }
 
