@@ -9,7 +9,7 @@ use pocketmine\nbt\tag\ListTag;
 
 final class CommandManager {
 
-    private array $commands;
+    private array $commands = [];
 
     public function __construct(CompoundTag $nbt) {
         if (($commandsTag = $nbt->getTag('Commands')) instanceof ListTag) {
