@@ -15,46 +15,46 @@ use brokiem\snpc\SimpleNPC;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntitySizeInfo;
+use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
 use pocketmine\player\Player;
-use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 abstract class BaseNPC extends Entity {
 
     protected $gravity = 0.0;
 
-    private string $identifier;
     protected bool $lookToPlayers;
 
     protected CommandManager $commandManager;
 
-    public function getIdentifier(): string {
-        return $this->identifier;
-    }
-
     protected function initEntity(CompoundTag $nbt): void {
         parent::initEntity($nbt);
 
-        $identifier = $nbt->getString("Identifier");
-
-        $this->identifier = $identifier;
-        $this->commandManager = new CommandManager($this);
-        $this->lookToPlayers = $this->getConfig()->get("enableRotate", true);
+        $this->commandManager = new CommandManager($nbt);
+        $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 1);
 
         $this->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::SILENT, true);
-        $this->setNameTagAlwaysVisible();
 
-        $scale = (float)$this->getConfig()->get("scale", 1.0);
-        if ($this->getScale() !== $scale) {
-            $this->setScale($scale);
-        }
+        $this->setNameTagAlwaysVisible((bool)$nbt->getByte("ShowNametag", 1));
+        $this->setNameTagVisible((bool)$nbt->getByte("ShowNametag", 1));
+        $this->setScale($nbt->getFloat("Scale", 1));
     }
 
     public function saveNBT(): CompoundTag {
         $nbt = parent::saveNBT();
-        $nbt->setString("Identifier", $this->identifier);
+        $nbt->setFloat("Scale", $this->getScale()); //pm doesn't save this to the nbt
+        $nbt->setByte("EnableRotation", (int)$this->lookToPlayers);
+        $nbt->setByte("ShowNametag", (int)$this->isNameTagAlwaysVisible());
+
+        $listTag = new ListTag([], NBT::TAG_String); //commands
+        foreach ($this->commandManager->getAll() as $command) {
+            $listTag->push(new StringTag($command));
+        }
+        $nbt->setTag("Commands", $listTag);
         return $nbt;
     }
 
@@ -63,17 +63,6 @@ abstract class BaseNPC extends Entity {
 
         if (!$this->isFlaggedForDespawn()) {
             $this->flagForDespawn();
-        }
-
-        $jsonPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.json";
-        $datPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.dat";
-
-        if (is_file($jsonPath)) {
-            unlink($jsonPath);
-        }
-
-        if (is_file($datPath)) {
-            unlink($datPath);
         }
 
         return true;
@@ -104,7 +93,7 @@ abstract class BaseNPC extends Entity {
                 goto execute;
             }
 
-            $coldown = (float)$this->getConfig()->get("command-execute-cooldown", 1.0);
+            $coldown = (float)$plugin->getConfig()->get("command-execute-cooldown", 1.0);
             if (($coldown + (float)$plugin->lastHit[$player->getName()][$this->getId()]) > microtime(true)) {
                 return;
             }
@@ -120,14 +109,7 @@ abstract class BaseNPC extends Entity {
         }
     }
 
-    public function getConfig(): Config {
-        return new Config(SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.json", Config::JSON);
-    }
-
     public function setCanLookToPlayers(bool $value): void {
-        $this->getConfig()->set("enableRotate", $value);
-        $this->getConfig()->save();
-
         $this->lookToPlayers = $value;
     }
 

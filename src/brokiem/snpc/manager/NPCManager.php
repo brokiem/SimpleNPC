@@ -45,7 +45,6 @@ use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\player\Player;
-use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 
@@ -88,7 +87,7 @@ class NPCManager {
         }
     }
 
-    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?array $commands = [], ?Location $customPos = null, ?string $skinData = null): ?int {
+    public function spawnNPC(string $type, Player $player, ?string $nametag = null, ?Location $customPos = null, ?string $skinData = null): ?int {
         $nbt = $this->createBaseNBT($player->getLocation(), null, $player->getLocation()->getYaw(), $player->getLocation()->getPitch());
 
         if ($customPos !== null) {
@@ -96,17 +95,6 @@ class NPCManager {
         }
 
         $pos = $customPos ?? $player->getLocation();
-        $nbt->setString("Identifier", $this->saveNPCData($type, [
-            "version" => SimpleNPC::getInstance()->getDescription()->getVersion(),
-            "type" => $type,
-            "nametag" => $nametag,
-            "world" => $player->getWorld()->getFolderName(),
-            "enableRotate" => true,
-            "showNametag" => $nametag !== null,
-            "scale" => 1.0,
-            "commands" => $commands ?? [],
-            "position" => [$pos->getX(), $pos->getY(), $pos->getZ(), $pos->getYaw(), $pos->getPitch()]
-        ]));
         if (isset(SimpleNPC::$entities[$type]) && is_a(SimpleNPC::$entities[$type], CustomHuman::class, true)) {
             $nbt->setTag("Skin", CompoundTag::create()
                 ->setString("Name", $player->getSkin()->getSkinId())
@@ -134,29 +122,7 @@ class NPCManager {
 
         (new SNPCCreationEvent($entity, $player))->call();
 
-        if ($entity instanceof CustomHuman) {
-            $entity->saveSkinTag();
-        }
-
         return $entity->getId();
-    }
-
-    public function saveNPCData(string $type, array $saves): string {
-        if (!is_dir(SimpleNPC::getInstance()->getDataFolder() . "npcs")) {
-            mkdir(SimpleNPC::getInstance()->getDataFolder() . "npcs");
-        }
-
-        $identifier = uniqid("$type-", true);
-        $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
-
-        $npcConfig = new Config($path, Config::JSON);
-        $npcConfig->set("identifier", $identifier);
-        foreach ($saves as $save => $value) {
-            $npcConfig->set($save, $value);
-        }
-
-        $npcConfig->save();
-        return $identifier;
     }
 
     public function createEntity(string $type, Location $location, CompoundTag $nbt): ?Entity {

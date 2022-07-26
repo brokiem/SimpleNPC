@@ -14,59 +14,50 @@ use brokiem\snpc\manager\command\CommandManager;
 use brokiem\snpc\SimpleNPC;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\entity\Human;
-use pocketmine\nbt\LittleEndianNbtSerializer;
+use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\TreeRoot;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\player\Player;
-use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 class CustomHuman extends Human {
     protected $gravity = 0.0;
 
-    private string $identifier;
     protected bool $canWalk = false;
     protected bool $lookToPlayers;
 
-    protected CompoundTag $skinTag;
     protected CommandManager $commandManager;
-
-    public function getIdentifier(): string {
-        return $this->identifier;
-    }
 
     protected function initEntity(CompoundTag $nbt): void {
         parent::initEntity($nbt);
 
         $skinTag = $nbt->getCompoundTag("Skin");
-        $identifier = $nbt->getString("Identifier");
 
         if ($skinTag === null) {
             throw new \UnexpectedValueException("Missing skin data");
         }
 
-        $this->identifier = $identifier;
-        $this->commandManager = new CommandManager($this);
-        $this->skinTag = $skinTag;
+        $this->commandManager = new CommandManager($nbt);
+        $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 1);
 
-        $this->lookToPlayers = $this->getConfig()->get("enableRotate", true);
-
-        $this->setNameTagAlwaysVisible();
-        $scale = (float)$this->getConfig()->get("scale", 1.0);
-
-        if ($this->getScale() !== $scale) {
-            $this->setScale($scale);
-        }
+        $this->setNameTagAlwaysVisible((bool)$nbt->getByte("ShowNametag", 1));
+        $this->setNameTagVisible((bool)$nbt->getByte("ShowNametag", 1));
+        $this->setScale($nbt->getFloat("Scale", 1));
     }
 
     public function saveNBT(): CompoundTag {
         $nbt = parent::saveNBT();
-        $nbt->setString("Identifier", $this->identifier);
-        return $nbt;
-    }
+        $nbt->setFloat("Scale", $this->getScale()); //pm doesn't save this to the nbt
+        $nbt->setByte("EnableRotation", (int)$this->lookToPlayers);
+        $nbt->setByte("ShowNametag", (int)$this->isNameTagAlwaysVisible());
 
-    public function getConfig(): Config {
-        return new Config(SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.json", Config::JSON);
+        $listTag = new ListTag([], NBT::TAG_String); //commands
+        foreach ($this->commandManager->getAll() as $command) {
+            $listTag->push(new StringTag($command));
+        }
+        $nbt->setTag("Commands", $listTag);
+        return $nbt;
     }
 
     public function despawn(Player $deletor = null): bool {
@@ -74,17 +65,6 @@ class CustomHuman extends Human {
 
         if (!$this->isFlaggedForDespawn()) {
             $this->flagForDespawn();
-        }
-
-        $jsonPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.json";
-        $datPath = SimpleNPC::getInstance()->getDataFolder() . "npcs/$this->identifier.dat";
-
-        if (is_file($jsonPath)) {
-            unlink($jsonPath);
-        }
-
-        if (is_file($datPath)) {
-            unlink($datPath);
         }
 
         return true;
@@ -115,7 +95,7 @@ class CustomHuman extends Human {
                 goto execute;
             }
 
-            $coldown = (float)$this->getConfig()->get("command-execute-cooldown", 1.0);
+            $coldown = (float)$plugin->getConfig()->get("command-execute-cooldown", 1.0);
             if (($coldown + (float)$plugin->lastHit[$player->getName()][$this->getId()]) > microtime(true)) {
                 return;
             }
@@ -131,22 +111,6 @@ class CustomHuman extends Human {
         }
     }
 
-    public function saveSkinTag(): void {
-        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $this->getIdentifier() . ".dat";
-        file_put_contents($file, zlib_encode((new LittleEndianNbtSerializer())->write(new TreeRoot($this->getSkinTag())), ZLIB_ENCODING_GZIP));
-    }
-
-    public function getSavedSkinTag(): ?CompoundTag {
-        $file = SimpleNPC::getInstance()->getDataFolder() . "npcs/" . $this->getIdentifier() . ".dat";
-
-        if (is_file($file)) {
-            $decompressed = @zlib_decode(file_get_contents($file));
-            return (new LittleEndianNbtSerializer())->read($decompressed)->mustGetCompoundTag();
-        }
-
-        return null;
-    }
-
     public function applyArmorFrom(Player $player): void {
         $this->getArmorInventory()->setContents($player->getArmorInventory()->getContents());
     }
@@ -160,22 +124,11 @@ class CustomHuman extends Human {
     }
 
     public function setCanLookToPlayers(bool $value): void {
-        $this->getConfig()->set("enableRotate", $value);
-        $this->getConfig()->save();
-
         $this->lookToPlayers = $value;
     }
 
     public function canLookToPlayers(): bool {
         return $this->lookToPlayers;
-    }
-
-    public function setSkinTag(CompoundTag $tag): void {
-        $this->skinTag = $tag;
-    }
-
-    public function getSkinTag(): CompoundTag {
-        return $this->skinTag;
     }
 
     public function getCommandManager(): CommandManager {

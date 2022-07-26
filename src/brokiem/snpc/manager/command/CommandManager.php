@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace brokiem\snpc\manager\command;
 
-use brokiem\snpc\entity\BaseNPC;
-use brokiem\snpc\entity\CustomHuman;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ListTag;
 
 final class CommandManager {
 
-    private array $commands;
+    private array $commands = [];
 
-    public function __construct(CustomHuman|BaseNPC $npc) {
-        $this->commands = $npc->getConfig()->get("commands", []);
+    public function __construct(CompoundTag $nbt) {
+        if (($commandsTag = $nbt->getTag('Commands')) instanceof ListTag) {
+            foreach ($commandsTag as $stringTag) {
+                $this->add($stringTag->getValue());
+            }
+        }
     }
 
     public function add($command): bool {

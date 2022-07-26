@@ -103,10 +103,6 @@ class SimpleNPC extends PluginBase {
     }
 
     public function initConfiguration(): void {
-        if (!is_dir($this->getDataFolder() . "npcs")) {
-            mkdir($this->getDataFolder() . "npcs");
-        }
-
         if ($this->getConfig()->get("config-version", 1) !== 3) {
             $this->getLogger()->notice("Your configuration file is outdated, updating the config.yml...");
             $this->getLogger()->notice("The old configuration file can be found at config.old.yml");
