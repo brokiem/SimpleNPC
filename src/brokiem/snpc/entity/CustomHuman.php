@@ -41,6 +41,8 @@ class CustomHuman extends Human {
         $this->commandManager = new CommandManager($nbt);
         $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 0);
 
+        $this->setNameTagAlwaysVisible((bool)$nbt->getByte("ShowNametag", 1));
+        $this->setNameTagVisible((bool)$nbt->getByte("ShowNametag", 1));
         $this->setScale($nbt->getFloat("Scale", 1));
     }
 
@@ -48,6 +50,7 @@ class CustomHuman extends Human {
         $nbt = parent::saveNBT();
         $nbt->setFloat("Scale", $this->getScale()); //pm doesn't save this to the nbt
         $nbt->setByte("EnableRotation", (int)$this->lookToPlayers);
+        $nbt->setByte("ShowNametag", (int)$this->isNameTagAlwaysVisible());
 
         $listTag = new ListTag([], NBT::TAG_String); //commands
         foreach ($this->commandManager->getAll() as $command) {
