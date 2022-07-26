@@ -39,7 +39,7 @@ class CustomHuman extends Human {
         }
 
         $this->commandManager = new CommandManager($nbt);
-        $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 0);
+        $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 1);
 
         $this->setNameTagAlwaysVisible((bool)$nbt->getByte("ShowNametag", 1));
         $this->setNameTagVisible((bool)$nbt->getByte("ShowNametag", 1));

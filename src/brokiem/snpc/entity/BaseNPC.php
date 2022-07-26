@@ -35,7 +35,7 @@ abstract class BaseNPC extends Entity {
         parent::initEntity($nbt);
 
         $this->commandManager = new CommandManager($nbt);
-        $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 0);
+        $this->lookToPlayers = (bool)$nbt->getByte("EnableRotation", 1);
 
         $this->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::SILENT, true);
 
