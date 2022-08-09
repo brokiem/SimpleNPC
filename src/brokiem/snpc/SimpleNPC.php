@@ -17,7 +17,7 @@ use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\updatechecker\Promise;
 use brokiem\updatechecker\UpdateChecker;
-use EasyUI\Form;
+use EasyUI\EasyForm;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityDataHelper;
 use pocketmine\entity\EntityFactory;
@@ -44,7 +44,7 @@ class SimpleNPC extends PluginBase {
     private bool $isDev = true;
 
     protected function onEnable(): void {
-        if (!class_exists(Form::class)) {
+        if (!class_exists(EasyForm::class)) {
             $this->getLogger()->alert("UI/Form dependency not found! Please download this plugin from poggit or install the UI/Form virion. Disabling plugin...");
             $this->getServer()->getPluginManager()->disablePlugin($this);
             return;
