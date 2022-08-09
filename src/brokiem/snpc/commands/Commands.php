@@ -86,7 +86,7 @@ class Commands extends Command implements PluginOwned {
                         if (array_key_exists(strtolower($args[1]) . "_snpc", SimpleNPC::getInstance()->getRegisteredNPC())) {
                             if (is_a(SimpleNPC::getInstance()->getRegisteredNPC()[strtolower($args[1]) . "_snpc"][0], CustomHuman::class, true)) {
                                 if (isset($args[3])) {
-                                    if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $args[3])) {
+                                    if (!preg_match("/^[^\?]+\.(png)(?:\?|$)/", $args[3])) {
                                         $sender->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
                                         return true;
                                     }

@@ -281,7 +281,7 @@ class FormManager {
                         return;
                     }
 
-                    if (!preg_match('/https?:\/\/[^?]*\.png(?![\w.\-_])/', $skin)) {
+                    if (!preg_match("/^[^\?]+\.(png)(?:\?|$)/", $skin)) {
                         $player->sendMessage(TextFormat::RED . "Invalid skin url file format! (Only PNG Supported)");
                         return;
                     }
