@@ -30,11 +30,7 @@ final class CommandManager {
     }
 
     public function exists(string $command): bool {
-        if (in_array($command, $this->commands, true)) {
-            return true;
-        }
-
-        return false;
+        return in_array($command, $this->commands, true);
     }
 
     public function getAll(): array {
@@ -43,7 +39,7 @@ final class CommandManager {
 
     public function remove($command): bool {
         if ($this->exists($command)) {
-            unset($this->commands[$command]);
+            unset($this->commands[array_search($command, $this->commands, true)]);
 
             return true;
         }
