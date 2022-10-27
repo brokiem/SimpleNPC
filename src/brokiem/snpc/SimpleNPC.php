@@ -41,7 +41,7 @@ class SimpleNPC extends PluginBase {
     public array $lastHit = [];
     public array $cachedUpdate = [];
     public array $idPlayers = [];
-    private bool $isDev = true;
+    public const IS_DEV = false;
 
     protected function onEnable(): void {
         if (!class_exists(EasyForm::class)) {
@@ -50,7 +50,7 @@ class SimpleNPC extends PluginBase {
             return;
         }
 
-        if ($this->isDev) {
+        if (self::IS_DEV) {
             $this->getLogger()->warning("You are using the Development version of SimpleNPC. The plugin will experience errors, crashes, or bugs. Only use this version if you are testing. Don't use the Dev version in production!");
         }
 
