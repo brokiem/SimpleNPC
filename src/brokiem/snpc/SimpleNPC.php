@@ -41,7 +41,7 @@ class SimpleNPC extends PluginBase {
     public array $lastHit = [];
     public array $cachedUpdate = [];
     public array $idPlayers = [];
-    public const IS_DEV = false;
+    public const IS_DEV = true;
 
     protected function onEnable(): void {
         if (!class_exists(EasyForm::class)) {
