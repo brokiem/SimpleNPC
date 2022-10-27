@@ -39,11 +39,6 @@ class ButtonManager {
                 "command" =>
                     "snpc id",
                 "function" => null
-            ], "Migrate NPC" => [
-                "text" => "Migrate NPC",
-                "icon" => null,
-                "command" => "snpc migrate",
-                "function" => null
             ], "Remove NPC" => [
                 "text" => "Remove NPC",
                 "icon" => null,
