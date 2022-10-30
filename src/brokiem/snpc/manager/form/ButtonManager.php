@@ -39,11 +39,6 @@ class ButtonManager {
                 "command" =>
                     "snpc id",
                 "function" => null
-            ], "Migrate NPC" => [
-                "text" => "Migrate NPC",
-                "icon" => null,
-                "command" => "snpc migrate",
-                "function" => null
             ], "Remove NPC" => [
                 "text" => "Remove NPC",
                 "icon" => null,
@@ -176,6 +171,32 @@ class ButtonManager {
                         "text" => "Hide Nametag",
                         "icon" => null,
                         "function" => "hideNametag",
+                        "force" => true
+                    ]
+                ]
+            ], "Set Click-Emote" => [
+                "text" => "Set Click-Emote",
+                "icon" => null,
+                "element" => [],
+                "additional" => [
+                    "form" => "editUI",
+                    "button" => [
+                        "text" => "Set Click-Emote",
+                        "icon" => null,
+                        "function" => "setClickEmote",
+                        "force" => true
+                    ]
+                ]
+            ], "Set Emote" => [
+                "text" => "Set Emote",
+                "icon" => null,
+                "element" => [],
+                "additional" => [
+                    "form" => "editUI",
+                    "button" => [
+                        "text" => "Set Emote",
+                        "icon" => null,
+                        "function" => "setEmote",
                         "force" => true
                     ]
                 ]

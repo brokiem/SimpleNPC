@@ -15,17 +15,24 @@ use brokiem\snpc\SimpleNPC;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\entity\Human;
 use pocketmine\nbt\NBT;
+use pocketmine\nbt\NoSuchTagException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
+use pocketmine\network\mcpe\protocol\EmotePacket;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use function in_array;
 
 class CustomHuman extends Human {
     protected $gravity = 0.0;
 
     protected bool $canWalk = false;
     protected bool $lookToPlayers;
+
+    protected string|null $clickEmoteId = null;
+
+    protected string|null $emoteId = null;
 
     protected CommandManager $commandManager;
 
@@ -44,6 +51,12 @@ class CustomHuman extends Human {
         $this->setNameTagAlwaysVisible((bool)$nbt->getByte("ShowNametag", 1));
         $this->setNameTagVisible((bool)$nbt->getByte("ShowNametag", 1));
         $this->setScale($nbt->getFloat("Scale", 1));
+        try {
+            $this->setClickEmoteId($nbt->getString("ClickEmote") === "NULL" ? null : $nbt->getString("ClickEmote"));
+        } catch (NoSuchTagException) {}
+        try {
+            $this->setEmoteId($nbt->getString("Emote") === "NULL" ? null : $nbt->getString("Emote"));
+        } catch (NoSuchTagException) {}
     }
 
     public function saveNBT(): CompoundTag {
@@ -51,6 +64,8 @@ class CustomHuman extends Human {
         $nbt->setFloat("Scale", $this->getScale()); //pm doesn't save this to the nbt
         $nbt->setByte("EnableRotation", (int)$this->lookToPlayers);
         $nbt->setByte("ShowNametag", (int)$this->isNameTagAlwaysVisible());
+        $nbt->setString("ClickEmote", $this->getClickEmoteId() === null ? "NULL" : $this->getClickEmoteId());
+        $nbt->setString("Emote", $this->getEmoteId() === null ? "NULL" : $this->getEmoteId());
 
         $listTag = new ListTag([], NBT::TAG_String); //commands
         foreach ($this->commandManager->getAll() as $command) {
@@ -58,6 +73,40 @@ class CustomHuman extends Human {
         }
         $nbt->setTag("Commands", $listTag);
         return $nbt;
+    }
+
+    /**
+     * @param string|null $clickEmoteId
+     */
+    public function setClickEmoteId(?string $clickEmoteId): void
+    {
+        $this->clickEmoteId = $clickEmoteId;
+        $this->saveNBT();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getClickEmoteId(): ?string
+    {
+        return $this->clickEmoteId === "NULL" ? null : $this->clickEmoteId;
+    }
+
+    /**
+     * @param string|null $emoteId
+     */
+    public function setEmoteId(?string $emoteId): void
+    {
+        $this->emoteId = $emoteId;
+        $this->saveNBT();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmoteId(): ?string
+    {
+        return $this->emoteId === "NULL" ? null : $this->emoteId;
     }
 
     public function despawn(Player $deletor = null): bool {
@@ -104,6 +153,8 @@ class CustomHuman extends Human {
         }
 
         execute:
+        if ($this->getClickEmoteId() !== null)
+            $this->broadcastEmote($this->getClickEmoteId(), [$player]);
         if (!empty($commands = $this->getCommandManager()->getAll())) {
             foreach ($commands as $command) {
                 $plugin->getServer()->getCommandMap()->dispatch(new ConsoleCommandSender($player->getServer(), $plugin->getServer()->getLanguage()), str_replace("{player}", '"' . $player->getName() . '"', $command));
@@ -133,5 +184,12 @@ class CustomHuman extends Human {
 
     public function getCommandManager(): CommandManager {
         return $this->commandManager;
+    }
+
+    public function broadcastEmote(string $emoteId, array|null $targets = null): void
+    {
+        if (!in_array($emoteId, EmoteIds::EMOTES)) return;
+
+        $this->server->broadcastPackets($targets ?? $this->getViewers(), [EmotePacket::create($this->getId(), $emoteId, EmotePacket::FLAG_SERVER)]);
     }
 }

@@ -40,13 +40,18 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\NoSuchTagException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\player\Player;
+use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
+use pocketmine\world\World;
+use function is_string;
+use function unlink;
 
 class NPCManager {
     use SingletonTrait;
@@ -177,5 +182,40 @@ class NPCManager {
         }
 
         return $npcs;
+    }
+
+    public function getOldNPCData(string $identifier): array
+    {
+        $path = SimpleNPC::getInstance()->getDataFolder() . "npcs/$identifier.json";
+        return file_exists($path)
+            ? (new Config($path, Config::JSON))->getAll()
+            : [];
+    }
+
+    public function updateOldNPCs(World $world): void
+    {
+        foreach ($world->getEntities() as $entity)
+            if ($entity instanceof BaseNPC) {
+                $ident = null;
+                try {
+                    $ident = $entity->saveNBT()->getString("Identifier");
+                } catch (NoSuchTagException $e) {}
+
+                if (is_string($ident)) {
+                    $data = $this->getOldNPCData($ident);
+                    if (isset($data["nametag"]))
+                        $entity->setNameTag($data["nametag"]);
+                    if (isset($data["showNametag"]))
+                        $entity->setNameTagVisible($data["showNametag"]);
+                    if (isset($data["scale"]))
+                        $entity->setScale($data["scale"]);
+                    if (isset($data["commands"]))
+                        foreach ($data["commands"] as $command)
+                            $entity->getCommandManager()->add($command);
+
+                    unlink(SimpleNPC::getInstance()->getDataFolder() . "npcs/$ident.json");
+                    $entity->respawnToAll();
+                }
+            }
     }
 }

@@ -20,13 +20,7 @@ final class CommandManager {
     }
 
     public function add($command): bool {
-        if (!$this->exists($command)) {
-            $this->commands[] = $command;
-
-            return true;
-        }
-
-        return false;
+        return in_array($command, $this->commands, true);
     }
 
     public function exists(string $command): bool {

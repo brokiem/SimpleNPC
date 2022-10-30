@@ -19,3 +19,6 @@ enable-command-cooldown: true
 # Coldown executing command when hit the NPC
 # Default: 1.0 (float)
 command-execute-cooldown: 1.0
+
+# Here you can choose the emote interval. 6-7 seconds are recommended.
+emote-interval-seconds: 7

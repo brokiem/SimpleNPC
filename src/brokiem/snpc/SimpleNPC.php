@@ -15,6 +15,7 @@ use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\manager\NPCManager;
+use brokiem\snpc\task\DoEmoteTask;
 use brokiem\updatechecker\Promise;
 use brokiem\updatechecker\UpdateChecker;
 use EasyUI\Form;
@@ -41,7 +42,7 @@ class SimpleNPC extends PluginBase {
     public array $lastHit = [];
     public array $cachedUpdate = [];
     public array $idPlayers = [];
-    private bool $isDev = true;
+    public const IS_DEV = true;
 
     protected function onEnable(): void {
         if (!class_exists(Form::class)) {
@@ -50,7 +51,7 @@ class SimpleNPC extends PluginBase {
             return;
         }
 
-        if ($this->isDev) {
+        if (self::IS_DEV) {
             $this->getLogger()->warning("You are using the Development version of SimpleNPC. The plugin will experience errors, crashes, or bugs. Only use this version if you are testing. Don't use the Dev version in production!");
         }
 
@@ -62,6 +63,8 @@ class SimpleNPC extends PluginBase {
         $this->initConfiguration();
         $this->getServer()->getCommandMap()->registerAll("SimpleNPC", [new Commands("snpc", $this), new RcaCommand("rca", $this)]);
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler($this), $this);
+
+        $this->getScheduler()->scheduleRepeatingTask(new DoEmoteTask(), $this->getConfig()->get("emote-interval-seconds", 7) * 20);
 
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(): void {
             UpdateChecker::checkUpdate($this->getDescription()->getName(), $promise = new Promise());

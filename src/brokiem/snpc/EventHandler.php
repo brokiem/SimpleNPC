@@ -127,4 +127,9 @@ class EventHandler implements Listener {
             }
         }
     }
+
+    /*public function onWorldLoad(WorldLoadEvent $ev): void //TODO: not working!!
+    {
+        NPCManager::getInstance()->updateOldNPCs($ev->getWorld());
+    }*/
 }
