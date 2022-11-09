@@ -25,7 +25,6 @@ use pocketmine\utils\TextFormat;
 use function in_array;
 
 class CustomHuman extends Human {
-    protected $gravity = 0.0;
 
     protected bool $canWalk = false;
     protected bool $lookToPlayers;

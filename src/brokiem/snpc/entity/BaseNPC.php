@@ -25,8 +25,6 @@ use pocketmine\utils\TextFormat;
 
 abstract class BaseNPC extends Entity {
 
-    protected $gravity = 0.0;
-
     protected bool $lookToPlayers;
 
     protected CommandManager $commandManager;
@@ -124,4 +122,8 @@ abstract class BaseNPC extends Entity {
     abstract protected function getInitialSizeInfo(): EntitySizeInfo;
 
     abstract public static function getNetworkTypeId(): string;
+
+    protected function getInitialDragMultiplier() : float{ return 0.02; }
+
+	protected function getInitialGravity() : float{ return 0.08; }
 }

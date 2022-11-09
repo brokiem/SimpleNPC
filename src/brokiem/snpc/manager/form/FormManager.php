@@ -26,7 +26,7 @@ use EasyUI\variant\SimpleForm;
 use InvalidArgumentException;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
-use pocketmine\item\ItemIds;
+use pocketmine\item\VanillaItems;
 use pocketmine\player\Player;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
@@ -188,7 +188,7 @@ class FormManager {
                                 break;
                             case "setHeld":
                                 if ($entity instanceof CustomHuman) {
-                                    if ($sender->getInventory()->getItemInHand()->getId() === ItemIds::AIR) {
+                                    if ($sender->getInventory()->getItemInHand()->equals(VanillaItems::AIR(), false ,false)) {
                                         $sender->sendMessage(TextFormat::RED . "Please hold the item in your hand");
                                     } else {
                                         $entity->sendHeldItemFrom($sender);
