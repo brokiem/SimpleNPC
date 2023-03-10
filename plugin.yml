@@ -1,6 +1,6 @@
 name: SimpleNPC
 main: brokiem\snpc\SimpleNPC
-version: 4.2.0-dev
+version: 4.2.0
 api: 5.0.0
 authors:
   - brokiem
@@ -29,3 +29,5 @@ permissions:
     default: op
   simplenpc.rca:
     default: op
+  simplenpc.cmd:
+    default: true

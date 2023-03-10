@@ -22,6 +22,7 @@ class Commands extends Command implements PluginOwned {
 
     public function __construct(string $name, private SimpleNPC $owner) {
         parent::__construct($name, "SimpleNPC commands");
+        $this->setPermission("simplenpc.cmd");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
