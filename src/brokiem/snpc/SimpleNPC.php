@@ -16,8 +16,6 @@ use brokiem\snpc\entity\CustomHuman;
 use brokiem\snpc\entity\WalkingHuman;
 use brokiem\snpc\manager\NPCManager;
 use brokiem\snpc\task\DoEmoteTask;
-use brokiem\updatechecker\Promise;
-use brokiem\updatechecker\UpdateChecker;
 use EasyUI\Form;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityDataHelper;
@@ -25,7 +23,6 @@ use pocketmine\entity\EntityFactory;
 use pocketmine\entity\Human;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\plugin\PluginBase;
-use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\world\World;
 
@@ -66,13 +63,13 @@ class SimpleNPC extends PluginBase {
 
         $this->getScheduler()->scheduleRepeatingTask(new DoEmoteTask(), $this->getConfig()->get("emote-interval-seconds", 7) * 20);
 
-        $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(): void {
-            UpdateChecker::checkUpdate($this->getDescription()->getName(), $promise = new Promise());
+        /*$this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(): void {
+            UpdateChecker::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion(), $promise = new Promise());
 
             $promise->then(function($data) {
                 $this->cachedUpdate = [$data["version"], $data["last_state_change_date"], $data["html_url"]];
             });
-        }), 864000); // 12 hours
+        }), 864000); // 12 hours*/
     }
 
     public static function registerEntity(string $entityClass, string $name, array $saveNames = []): void {

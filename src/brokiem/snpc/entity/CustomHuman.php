@@ -189,6 +189,6 @@ class CustomHuman extends Human {
     {
         if (!in_array($emoteId, EmoteIds::EMOTES)) return;
 
-        $this->server->broadcastPackets($targets ?? $this->getViewers(), [EmotePacket::create($this->getId(), $emoteId, EmotePacket::FLAG_SERVER)]);
+        $this->server->broadcastPackets($targets ?? $this->getViewers(), [EmotePacket::create($this->getId(), $emoteId, EmotePacket::FLAG_MUTE_ANNOUNCEMENT)]);
     }
 }
