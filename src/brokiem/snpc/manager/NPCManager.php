@@ -11,25 +11,33 @@ namespace brokiem\snpc\manager;
 
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
+use brokiem\snpc\entity\npc\AllayNPC;
 use brokiem\snpc\entity\npc\AxolotlNPC;
 use brokiem\snpc\entity\npc\BatNPC;
+use brokiem\snpc\entity\npc\BeeNPC;
 use brokiem\snpc\entity\npc\BlazeNPC;
 use brokiem\snpc\entity\npc\ChickenNPC;
 use brokiem\snpc\entity\npc\CowNPC;
 use brokiem\snpc\entity\npc\CreeperNPC;
 use brokiem\snpc\entity\npc\EndermanNPC;
+use brokiem\snpc\entity\npc\FoxNPC;
+use brokiem\snpc\entity\npc\FrogNPC;
 use brokiem\snpc\entity\npc\GlowsquidNPC;
 use brokiem\snpc\entity\npc\GoatNPC;
 use brokiem\snpc\entity\npc\HorseNPC;
 use brokiem\snpc\entity\npc\OcelotNPC;
+use brokiem\snpc\entity\npc\PandaNPC;
 use brokiem\snpc\entity\npc\PigNPC;
 use brokiem\snpc\entity\npc\PolarBearNPC;
+use brokiem\snpc\entity\npc\RavagerNPC;
 use brokiem\snpc\entity\npc\SheepNPC;
 use brokiem\snpc\entity\npc\ShulkerNPC;
 use brokiem\snpc\entity\npc\SkeletonNPC;
 use brokiem\snpc\entity\npc\SlimeNPC;
 use brokiem\snpc\entity\npc\SnowGolem;
 use brokiem\snpc\entity\npc\SpiderNPC;
+use brokiem\snpc\entity\npc\StriderNPC;
+use brokiem\snpc\entity\npc\TurtleNPC;
 use brokiem\snpc\entity\npc\VillagerNPC;
 use brokiem\snpc\entity\npc\WitchNPC;
 use brokiem\snpc\entity\npc\WolfNPC;
@@ -79,7 +87,15 @@ class NPCManager {
         VillagerNPC::class => ["villager_snpc", "simplenpc:villager"],
         WitchNPC::class => ["witch_snpc", "simplenpc:witch"],
         WolfNPC::class => ["wolf_snpc", "simplenpc:wolf"],
-        ZombieNPC::class => ["zombie_snpc", "simplenpc:zombie"]
+        ZombieNPC::class => ["zombie_snpc", "simplenpc:zombie"],
+        BeeNPC::class => ["bee_snpc", "simplenpc:bee"],
+        AllayNPC::class => ["allay_snpc", "simplenpc:allay"],
+        FoxNPC::class => ["fox_snpc", "simplenpc:fox"],
+        FrogNPC::class => ["frog_snpc", "simplenpc:frog"],
+        PandaNPC::class => ["panda_snpc", "simplenpc:panda"],
+        RavagerNPC::class => ["ravager_snpc", "simplenpc:ravager"],
+        StriderNPC::class => ["strider_snpc", "simplenpc:strider"],
+        TurtleNPC::class => ["turtle_snpc", "simplenpc:turtle"]
     ];
 
     public function getDefaultNPCs(): array {
