@@ -11,6 +11,8 @@ namespace brokiem\snpc;
 
 use brokiem\snpc\entity\BaseNPC;
 use brokiem\snpc\entity\CustomHuman;
+use pocketmine\entity\projectile\Arrow;
+use pocketmine\event\entity\EntityDamageByChildEntityEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
@@ -50,6 +52,7 @@ class EventHandler implements Listener {
 
         if ($event instanceof EntityDamageByEntityEvent) {
             if ($entity instanceof CustomHuman || $entity instanceof BaseNPC) {
+                $event->setKnockBack(0.0);
                 $event->cancel();
 
                 $damager = $event->getDamager();
@@ -126,6 +129,22 @@ class EventHandler implements Listener {
                 }
             }
         }
+    }
+
+    /**
+     * @priority MONITOR
+     * @param EntityDamageByChildEntityEvent $ev
+     * @return void
+     */
+    public static function oneEntityDamageByChildEntity(EntityDamageByChildEntityEvent $ev): void
+    {
+        $entity = $ev->getEntity();
+        $child = $ev->getChild();
+        if (!$entity instanceof BaseNPC || !$child instanceof Arrow) return;
+
+        $ev->setKnockBack(0);
+        $child->setPunchKnockback(0);
+        $ev->cancel();
     }
 
     /*public function onWorldLoad(WorldLoadEvent $ev): void //TODO: not working!!

@@ -15,6 +15,7 @@ use brokiem\snpc\SimpleNPC;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntitySizeInfo;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
@@ -40,6 +41,8 @@ abstract class BaseNPC extends Entity {
         $this->setNameTagAlwaysVisible((bool)$nbt->getByte("ShowNametag", 1));
         $this->setNameTagVisible((bool)$nbt->getByte("ShowNametag", 1));
         $this->setScale($nbt->getFloat("Scale", 1));
+
+        $this->setImmobile();
     }
 
     public function saveNBT(): CompoundTag {
@@ -123,7 +126,9 @@ abstract class BaseNPC extends Entity {
 
     abstract public static function getNetworkTypeId(): string;
 
-    protected function getInitialDragMultiplier() : float{ return 0.02; }
+    protected function getInitialDragMultiplier() : float{ return 0.00; }
 
-	protected function getInitialGravity() : float{ return 0.08; }
+	protected function getInitialGravity() : float{ return 0.00; }
+
+    public function attack(EntityDamageEvent $source): void { $source->cancel(); }
 }

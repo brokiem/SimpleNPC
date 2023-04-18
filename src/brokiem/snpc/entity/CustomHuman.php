@@ -189,6 +189,15 @@ class CustomHuman extends Human {
     {
         if (!in_array($emoteId, EmoteIds::EMOTES)) return;
 
-        $this->server->broadcastPackets($targets ?? $this->getViewers(), [EmotePacket::create($this->getId(), $emoteId, EmotePacket::FLAG_MUTE_ANNOUNCEMENT)]);
+        $pk = EmotePacket::create($this->getId(), $emoteId, EmotePacket::FLAG_MUTE_ANNOUNCEMENT);
+        if ($targets === null)
+            foreach ($this->getViewers() as $player)
+                $player->getNetworkSession()->sendDataPacket($pk);
+        else
+            foreach ($targets as $player)
+                $player->getNetworkSession()->sendDataPacket($pk);
     }
+
+    public function knockBack(float $x, float $z, float $force = 0.4, ?float $verticalLimit = 0.4): void
+    { return; }
 }
