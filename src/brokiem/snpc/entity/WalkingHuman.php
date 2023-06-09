@@ -27,7 +27,7 @@ final class WalkingHuman extends CustomHuman {
 
     protected function initEntity(CompoundTag $nbt): void {
         $this->canWalk = true;
-        $this->setImmobile(false);
+        $this->setNoClientPredictions(false);
         parent::initEntity($nbt);
     }
 

@@ -42,7 +42,7 @@ abstract class BaseNPC extends Entity {
         $this->setNameTagVisible((bool)$nbt->getByte("ShowNametag", 1));
         $this->setScale($nbt->getFloat("Scale", 1));
 
-        $this->setImmobile();
+        $this->setNoClientPredictions();
     }
 
     public function saveNBT(): CompoundTag {
