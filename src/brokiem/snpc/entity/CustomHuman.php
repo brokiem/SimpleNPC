@@ -19,6 +19,7 @@ use pocketmine\nbt\NoSuchTagException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
+use pocketmine\network\mcpe\protocol\EmotePacket;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function in_array;
@@ -184,10 +185,17 @@ class CustomHuman extends Human {
         return $this->commandManager;
     }
 
-    public function broadcastEmote(string $emoteId): void
+    public function broadcastEmote(string $emoteId, array|null $targets = null): void
     {
         if (!in_array($emoteId, EmoteIds::EMOTES)) return;
-        $this->emote($emoteId);
+
+        $pk = EmotePacket::create($this->getId(), $emoteId, "", "", EmotePacket::FLAG_MUTE_ANNOUNCEMENT);
+        if ($targets === null)
+            foreach ($this->getViewers() as $player)
+                $player->getNetworkSession()->sendDataPacket($pk);
+        else
+            foreach ($targets as $player)
+                $player->getNetworkSession()->sendDataPacket($pk);
     }
 
     public function knockBack(float $x, float $z, float $force = 0.4, ?float $verticalLimit = 0.4): void
