@@ -1,0 +1,14 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/supercrafter333/SimpleNPC
+build-by-default: true
+branches:
+- pm5
+projects:
+  SimpleNPC:
+    path: ""
+    libs:
+      - src: brokiem-pm-pl/EasyUI/libEasyUI
+        version: 3.0.0
+      - src: brokiem-pm-pl/UpdateChecker/UpdateChecker
+        version: ^1.0.0
+        branch: "pm4"
+...
