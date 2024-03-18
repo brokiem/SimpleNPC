@@ -1,8 +1,6 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/brokiem/SimpleNPC
 branches:
   - master
-  - pm4-new
-  - use-nbt
 projects:
   SimpleNPC:
     path: ""
